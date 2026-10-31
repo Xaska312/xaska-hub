@@ -1,0 +1,33 @@
+{
+  // Cloudflare Workers con assets estáticos (ver docs/DECISIONES.md).
+  // El Worker (worker/index.ts) solo atiende /api/*; el resto son archivos de dist/.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "xaska-hub",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-24",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "drop-trailing-slash",
+    "run_worker_first": ["/api/*"],
+  },
+  // Valores no secretos. Los secretos (RESEND_API_KEY, TURNSTILE_SECRET_KEY) se cargan en
+  // Cloudflare (Settings → Variables and Secrets) o en .dev.vars para pruebas locales.
+  "vars": {
+    "MAIL_TO": "soporte@xaska.co",
+    "MAIL_FROM": "XASKA <formulario@envios.xaska.co>",
+    "MAIL_TRANSPORT": "resend",
+  },
+  // Límite de envíos del formulario: 5 por minuto por IP en cada ubicación de Cloudflare.
+  "ratelimits": [
+    {
+      "name": "CONTACT_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 5, "period": 60 },
+    },
+  ],
+  "observability": {
+    "enabled": true,
+  },
+}

@@ -1,0 +1,20 @@
+---
+/**
+ * Lista con el rombo de la marca como viñeta.
+ */
+interface Props {
+  items: readonly string[];
+  class?: string | undefined;
+}
+
+const { items, class: className } = Astro.props;
+---
+
+<ul class:list={['space-y-3', className]}>
+  {items.map((item) => (
+    <li class="flex items-baseline gap-3">
+      <span class="rombo translate-y-[-0.1em] text-[0.8em]" aria-hidden="true" />
+      <span>{item}</span>
+    </li>
+  ))}
+</ul>

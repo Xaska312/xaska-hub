@@ -1,0 +1,9 @@
+# Copia este archivo como .dev.vars para probar el formulario en local con `pnpm preview`.
+# .dev.vars NO se sube al repositorio (está en .gitignore).
+#
+# Claves de prueba oficiales de Cloudflare Turnstile (siempre pasan):
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+# "log" no envía correos: solo registra que hubo un envío. Para probar Resend de verdad,
+# pon "resend" y tu API key real.
+MAIL_TRANSPORT=log
+# RESEND_API_KEY=re_...

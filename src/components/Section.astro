@@ -1,0 +1,32 @@
+---
+/**
+ * Bloque de página con ancho y espaciado vertical consistentes.
+ * - tone "default": fondo de página.
+ * - tone "surface": fondo de superficie, para separar bloques sin bordes ni tarjetas.
+ * - tone "night": banda en Noche (siempre oscura, en los dos temas). Usar con moderación:
+ *   hoy solo la portada (entrada y cierre).
+ */
+interface Props {
+  id?: string | undefined;
+  tone?: 'default' | 'surface' | 'night' | undefined;
+  labelledby?: string | undefined;
+  class?: string | undefined;
+}
+
+const { id, tone = 'default', labelledby, class: className } = Astro.props;
+---
+
+<section
+  id={id}
+  aria-labelledby={labelledby}
+  class:list={[
+    tone === 'surface' && 'bg-surface',
+    tone === 'night' && 'on-night bg-bg text-ink',
+    'py-16 sm:py-24',
+    className,
+  ]}
+>
+  <div class="mx-auto w-full max-w-(--container-page) px-4 sm:px-6 lg:px-8">
+    <slot />
+  </div>
+</section>

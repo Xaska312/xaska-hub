@@ -1,0 +1,132 @@
+seo:
+  title: XASKA POS
+  description: Sistema de punto de venta en la web para comercios en Colombia. Ventas con código de barras, inventario por sucursal, tallas y colores, caja con arqueo. Prueba gratis de 14 días.
+# Lema: el mismo de las tarjetas impresas. La última palabra sale resaltada.
+slogan:
+  - Vende.
+  - Fía.
+  - Cobra.
+  - Controla.
+lead: El punto de venta en la web para comercios en Colombia. Ventas, caja, fiados e inventario desde el computador, la tablet o el celular, sin instalar nada.
+
+problems:
+  title: Lo que resuelve
+  items:
+    - title: El cuaderno ya no da abasto
+      text: Cada venta queda registrada con su producto, su precio y su forma de pago.
+    - title: El inventario no cuadra
+      text: Las existencias bajan solas con cada venta y sabes cuánto tienes en cada sucursal.
+    - title: La caja no cuadra al cierre
+      text: Abres y cierras caja con arqueo, y ves qué entró en efectivo y qué por otros medios.
+    - title: No sabes qué se vende más
+      text: Los reportes te muestran ventas por día, producto y forma de pago.
+
+audience:
+  title: Para quién es
+  text: Para comercios de barrio y de centro comercial que quieren dejar el cuaderno o el programa viejo, y para restaurantes que atienden a la mesa. Funciona especialmente bien en tiendas de ropa y calzado, porque maneja tallas y colores, y también en minimercados, papelerías y otros negocios con mostrador.
+
+# Capturas de un negocio de prueba (sin datos de clientes reales). Archivos en src/assets/pos/.
+screens:
+  title: Así se ve
+  lead: Capturas reales de XASKA POS en un minimercado de prueba. Toca una imagen para verla completa.
+  items:
+    - image: reportes
+      alt: Inicio con las ventas del día, el número de ventas, el ticket promedio, la utilidad, las ventas por hora, los medios de pago y los productos más vendidos.
+      caption: Tus ventas del día, la utilidad y lo que más se vende.
+    - image: cobrar
+      alt: Ventana de cobro con el total, los medios de pago efectivo, tarjeta y transferencia, los billetes rápidos y el cambio a devolver.
+      caption: Cobras en efectivo, con tarjeta, por transferencia o con pago mixto, y ves el cambio.
+    - image: tiquete
+      alt: Venta registrada con el tiquete de 80 mm, el cambio y los botones para imprimir o enviar por WhatsApp.
+      caption: Tiquete de 58 u 80 mm, para imprimir o enviar por WhatsApp.
+    - image: cierre-caja
+      alt: Informe de caja con las ventas por medio de pago, la base de apertura, los egresos, los anticipos y el efectivo esperado, con botones para imprimir o enviar por WhatsApp.
+      caption: El informe de caja te dice cuánto efectivo debe haber al cerrar.
+    - image: productos
+      alt: Lista de productos con su código, nombre, categoría, unidad, impuesto, precio y estado.
+      caption: Tus productos con código, categoría, impuesto y precio.
+    - image: mesa
+      alt: Cuenta de la mesa 1 con los productos por enviar a cocina, los botones para mover o unir la cuenta y el total.
+      caption: Para restaurantes, cuentas por mesa que se envían a cocina.
+
+capabilities:
+  title: Qué puedes hacer
+  groups:
+    - title: Vender
+      items:
+        - Ventas con lector de código de barras
+        - Pagos mixtos, por ejemplo parte en efectivo y parte con transferencia
+        - Precio libre para lo que no tiene precio fijo
+        - Pausar una venta y retomarla después
+        - Tiquete imprimible de 58 u 80 mm
+        - Pantalla de ventas que funciona en el celular
+    - title: Clientes
+      items:
+        - Fiado con cupo por cliente, abonos y estado de cuenta
+        - Pedidos por encargo con anticipos y entregas parciales
+        - Cotizaciones que se convierten en pedido o en venta
+        - Clientes y proveedores
+    - title: Inventario
+      items:
+        - Inventario por sucursal
+        - Productos con tallas y colores
+        - Carga de productos desde una hoja de cálculo
+        - Etiquetas de báscula para productos por peso
+        - Aviso de productos que no se venden
+    - title: Caja
+      items:
+        - Apertura y cierre de caja con arqueo
+        - Caja compartida entre varios vendedores
+        - Cierre de caja para imprimir o enviar por WhatsApp
+    - title: Tu negocio y tu equipo
+      items:
+        - Varios negocios y varias sucursales en una sola cuenta
+        - Usuarios con roles y permisos
+        - Reportes de ventas y registro de cambios
+        - Tu logo y tu color en el sistema y en el tiquete
+        - Prendes o apagas los módulos que tu negocio no usa
+    - title: Restaurantes
+      items:
+        - Mesas por zona y cuentas abiertas, que puedes mover o unir
+        - Comandas a cocina y bar, impresas o en la pantalla de cocina
+        - Adiciones y modificadores, como tamaños, extras y notas
+        - Cobro de la cuenta por partes y propina voluntaria con su reparto
+        - Impuesto al consumo (INC) en las categorías que lo llevan
+        - Roles de mesero y cocina
+
+# Factura electrónica: solo aparece con E_INVOICING en true (src/config/site.ts).
+eInvoicing:
+  group:
+    title: Factura electrónica
+    items:
+      - 'PENDIENTE: qué documentos emite (factura electrónica de venta, documento equivalente POS electrónico, notas crédito), si se hace con un proveedor tecnológico y si tiene costo adicional.'
+  faqAnswer: 'Sí. PENDIENTE: respuesta completa cuando salga la factura electrónica en XASKA POS (documentos, cómo se activa y costo, si lo tiene).'
+
+plans:
+  title: Planes
+  lead: Hay dos planes, Básico y Pro. Los dos empiezan con 14 días de prueba gratis.
+  items:
+    - name: Básico
+      price: $49.900 al mes
+      features:
+        - 1 sucursal
+        - Hasta 3 usuarios
+    - name: Pro
+      price: $99.900 al mes
+      features:
+        - Hasta 5 sucursales
+        - Hasta 15 usuarios
+  note: Los dos planes incluyen todas las funciones y soporte por WhatsApp.
+  equipment:
+    text: '¿Necesitas los equipos? Te armamos el punto de venta completo: computador, lector de código de barras, impresora térmica, cajón monedero y UPS, instalados y con garantía.'
+    linkLabel: Ver equipos y computadores
+
+start:
+  title: Cómo empezar
+  steps:
+    - title: Pide tu demo
+      text: Escríbenos por WhatsApp. Te mostramos XASKA POS y te damos un código para activar tus 14 días de prueba gratis.
+    - title: Configura tu negocio
+      text: Regístrate con tu correo, crea tu negocio con el código y carga tus productos uno a uno o desde una hoja de cálculo.
+    - title: Abre la caja y vende
+      text: Si tienes dudas en el camino, escríbenos por WhatsApp.

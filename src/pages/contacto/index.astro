@@ -1,0 +1,81 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import ContactForm from '@/components/ContactForm.astro';
+import CTA from '@/components/CTA.astro';
+import { contact, site, whatsappMessages, whatsappUrl } from '@/config/site';
+import { TURNSTILE_ORIGIN } from '@/lib/turnstile';
+
+// Turnstile: script y marco desde challenges.cloudflare.com, solo en esta página.
+if (!Astro.csp) throw new Error('La CSP debe estar activa (security.csp en astro.config.mjs).');
+// Al agregar un origen, Astro reemplaza las fuentes por defecto: hay que volver a incluir 'self'.
+Astro.csp.insertScriptResource("'self'");
+Astro.csp.insertScriptResource(TURNSTILE_ORIGIN);
+Astro.csp.insertDirective(`frame-src ${TURNSTILE_ORIGIN}`);
+---
+
+<BaseLayout
+  title="Contacto"
+  description="Escríbele a XASKA por el formulario, por WhatsApp o por correo. Estamos en Ibagué, Tolima, y trabajamos con pymes de toda Colombia."
+  whatsappMessage={whatsappMessages.general}
+>
+  <PageHeader
+    title="Contacto"
+    lead="Escríbenos por el canal que prefieras. Te responde directamente el equipo de XASKA."
+  >
+    <aside
+      slot="visual"
+      aria-labelledby="otros-canales"
+      class="rounded-block border border-line bg-surface p-6 sm:p-8"
+    >
+      <h2 id="otros-canales" class="sr-only">
+        Canales directos
+      </h2>
+      <dl class="space-y-7">
+        <div>
+          <dt class="text-sm font-semibold text-muted">WhatsApp, la forma más rápida</dt>
+          <dd class="mt-2 flex flex-wrap items-center justify-between gap-4">
+            <span class="text-2xl font-extrabold whitespace-nowrap sm:text-3xl">
+              {contact.whatsapp.display}
+            </span>
+            <CTA href={whatsappUrl(whatsappMessages.general)} external>
+              Abrir WhatsApp
+            </CTA>
+          </dd>
+        </div>
+        <div class="border-t border-line pt-7">
+          <dt class="text-sm font-semibold text-muted">Correo, para propuestas y documentos</dt>
+          <dd class="mt-2">
+            <a class="link text-xl font-bold break-all" href={`mailto:${contact.email}`}>
+              {contact.email}
+            </a>
+          </dd>
+        </div>
+        <div class="border-t border-line pt-7 text-muted">
+          <dt class="sr-only">Ubicación y horario</dt>
+          <dd>
+            <p>{`Estamos en ${site.city}.`}</p>
+            {contact.hours && (
+              <p class="mt-1">{`Horario de atención: ${contact.hours.charAt(0).toLowerCase()}${contact.hours.slice(1)}`}</p>
+            )}
+          </dd>
+        </div>
+      </dl>
+    </aside>
+  </PageHeader>
+
+  <Section labelledby="formulario">
+    <div class="max-w-2xl">
+      <h2 id="formulario" class="text-2xl sm:text-3xl">
+        Déjanos un mensaje
+      </h2>
+      <p class="mt-4 text-lg text-muted">
+        Cuéntanos qué necesitas y te respondemos al correo que escribas.
+      </p>
+      <div class="mt-8">
+        <ContactForm />
+      </div>
+    </div>
+  </Section>
+</BaseLayout>

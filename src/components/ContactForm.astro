@@ -1,0 +1,305 @@
+---
+/**
+ * Formulario de contacto. Envía a /api/contacto (Worker) con Turnstile.
+ * - Con JavaScript: valida antes de enviar, envía con fetch y anuncia el resultado (aria-live).
+ * - Sin JavaScript: Turnstile no puede funcionar, así que se muestran WhatsApp y correo.
+ * La CSP de la página permite https://challenges.cloudflare.com (ver contacto.astro).
+ */
+import FormField from './FormField.astro';
+import CTA from './CTA.astro';
+import { contact, interestOptions, whatsappMessages, whatsappUrl } from '@/config/site';
+import { CONTACT_LIMITS, HONEYPOT_FIELD } from '@/lib/contact';
+import { turnstileSiteKey } from '@/lib/turnstile';
+
+const siteKey = turnstileSiteKey();
+---
+
+<form
+  id="contact-form"
+  action="/api/contacto"
+  method="post"
+  novalidate
+  class="contact-form space-y-6"
+  data-interests={JSON.stringify(interestOptions)}
+>
+  <div
+    id="contact-summary"
+    class="hidden rounded-control border px-4 py-3"
+    tabindex="-1"
+    data-summary
+  ></div>
+
+  <div class="grid gap-6 sm:grid-cols-2">
+    <FormField
+      id="contact-name"
+      name="name"
+      label="Nombre"
+      required
+      maxlength={CONTACT_LIMITS.name}
+      autocomplete="name"
+    />
+    <FormField
+      id="contact-email"
+      name="email"
+      label="Correo"
+      type="email"
+      required
+      maxlength={CONTACT_LIMITS.email}
+      autocomplete="email"
+      inputmode="email"
+    />
+    <FormField
+      id="contact-phone"
+      name="phone"
+      label="Teléfono"
+      type="tel"
+      maxlength={CONTACT_LIMITS.phone}
+      autocomplete="tel"
+      inputmode="tel"
+    />
+    <FormField
+      id="contact-interest"
+      name="interest"
+      label="¿Qué te interesa?"
+      type="select"
+      required
+      options={interestOptions}
+    />
+  </div>
+
+  <FormField
+    id="contact-message"
+    name="message"
+    label="Mensaje"
+    type="textarea"
+    required
+    maxlength={CONTACT_LIMITS.message}
+    hint="Cuéntanos qué necesitas o qué te gustaría resolver."
+  />
+
+  <!-- Campo trampa: oculto para las personas, visible para algunos bots. -->
+  <div class="trap" aria-hidden="true">
+    <label for="contact-trap">No llenes este campo</label>
+    <input id="contact-trap" name={HONEYPOT_FIELD} type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="field">
+    <div class="flex items-start gap-3">
+      <input
+        id="contact-consent"
+        name="consent"
+        type="checkbox"
+        value="si"
+        required
+        aria-describedby="contact-consent-error"
+        class="mt-1 size-5 shrink-0 accent-[var(--c-accent)]"
+      />
+      <label for="contact-consent">
+        Autorizo a XASKA a tratar mis datos para responder esta solicitud, según la{' '}
+        <a class="link" href="/legal/privacidad">
+          política de privacidad
+        </a>
+        .
+      </label>
+    </div>
+    <p
+      id="contact-consent-error"
+      class="field-error mt-2 text-sm font-semibold"
+      data-error-for="consent"
+    ></p>
+  </div>
+
+  <div class="cf-turnstile" data-sitekey={siteKey} data-language="es" data-theme="auto"></div>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <button
+      type="submit"
+      class="inline-flex min-h-11 items-center justify-center rounded-control bg-accent px-5 font-semibold text-on-accent transition-colors hover:bg-accent-strong disabled:cursor-wait disabled:opacity-70"
+      data-submit
+    >
+      Enviar mensaje
+    </button>
+    <p class="text-sm text-muted">Te respondemos al correo que escribas.</p>
+  </div>
+
+  <p class="sr-only" role="status" aria-live="polite" data-status></p>
+</form>
+
+<noscript>
+  <div class="mt-6 rounded-control border border-line-strong p-4">
+    <p>
+      Para enviar el formulario necesitas activar JavaScript. También puedes escribirnos por
+      WhatsApp o al correo {contact.email}.
+    </p>
+    <div class="mt-4">
+      <CTA href={whatsappUrl(whatsappMessages.general)} external>
+        Abrir WhatsApp
+      </CTA>
+    </div>
+  </div>
+</noscript>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<style>
+  .trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  [data-summary][data-tone='error'] {
+    border-color: var(--c-error);
+  }
+  [data-summary][data-tone='success'] {
+    border-color: var(--c-accent);
+  }
+  .cf-turnstile {
+    min-height: 65px;
+  }
+</style>
+
+<script>
+  import {
+    TURNSTILE_FIELD,
+    validateContact,
+    type ContactErrors,
+    type ContactField,
+  } from '@/lib/contact';
+
+  interface TurnstileApi {
+    reset(widget?: string | HTMLElement): void;
+  }
+  type WithTurnstile = Window & { turnstile?: TurnstileApi };
+
+  const form = document.querySelector<HTMLFormElement>('#contact-form');
+  if (form) setup(form);
+
+  function setup(form: HTMLFormElement): void {
+    const interests: string[] = JSON.parse(form.dataset['interests'] ?? '[]');
+    const summary = form.querySelector<HTMLElement>('[data-summary]');
+    const status = form.querySelector<HTMLElement>('[data-status]');
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
+
+    const controls = (name: ContactField): HTMLElement | null =>
+      form.querySelector<HTMLElement>(`[name="${name}"]`);
+
+    function clearErrors(): void {
+      form.querySelectorAll<HTMLElement>('[data-error-for]').forEach((el) => (el.textContent = ''));
+      form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    }
+
+    function showErrors(errors: ContactErrors): void {
+      clearErrors();
+      let first: HTMLElement | null = null;
+      for (const [name, message] of Object.entries(errors) as [ContactField, string][]) {
+        const slot = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+        const control = controls(name);
+        if (slot) slot.textContent = message;
+        if (control) {
+          control.setAttribute('aria-invalid', 'true');
+          first ??= control;
+        }
+      }
+      const count = Object.keys(errors).length;
+      showSummary(
+        'error',
+        count === 1 ? 'Revisa el campo marcado.' : `Revisa los ${count} campos marcados.`,
+      );
+      first?.focus();
+    }
+
+    function showSummary(tone: 'error' | 'success', message: string): void {
+      if (!summary) return;
+      summary.textContent = message;
+      summary.dataset['tone'] = tone;
+      summary.classList.remove('hidden');
+    }
+
+    function announce(message: string): void {
+      if (status) status.textContent = message;
+    }
+
+    function resetTurnstile(): void {
+      (window as WithTurnstile).turnstile?.reset();
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const value = (key: string): string => {
+        const v = data.get(key);
+        return typeof v === 'string' ? v : '';
+      };
+
+      const check = validateContact(
+        {
+          name: value('name'),
+          email: value('email'),
+          phone: value('phone'),
+          interest: value('interest'),
+          message: value('message'),
+          consent: value('consent'),
+        },
+        interests,
+      );
+      if (!check.ok) {
+        showErrors(check.errors);
+        return;
+      }
+      if (value(TURNSTILE_FIELD) === '') {
+        clearErrors();
+        showSummary(
+          'error',
+          'Espera a que termine la verificación de seguridad y vuelve a enviar.',
+        );
+        summary?.focus();
+        return;
+      }
+
+      clearErrors();
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'Enviando…';
+      }
+      announce('Enviando tu mensaje…');
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { Accept: 'application/json' },
+        });
+        const body: { ok?: boolean; message?: string; errors?: ContactErrors } = await res
+          .json()
+          .catch(() => ({}));
+        const message = body.message ?? 'No pudimos enviar tu mensaje. Escríbenos por WhatsApp.';
+        if (res.ok && body.ok) {
+          form.reset();
+          showSummary('success', message);
+          announce(message);
+          summary?.focus();
+        } else if (body.errors && Object.keys(body.errors).length > 0) {
+          showErrors(body.errors);
+          announce(message);
+        } else {
+          showSummary('error', message);
+          announce(message);
+          summary?.focus();
+        }
+      } catch {
+        const message = 'No hay conexión. Revisa tu internet o escríbenos por WhatsApp.';
+        showSummary('error', message);
+        announce(message);
+        summary?.focus();
+      } finally {
+        resetTurnstile();
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = 'Enviar mensaje';
+        }
+      }
+    });
+  }
+</script>

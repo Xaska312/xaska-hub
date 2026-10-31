@@ -1,0 +1,64 @@
+seo:
+  title: XASKA
+  description: Software para pymes colombianas. XASKA POS para vender y controlar tu inventario, y desarrollo a medida, automatización y páginas web. Desde Ibagué.
+
+hero:
+  title: Software para pymes, hecho por gente que conoce el mostrador
+  lead: En XASKA creamos XASKA POS, un sistema de punto de venta para comercios, y desarrollamos herramientas a la medida para pymes colombianas. Hablas directo con quien lo construye.
+
+pillars:
+  title: Lo que hacemos
+  items:
+    - title: Un producto propio
+      text: XASKA POS, para vender, controlar el inventario y cuadrar la caja desde el computador, la tablet o el celular.
+      link:
+        label: Conocer XASKA POS
+        href: /productos/xaska-pos
+    - title: Proyectos a la medida
+      text: Programas, automatizaciones y páginas web para lo que tu negocio necesita y ningún software de caja resuelve.
+      link:
+        label: Ver servicios
+        href: /servicios
+    - title: Trato directo
+      text: Sin intermediarios ni respuestas automáticas. Nos escribes por WhatsApp y te responde quien conoce tu caso.
+
+pos:
+  title: XASKA POS
+  lead: El punto de venta en la web para comercios en Colombia. Funciona en el navegador, sin instalar nada. Pídenos una demo y te activamos 14 días de prueba gratis.
+  highlights:
+    - Ventas con lector de código de barras y pagos mixtos
+    - Inventario por sucursal, con tallas y colores
+    - Caja con arqueo al cierre
+    - Tiquete de 58 u 80 mm
+    - Varios negocios y sucursales, con roles y permisos
+    - Reportes de ventas y etiquetas de báscula
+    - Fiado con cupo por cliente
+    - Pedidos con anticipo y cotizaciones
+
+services:
+  title: Servicios para tu empresa
+  lead: Cuando necesitas algo que no viene en una caja, lo construimos contigo.
+
+why:
+  title: Por qué trabajar con XASKA
+  items:
+    - title: Cercanía
+      text: Estamos en Ibagué y atendemos pymes de toda Colombia. Hablas directo con quien diseña y programa tu solución, y la conversación sigue después de la entrega.
+    - title: Conocemos el día a día de un comercio
+      text: Construimos XASKA POS al lado de comerciantes. Sabemos lo que pasa en una caja a las seis de la tarde y lo tenemos en cuenta en cada proyecto.
+
+process:
+  title: Cómo trabajamos
+  steps:
+    - title: Conversamos
+      text: Nos cuentas cómo funciona tu negocio hoy y qué quieres resolver.
+    - title: Te proponemos
+      text: Recibes por escrito el alcance, los tiempos y el precio, sin letra pequeña.
+    - title: Construimos por etapas
+      text: Ves avances desde el principio y ajustamos sobre la marcha.
+    - title: Te acompañamos
+      text: Entregamos, te enseñamos a usarlo y seguimos disponibles por WhatsApp.
+
+closing:
+  title: ¿Hablamos de tu negocio?
+  text: Escríbenos por WhatsApp o por correo y te respondemos nosotros mismos.

@@ -1,0 +1,77 @@
+---
+import { whatsappUrl, whatsappMessages } from '@/config/site';
+
+/**
+ * Enlace a WhatsApp con mensaje prellenado.
+ * - variant "button": botón con texto.
+ * - variant "icon": solo ícono (encabezado móvil), con nombre accesible.
+ */
+interface Props {
+  message?: string | undefined;
+  label?: string | undefined;
+  variant?: 'button' | 'icon' | undefined;
+  class?: string | undefined;
+}
+
+const {
+  message = whatsappMessages.general,
+  label = 'Escríbenos por WhatsApp',
+  variant = 'button',
+  class: className,
+} = Astro.props;
+
+const href = whatsappUrl(message);
+---
+
+{variant === 'icon' ? (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener"
+    class:list={[
+      'inline-flex size-11 items-center justify-center rounded-control text-ink hover:bg-surface',
+      className,
+    ]}
+    aria-label={`${label} (se abre en una pestaña nueva)`}
+  >
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 19.5 5.3 15A8 8 0 1 1 8.6 18.3L4 19.5Z" />
+      <path d="M9 10.5h6M9 13.5h4" stroke-linecap="round" />
+    </svg>
+  </a>
+) : (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener"
+    class:list={[
+      'inline-flex min-h-11 items-center gap-2 rounded-control border border-line-strong px-4 font-semibold text-ink hover:border-ink',
+      className,
+    ]}
+  >
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 19.5 5.3 15A8 8 0 1 1 8.6 18.3L4 19.5Z" />
+      <path d="M9 10.5h6M9 13.5h4" stroke-linecap="round" />
+    </svg>
+    <span>{label}</span>
+    <span class="sr-only">(se abre en una pestaña nueva)</span>
+  </a>
+)}

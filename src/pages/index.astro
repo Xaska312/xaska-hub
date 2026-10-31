@@ -1,0 +1,169 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import CTA from '@/components/CTA.astro';
+import Card from '@/components/Card.astro';
+import Steps from '@/components/Steps.astro';
+import RomboList from '@/components/RomboList.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import ScreenShowcase from '@/components/ScreenShowcase.astro';
+import reportsScreen from '@/assets/pos/header-reportes.png';
+import {
+  contact,
+  primaryCta,
+  primaryCtaIsWhatsApp,
+  products,
+  whatsappMessages,
+} from '@/config/site';
+
+const entry = await getEntry('home', 'index');
+if (!entry) throw new Error('Falta src/content/home/index.yaml');
+const home = entry.data;
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title={home.seo.title}
+  description={home.seo.description}
+  whatsappMessage={whatsappMessages.general}
+>
+  {/* Entrada en Noche, como las tarjetas: el título y las pantallas reales de XASKA POS. */}
+  <PageHeader title={home.hero.title} lead={home.hero.lead} bleed>
+    <CTA href={primaryCta.href} external>
+      {primaryCta.longLabel}
+    </CTA>
+    {primaryCtaIsWhatsApp ? (
+      <CTA href={products.pos.path} variant="secondary">
+        Conocer XASKA POS
+      </CTA>
+    ) : (
+      <WhatsAppButton message={whatsappMessages.general} />
+    )}
+    <ScreenShowcase
+      slot="visual"
+      src={reportsScreen}
+      alt="Inicio de XASKA POS con las ventas del día, la utilidad, las ventas por hora, los medios de pago y los productos más vendidos."
+    />
+  </PageHeader>
+
+  <Section labelledby="pilares" class="pt-6 sm:pt-10">
+    <h2 id="pilares" class="sr-only">
+      {home.pillars.title}
+    </h2>
+    <ul class="grid md:grid-cols-3">
+      {home.pillars.items.map((pillar, index) => (
+        <li
+          class:list={[
+            'py-8 md:px-8 md:py-10',
+            index > 0 && 'border-t border-line md:border-t-0 md:border-l',
+            index === 0 && 'md:pl-0',
+          ]}
+        >
+          <h3 class="flex items-center gap-3 text-xl">
+            <span class="rombo text-base" aria-hidden="true" />
+            {pillar.title}
+          </h3>
+          <p class="mt-3 text-muted">{pillar.text}</p>
+          {pillar.link && (
+            <a class="link mt-4 inline-block" href={pillar.link.href}>
+              {pillar.link.label}
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section tone="surface" labelledby="xaska-pos">
+    <div class="grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <h2 id="xaska-pos" class="text-2xl sm:text-3xl">
+          {home.pos.title}
+        </h2>
+        <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{home.pos.lead}</p>
+        <div class="mt-8 flex flex-wrap items-center gap-4">
+          <CTA href={primaryCta.href} external>
+            {primaryCta.longLabel}
+          </CTA>
+          <CTA href={products.pos.path} variant="secondary">
+            Ver lo que hace
+          </CTA>
+        </div>
+      </div>
+      <RomboList items={home.pos.highlights} class="self-center text-lg" />
+    </div>
+  </Section>
+
+  <Section labelledby="servicios">
+    <div class="max-w-(--container-prose)">
+      <h2 id="servicios" class="text-2xl sm:text-3xl">
+        {home.services.title}
+      </h2>
+      <p class="mt-4 text-lg text-muted">{home.services.lead}</p>
+    </div>
+    <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {services.map((service) => (
+        <Card as="li">
+          <h3 class="text-xl">
+            <a href={`/servicios#${service.id}`} class="hover:underline">
+              {service.data.title}
+            </a>
+          </h3>
+          <p class="mt-3 text-muted">{service.data.summary}</p>
+        </Card>
+      ))}
+      {/* Sexta casilla: cierra la cuadrícula de 3 con el enlace a todos los servicios. */}
+      <li class="flex">
+        <a
+          href="/servicios"
+          class="flex w-full items-center justify-between gap-4 rounded-block border border-line-strong p-6 font-semibold text-accent transition-colors hover:bg-surface sm:p-8"
+        >
+          Ver todos los servicios
+          <span class="rombo text-base" aria-hidden="true"></span>
+        </a>
+      </li>
+    </ul>
+  </Section>
+
+  <Section tone="surface" labelledby="por-que">
+    <h2 id="por-que" class="text-2xl sm:text-3xl">
+      {home.why.title}
+    </h2>
+    <div class="mt-10 grid gap-10 md:grid-cols-2 md:gap-16">
+      {home.why.items.map((item) => (
+        <div>
+          <h3 class="text-xl">{item.title}</h3>
+          <p class="mt-3 max-w-(--container-prose) text-lg text-muted">{item.text}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section labelledby="como-trabajamos">
+    <h2 id="como-trabajamos" class="text-2xl sm:text-3xl">
+      {home.process.title}
+    </h2>
+    <div class="mt-10">
+      <Steps steps={home.process.steps} />
+    </div>
+  </Section>
+
+  <Section tone="night" labelledby="cierre">
+    <div class="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
+      <div>
+        <h2 id="cierre" class="text-2xl sm:text-3xl">
+          {home.closing.title}
+        </h2>
+        <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{home.closing.text}</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
+        <WhatsAppButton message={whatsappMessages.services} />
+        <a class="link" href={`mailto:${contact.email}`}>
+          {contact.email}
+        </a>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>

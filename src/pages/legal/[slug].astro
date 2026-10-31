@@ -1,0 +1,64 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import { whatsappMessages } from '@/config/site';
+import { isProductionBuild } from '@/lib/pendientes';
+
+export const getStaticPaths = (async () => {
+  const docs = await getCollection('legal');
+  return docs.map((doc) => ({ params: { slug: doc.id }, props: { doc } }));
+}) satisfies GetStaticPaths;
+
+const { doc } = Astro.props;
+const { Content } = await render(doc);
+
+if (isProductionBuild() && !doc.data.reviewed) {
+  throw new Error(`Falta la revisión legal de "${doc.data.title}" (campo reviewed).`);
+}
+
+const updated = new Intl.DateTimeFormat('es-CO', {
+  dateStyle: 'long',
+  timeZone: 'America/Bogota',
+}).format(new Date(`${doc.data.updated}T12:00:00-05:00`));
+---
+
+<BaseLayout
+  title={doc.data.title}
+  description={doc.data.description}
+  whatsappMessage={whatsappMessages.general}
+>
+  <Section class="pt-12 sm:pt-20">
+    <div class="max-w-(--container-prose)">
+      {!doc.data.reviewed && (
+        <p class="mb-8 rounded-control border border-line-strong bg-surface px-4 py-3 font-semibold">
+          Borrador pendiente de revisión legal
+        </p>
+      )}
+      <h1 class="text-3xl sm:text-4xl">{doc.data.title}</h1>
+      <p class="mt-4 text-sm text-muted">{`Última actualización: ${updated}`}</p>
+      <div class="prose-xaska legal mt-10">
+        <Content />
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .legal :global(h2) {
+    margin-top: 2.5rem;
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+  }
+  .legal :global(ul) {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .legal :global(li + li) {
+    margin-top: 0.4rem;
+  }
+  .legal :global(strong) {
+    font-weight: 600;
+  }
+</style>

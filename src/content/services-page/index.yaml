@@ -1,0 +1,17 @@
+seo:
+  title: Servicios
+  description: Desarrollo a medida, automatización de procesos, páginas web, consultoría y equipos para pymes colombianas. Trato directo desde Ibagué.
+title: Servicios
+lead: Cuando necesitas algo que no viene en una caja, lo construimos contigo. Cada proyecto empieza por entender cómo trabaja tu negocio.
+
+process:
+  title: Cómo trabajamos
+  steps:
+    - title: Conversamos
+      text: Nos cuentas qué quieres resolver y cómo lo haces hoy. Si hace falta, revisamos juntos tus archivos o tu proceso.
+    - title: Te proponemos
+      text: Recibes una propuesta por escrito con alcance, entregables, tiempos y precio.
+    - title: Construimos por etapas
+      text: Trabajamos en entregas cortas para que veas avances y podamos ajustar a tiempo.
+    - title: Entregamos y acompañamos
+      text: Te dejamos todo funcionando, te enseñamos a usarlo y seguimos disponibles por WhatsApp.

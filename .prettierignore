@@ -1,0 +1,14 @@
+dist/
+.astro/
+node_modules/
+pnpm-lock.yaml
+public/brand/
+src/assets/fonts/
+playwright-report/
+test-results/
+.wrangler/
+worker/worker-configuration.d.ts
+lighthouse-report/
+public/og/
+_to_delete/
+_capturas/

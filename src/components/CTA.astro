@@ -1,0 +1,30 @@
+---
+/**
+ * Botón de llamada a la acción.
+ * - primary: fondo de acento (Índigo en claro, Índigo claro en oscuro).
+ * - secondary: borde, sin relleno.
+ */
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary' | undefined;
+  external?: boolean | undefined;
+  class?: string | undefined;
+}
+
+const { href, variant = 'primary', external = false, class: className } = Astro.props;
+---
+
+<a
+  href={href}
+  {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+  class:list={[
+    'inline-flex min-h-11 items-center justify-center rounded-control px-5 font-semibold transition-colors',
+    variant === 'primary'
+      ? 'bg-accent text-on-accent hover:bg-accent-strong'
+      : 'border border-line-strong text-ink hover:border-ink',
+    className,
+  ]}
+>
+  <slot />
+  {external && <span class="sr-only">(se abre en una pestaña nueva)</span>}
+</a>

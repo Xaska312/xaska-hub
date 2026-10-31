@@ -1,0 +1,51 @@
+---
+/**
+ * Pantalla real de XASKA POS que "sale" de la banda en Noche: llega al borde inferior y se
+ * corta por la derecha. Se muestra grande (cerca del tamaño real de la captura) para que el
+ * texto se lea nítido, en vez de reducir la pantalla completa.
+ * Las capturas del encabezado se toman al doble de resolución (device pixel ratio 2) para que
+ * se vean nítidas también en pantallas de alta densidad.
+ * Opcional: una segunda pantalla superpuesta (solo escritorio).
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Overlay {
+  src: ImageMetadata;
+  alt: string;
+}
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  overlay?: Overlay | undefined;
+}
+
+const { src, alt, overlay } = Astro.props;
+---
+
+<figure class="relative">
+  <div class="w-[170%] overflow-hidden rounded-t-block border border-b-0 border-line bg-white sm:w-[130%] lg:w-[65rem]">
+    <Image
+      src={src}
+      alt={alt}
+      widths={[640, 1040, 1560, 2080]}
+      sizes="(min-width: 1024px) 1040px, 170vw"
+      quality={90}
+      class="block h-auto w-full"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+  {overlay && (
+    <Image
+      src={overlay.src}
+      alt={overlay.alt}
+      widths={[400, 632]}
+      sizes="400px"
+      quality={90}
+      class="absolute -bottom-10 left-6 hidden w-[22rem] rounded-block border border-line shadow-float lg:block xl:w-[24rem]"
+      loading="eager"
+    />
+  )}
+</figure>

@@ -1,0 +1,28 @@
+# build
+dist/
+.astro/
+.wrangler/
+
+# dependencias
+node_modules/
+
+# entorno (nunca subir valores reales)
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# pruebas
+playwright-report/
+test-results/
+
+# sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# material local que no va al repositorio
+_to_delete/
+_capturas/
+xaska-logo.zip
+lighthouse-report/

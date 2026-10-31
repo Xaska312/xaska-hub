@@ -1,0 +1,50 @@
+---
+/**
+ * Pasos en orden (un proceso real, por eso van numerados).
+ */
+interface Props {
+  steps: { title: string; text: string }[];
+}
+
+const { steps } = Astro.props;
+---
+
+<ol class="steps grid gap-8 sm:grid-cols-2 lg:grid-flow-col lg:auto-cols-fr lg:grid-cols-none lg:gap-6">
+  {steps.map((step, index) => (
+    <li class="step relative">
+      <div class="flex items-center gap-3">
+        <span class="step-number" aria-hidden="true">
+          {index + 1}
+        </span>
+        <span class="step-line hidden flex-1 lg:block" aria-hidden="true" />
+      </div>
+      <h3 class="mt-4 text-lg">
+        <span class="sr-only">{`Paso ${index + 1}: `}</span>
+        {step.title}
+      </h3>
+      <p class="mt-2 text-muted">{step.text}</p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .step-number {
+    display: inline-flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--c-accent);
+    border-radius: 9999px;
+    color: var(--c-accent);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .step-line {
+    height: 1px;
+    background-color: var(--c-line);
+  }
+  .step:last-child .step-line {
+    visibility: hidden;
+  }
+</style>

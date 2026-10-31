@@ -1,0 +1,7 @@
+# Línea de hardware aparte. No se publica (SHOW_HARDWARE=false en src/config/site.ts).
+# Desde el 2026-10-31 los equipos se ofrecen como el servicio "Equipos y computadores".
+
+seo:
+  title: Ensamble de computadores
+  description: Ensamble de computadores a la medida en Ibagué.
+lead: Armamos computadores a la medida de lo que necesitas.

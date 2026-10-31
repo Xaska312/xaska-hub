@@ -1,0 +1,249 @@
+@import 'tailwindcss';
+
+/*
+ * Tokens de diseño de XASKA. Único lugar donde se definen colores, tipografía,
+ * espaciado, radios y sombras. Los colores de marca no se modifican:
+ *   Noche #111827 · Índigo #4F46E5 (sobre claro) · Índigo claro #818CF8 (sobre oscuro).
+ * La tabla de contrastes está en docs/DECISIONES.md.
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  color-scheme: light;
+
+  /* Marca (fijos) */
+  --brand-night: #111827;
+  --brand-indigo: #4f46e5;
+  --brand-indigo-light: #818cf8;
+  --brand-white: #ffffff;
+
+  /* Semánticos — tema claro */
+  --c-bg: #ffffff;
+  --c-surface: #f4f5f8;
+  --c-text: var(--brand-night);
+  --c-muted: #4b5563;
+  --c-line: #e1e4ea;
+  --c-line-strong: #6b7280;
+  --c-accent: var(--brand-indigo);
+  --c-accent-strong: color-mix(in srgb, var(--brand-indigo) 82%, var(--brand-night));
+  --c-on-accent: var(--brand-white);
+  --c-focus: var(--brand-indigo);
+  --c-error: #b91c1c;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --c-bg: var(--brand-night);
+  --c-surface: #1a2232;
+  --c-text: #f3f4f6;
+  --c-muted: #aab1be;
+  --c-line: #2b3446;
+  --c-line-strong: #8b93a3;
+  --c-accent: var(--brand-indigo-light);
+  --c-accent-strong: color-mix(in srgb, var(--brand-indigo-light) 80%, var(--brand-white));
+  --c-on-accent: var(--brand-night);
+  --c-focus: var(--brand-indigo-light);
+  --c-error: #fca5a5;
+}
+
+/* Sin JavaScript no hay data-theme: se respeta la preferencia del sistema. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --c-bg: var(--brand-night);
+    --c-surface: #1a2232;
+    --c-text: #f3f4f6;
+    --c-muted: #aab1be;
+    --c-line: #2b3446;
+    --c-line-strong: #8b93a3;
+    --c-accent: var(--brand-indigo-light);
+    --c-accent-strong: color-mix(in srgb, var(--brand-indigo-light) 80%, var(--brand-white));
+    --c-on-accent: var(--brand-night);
+    --c-focus: var(--brand-indigo-light);
+    --c-error: #fca5a5;
+  }
+}
+
+/*
+ * Banda en Noche: siempre oscura, también con el tema claro. Usa los mismos tokens del
+ * tema oscuro (contrastes ya verificados en docs/DECISIONES.md). En el tema oscuro se
+ * oscurece un poco más el fondo para que la banda se distinga de la página.
+ */
+.on-night {
+  color-scheme: dark;
+  --c-bg: var(--brand-night);
+  --c-surface: #1a2232;
+  --c-text: #f3f4f6;
+  --c-muted: #aab1be;
+  --c-line: #2b3446;
+  --c-line-strong: #8b93a3;
+  --c-accent: var(--brand-indigo-light);
+  --c-accent-strong: color-mix(in srgb, var(--brand-indigo-light) 80%, var(--brand-white));
+  --c-on-accent: var(--brand-night);
+  --c-focus: var(--brand-indigo-light);
+  --c-error: #fca5a5;
+}
+:root[data-theme='dark'] .on-night {
+  --c-bg: #0b111e;
+  border-block: 1px solid #2b3446;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .on-night {
+    --c-bg: #0b111e;
+    border-block: 1px solid #2b3446;
+  }
+}
+
+/* "POS" gigante del encabezado de Productos, como en la tarjeta impresa (decorativo). */
+.pos-type {
+  background-image: linear-gradient(100deg, var(--brand-indigo) 10%, #a5b4fc 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-ink: var(--c-text);
+  --color-muted: var(--c-muted);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-accent: var(--c-accent);
+  --color-accent-strong: var(--c-accent-strong);
+  --color-on-accent: var(--c-on-accent);
+  --color-focus: var(--c-focus);
+  --color-night: var(--brand-night);
+
+  --font-sans: var(--font-jakarta);
+}
+
+@theme {
+  /* Escala tipográfica (razón ~1.25, base 17px) */
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.65;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.55;
+  --text-xl: 1.5625rem;
+  --text-xl--line-height: 1.35;
+  --text-2xl: 1.953rem;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2.441rem;
+  --text-3xl--line-height: 1.12;
+  --text-4xl: 3.052rem;
+  --text-4xl--line-height: 1.05;
+
+  /* Radios: pequeño para controles, mediano para bloques. No se usa un único radio para todo. */
+  --radius-control: 0.5rem;
+  --radius-block: 1rem;
+
+  /* Sombras: solo para elementos flotantes (menú móvil, botón de WhatsApp). */
+  --shadow-float: 0 8px 24px -8px rgb(17 24 39 / 0.25);
+
+  /* Medida máxima de lectura */
+  --container-prose: 68ch;
+  --container-page: 72rem;
+}
+
+@layer base {
+  html {
+    background-color: var(--c-bg);
+    color: var(--c-text);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
+  /* Pesos como en XASKA POS: títulos 800, subtítulos y nombres 700, botones y negrilla 600, texto 400. */
+  h1,
+  h2,
+  h3 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-weight: 700;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--c-focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+}
+
+@layer components {
+  /* Enlace de texto: subrayado siempre visible, no depende solo del color. */
+  .link {
+    color: var(--c-accent);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .link:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  /* Texto largo que viene de Markdown. */
+  .prose-xaska > * + * {
+    margin-top: 1em;
+  }
+  .prose-xaska a {
+    color: var(--c-accent);
+    text-decoration-line: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Mensajes de error de formularios (se llenan desde JavaScript). */
+  .field-error {
+    color: var(--c-error);
+  }
+  .field-error:empty {
+    display: none;
+  }
+
+  /* Rombo: motivo gráfico tomado del logo. Se usa con moderación. */
+  .rombo {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.5em;
+    background-color: var(--c-accent);
+    transform: rotate(45deg);
+    flex: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

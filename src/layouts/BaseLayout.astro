@@ -1,0 +1,120 @@
+---
+import { Font } from 'astro:assets';
+import '@/styles/global.css';
+import ThemeInit from '@/components/ThemeInit.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import PreviewBanner from '@/components/PreviewBanner.astro';
+import { ogImage, site } from '@/config/site';
+import { findSourceMarkers, isProductionBuild } from '@/lib/pendientes';
+import { organization, serializeJsonLd, type JsonLd } from '@/lib/structured-data';
+import {
+  ANALYTICS_CONNECT_ORIGIN,
+  ANALYTICS_SCRIPT_ORIGIN,
+  ANALYTICS_SCRIPT_URL,
+  analyticsToken,
+} from '@/lib/analytics';
+
+interface Props {
+  /** Título de la página (sin el nombre de la marca). */
+  title: string;
+  description: string;
+  /** Mensaje prellenado de WhatsApp para el encabezado móvil. */
+  whatsappMessage?: string | undefined;
+  /** Evita la indexación (p. ej. 404 o previsualizaciones). */
+  noindex?: boolean | undefined;
+  /** Datos estructurados propios de la página (la organización ya va en todas). */
+  jsonLd?: JsonLd[] | undefined;
+}
+
+const { title, description, whatsappMessage, noindex = false, jsonLd = [] } = Astro.props;
+// La portada usa el nombre y el lema; las demás, "Página | XASKA".
+const fullTitle =
+  title === site.name ? `${site.name} | ${site.tagline}` : `${title} | ${site.name}`;
+// Con build.format 'file' la portada se genera como /index.html: su canonical es la raíz.
+const pathname =
+  Astro.url.pathname
+    .replace(/\.html$/, '')
+    .replace(/(^|\/)index$/, '')
+    .replace(/\/$/, '') || '/';
+const canonical = new URL(pathname, site.url).href;
+
+// Todo lo que no es el build de producción es versión de prueba: franja visible y noindex.
+const production = isProductionBuild();
+const pendingCount = production ? 0 : findSourceMarkers(process.cwd(), !import.meta.env.DEV).length;
+const robotsNoindex = noindex || !production;
+
+const ogImageUrl = new URL(ogImage.path, site.url).href;
+const structuredData = [organization(), ...jsonLd];
+
+// Cloudflare Web Analytics: solo con la bandera ANALYTICS y el token. Abre la CSP únicamente entonces.
+const analytics = analyticsToken();
+if (analytics) {
+  if (!Astro.csp) throw new Error('La CSP debe estar activa (security.csp en astro.config.mjs).');
+  // Al agregar un origen, Astro reemplaza las fuentes por defecto: hay que volver a incluir 'self'.
+  Astro.csp.insertScriptResource("'self'");
+  Astro.csp.insertScriptResource(ANALYTICS_SCRIPT_ORIGIN);
+  Astro.csp.insertDirective(`connect-src 'self' ${ANALYTICS_CONNECT_ORIGIN}`);
+}
+---
+
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ThemeInit />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {robotsNoindex && <meta name="robots" content="noindex" />}
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content={String(ogImage.width)} />
+    <meta property="og:image:height" content={String(ogImage.height)} />
+    <meta property="og:image:alt" content={ogImage.alt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={ogImage.alt} />
+    {structuredData.map((data) => (
+      <script is:inline type="application/ld+json" set:html={serializeJsonLd(data)} />
+    ))}
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/brand/web/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/brand/web/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/brand/web/apple-touch-icon.png" />
+    <Font cssVariable="--font-jakarta" preload />
+  </head>
+  <body class="flex flex-col bg-bg text-ink antialiased">
+    <a
+      href="#contenido"
+      class="sr-only z-50 rounded-control bg-accent px-4 py-3 font-semibold text-on-accent focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      Saltar al contenido
+    </a>
+    {!production && <PreviewBanner count={pendingCount} />}
+    <Header whatsappMessage={whatsappMessage} />
+    <main id="contenido" tabindex="-1" class="flex-1 focus:outline-none">
+      <slot />
+    </main>
+    <Footer />
+    {analytics && (
+      <script
+        is:inline
+        type="module"
+        src={ANALYTICS_SCRIPT_URL}
+        data-cf-beacon={JSON.stringify({ token: analytics })}
+      />
+    )}
+  </body>
+</html>

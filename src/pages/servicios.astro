@@ -1,0 +1,99 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Steps from '@/components/Steps.astro';
+import RomboList from '@/components/RomboList.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import Convergence from '@/components/Convergence.astro';
+import { contact, whatsappMessages } from '@/config/site';
+
+const pageEntry = await getEntry('servicesPage', 'index');
+if (!pageEntry) throw new Error('Falta src/content/services-page/index.yaml');
+const page = pageEntry.data;
+
+const services = await Promise.all(
+  (await getCollection('services'))
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+---
+
+<BaseLayout
+  title={page.seo.title}
+  description={page.seo.description}
+  whatsappMessage={whatsappMessages.services}
+>
+  <PageHeader title={page.title} lead={page.lead}>
+    <WhatsAppButton message={whatsappMessages.services} label="Cuéntanos tu proyecto" />
+    {/* El motivo de la marca: cuatro trazos que convergen en un rombo, como los servicios en tu proyecto. */}
+    <Convergence slot="visual" class="mx-auto hidden w-full max-w-xs lg:block" />
+    <nav slot="below" aria-label="Servicios">
+      <ul class="flex flex-wrap gap-3">
+        {services.map(({ entry }) => (
+          <li>
+            <a
+              href={`#${entry.id}`}
+              class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-5 font-semibold transition-colors hover:border-accent hover:text-accent"
+            >
+              {entry.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </PageHeader>
+
+  {services.map(({ entry, Content }, index) => (
+    <Section
+      id={entry.id}
+      labelledby={`${entry.id}-titulo`}
+      tone={index % 2 === 1 ? 'surface' : 'default'}
+      class="scroll-mt-20"
+    >
+      <div class="grid gap-10 lg:grid-cols-[3fr_2fr] lg:gap-16">
+        <div class="max-w-(--container-prose)">
+          <h2 id={`${entry.id}-titulo`} class="text-2xl sm:text-3xl">
+            {entry.data.title}
+          </h2>
+          <p class="mt-4 text-xl">{entry.data.summary}</p>
+          <div class="prose-xaska mt-4 text-lg text-muted">
+            <Content />
+          </div>
+          <h3 class="mt-8 text-sm font-semibold text-muted">Para quién</h3>
+          <p class="mt-2">{entry.data.forWho}</p>
+        </div>
+        <div class="space-y-8">
+          <div>
+            <h3 class="text-sm font-semibold text-muted">Por ejemplo</h3>
+            <RomboList items={entry.data.examples} class="mt-4" />
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-muted">Qué recibes</h3>
+            <RomboList items={entry.data.deliverables} class="mt-4" />
+          </div>
+        </div>
+      </div>
+    </Section>
+  ))}
+
+  <Section
+    id="como-trabajamos"
+    labelledby="como-trabajamos-titulo"
+    class="scroll-mt-20 border-t border-line"
+  >
+    <h2 id="como-trabajamos-titulo" class="text-2xl sm:text-3xl">
+      {page.process.title}
+    </h2>
+    <div class="mt-10">
+      <Steps steps={page.process.steps} />
+    </div>
+    <div class="mt-12 flex flex-wrap items-center gap-x-6 gap-y-4">
+      <WhatsAppButton message={whatsappMessages.services} label="Cuéntanos tu proyecto" />
+      <a class="link" href={`mailto:${contact.email}`}>
+        {contact.email}
+      </a>
+    </div>
+  </Section>
+</BaseLayout>

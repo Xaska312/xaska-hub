@@ -1,0 +1,57 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Card from '@/components/Card.astro';
+import CTA from '@/components/CTA.astro';
+import { primaryCta, products, whatsappMessages } from '@/config/site';
+
+const entry = await getEntry('products', 'index');
+const posEntry = await getEntry('pos', 'index');
+if (!entry || !posEntry) throw new Error('Falta el contenido de productos o de XASKA POS');
+const page = entry.data;
+const pos = posEntry.data;
+---
+
+<BaseLayout
+  title={page.seo.title}
+  description={page.seo.description}
+  whatsappMessage={whatsappMessages.pos}
+>
+  <PageHeader title={page.title} lead={page.lead} bleed>
+    <CTA href={products.pos.path}>Conocer XASKA POS</CTA>
+    {/* Como en la tarjeta impresa: "POS" en letra gigante que se corta en el borde de la banda. */}
+    <p
+      slot="visual"
+      aria-hidden="true"
+      class="pos-type -mb-[0.2em] text-[8.5rem] leading-[0.8] font-extrabold tracking-[-0.05em] select-none sm:text-[13rem] lg:text-right lg:text-[15rem]"
+    >
+      POS
+    </p>
+  </PageHeader>
+
+  <Section labelledby="lista-productos">
+    <h2 id="lista-productos" class="sr-only">
+      Nuestros productos
+    </h2>
+    <Card tone="surface" class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div class="max-w-(--container-prose)">
+        <h3 class="text-2xl sm:text-3xl">
+          <a href={products.pos.path} class="hover:underline">
+            {products.pos.name}
+          </a>
+        </h3>
+        <p class="mt-4 text-lg text-muted">{pos.lead}</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <CTA href={products.pos.path} variant="secondary">
+          Ver lo que hace
+        </CTA>
+        <CTA href={primaryCta.href} external>
+          {primaryCta.longLabel}
+        </CTA>
+      </div>
+    </Card>
+  </Section>
+</BaseLayout>

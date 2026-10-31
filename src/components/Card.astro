@@ -1,0 +1,23 @@
+---
+/**
+ * Bloque con borde para agrupar contenido relacionado (un servicio, un plan, un producto).
+ * Se usa con moderación: no todo va en tarjetas.
+ */
+interface Props {
+  as?: 'article' | 'div' | 'li' | undefined;
+  tone?: 'default' | 'surface' | undefined;
+  class?: string | undefined;
+}
+
+const { as: Tag = 'article', tone = 'default', class: className } = Astro.props;
+---
+
+<Tag
+  class:list={[
+    'rounded-block border border-line p-6 sm:p-8',
+    tone === 'surface' ? 'bg-surface' : 'bg-bg',
+    className,
+  ]}
+>
+  <slot />
+</Tag>

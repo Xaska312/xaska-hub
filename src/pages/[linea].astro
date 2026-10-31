@@ -1,0 +1,29 @@
+---
+/**
+ * Línea de hardware. Solo se genera con flags.SHOW_HARDWARE = true.
+ * Con la bandera en false, getStaticPaths devuelve una lista vacía y /hardware no existe en el build.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import { flags, hardware, whatsappMessages } from '@/config/site';
+
+export const getStaticPaths = (() =>
+  flags.SHOW_HARDWARE ? [{ params: { linea: hardware.slug } }] : []) satisfies GetStaticPaths;
+
+const entry = await getEntry('hardwareLine', 'index');
+if (!entry) throw new Error('Falta src/content/hardware/index.yaml');
+const page = entry.data;
+---
+
+<BaseLayout
+  title={page.seo.title}
+  description={page.seo.description}
+  whatsappMessage={whatsappMessages.hardware}
+>
+  <PageHeader title={hardware.name} lead={page.lead}>
+    <WhatsAppButton message={whatsappMessages.hardware} />
+  </PageHeader>
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+/**
+ * Franja visible en las versiones de prueba (todo lo que no es el build de producción).
+ * Indica cuántos borradores y datos faltan; la lista completa sale con `pnpm pendientes`.
+ */
+interface Props {
+  count: number;
+}
+
+const { count } = Astro.props;
+const message =
+  count === 0
+    ? 'Versión de prueba — sin pendientes'
+    : `Versión de prueba — hay ${count} ${count === 1 ? 'pendiente' : 'pendientes'}`;
+---
+
+<div class="preview-banner border-b border-line bg-surface text-sm" role="note">
+  <p class="mx-auto flex w-full max-w-(--container-page) items-center gap-3 px-4 py-2 sm:px-6 lg:px-8">
+    <span class="rombo" aria-hidden="true"></span>
+    <span>{message}</span>
+  </p>
+</div>

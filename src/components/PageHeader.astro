@@ -1,0 +1,83 @@
+---
+/**
+ * Encabezado de página: banda en Noche (como la portada y las tarjetas), con el único h1.
+ *
+ * - `trail`: migas de pan antes de la página actual.
+ * - `slogan`: lema bajo el título; la última palabra va resaltada.
+ * - slot por defecto: acciones (botones) bajo la entrada.
+ * - slot "visual": lo propio de cada página (pantallas, foto, canales…) a la derecha en escritorio.
+ * - slot "below": contenido a lo ancho bajo el encabezado (p. ej. la lista de servicios).
+ * - `bleed`: el visual llega hasta el borde inferior de la banda (pantallas que "salen" de ella).
+ */
+import Section from './Section.astro';
+
+interface Props {
+  title: string;
+  lead: string;
+  trail?: { label: string; href: string }[] | undefined;
+  /** Lema opcional bajo el título (p. ej. "Vende. Fía. Cobra. Controla."). La última palabra va resaltada. */
+  slogan?: readonly string[] | undefined;
+  bleed?: boolean | undefined;
+}
+
+const { title, lead, trail, slogan, bleed = false } = Astro.props;
+const sloganHead = slogan?.slice(0, -1) ?? [];
+const sloganLast = slogan?.at(-1);
+const hasVisual = Astro.slots.has('visual');
+---
+
+<Section
+  tone="night"
+  class:list={['overflow-hidden pt-12 sm:pt-20', bleed ? 'pb-0 sm:pb-0' : 'pb-14 sm:pb-20']}
+>
+  <div
+    class:list={[
+      'grid gap-12',
+      hasVisual && 'lg:grid-cols-[1fr_1.1fr] lg:gap-16',
+      bleed ? 'items-end' : 'items-center',
+    ]}
+  >
+    <div class:list={[bleed && 'pb-4 lg:pb-20']}>
+      {trail && trail.length > 0 && (
+        <nav aria-label="Ruta" class="mb-6 text-sm text-muted">
+          <ol class="flex flex-wrap items-center gap-2">
+            {trail.map((item) => (
+              <li class="flex items-center gap-2">
+                <a href={item.href} class="hover:text-ink">
+                  {item.label}
+                </a>
+                <span aria-hidden="true">/</span>
+              </li>
+            ))}
+            <li aria-current="page" class="text-ink">
+              {title}
+            </li>
+          </ol>
+        </nav>
+      )}
+      <h1 class="max-w-[18ch] text-3xl sm:text-4xl lg:text-[3.25rem] lg:leading-[1.05]">{title}</h1>
+      {sloganLast && (
+        <p class="mt-4 text-2xl font-extrabold tracking-tight sm:text-3xl" data-slogan>
+          {sloganHead.map((word) => `${word} `)}
+          <span class="text-accent">{sloganLast}</span>
+        </p>
+      )}
+      <p class="mt-6 max-w-(--container-prose) text-lg text-muted">{lead}</p>
+      {Astro.slots.has('default') && (
+        <div class="mt-10 flex flex-wrap items-center gap-4">
+          <slot />
+        </div>
+      )}
+    </div>
+    {hasVisual && (
+      <div class="min-w-0">
+        <slot name="visual" />
+      </div>
+    )}
+  </div>
+  {Astro.slots.has('below') && (
+    <div class="mt-12 sm:mt-16">
+      <slot name="below" />
+    </div>
+  )}
+</Section>

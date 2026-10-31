@@ -1,0 +1,27 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import CTA from '@/components/CTA.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import { whatsappMessages } from '@/config/site';
+---
+
+<BaseLayout
+  title="Página no encontrada"
+  description="La página que buscas no existe o cambió de dirección."
+  whatsappMessage={whatsappMessages.notFound}
+  noindex
+>
+  <Section>
+    <p class="text-sm text-muted">Error 404</p>
+    <h1 class="mt-2 text-3xl sm:text-4xl">No encontramos esta página</h1>
+    <p class="mt-6 max-w-(--container-prose) text-lg text-muted">
+      Puede que el enlace esté mal escrito o que la página haya cambiado de dirección. Vuelve al
+      inicio o cuéntanos qué buscabas.
+    </p>
+    <div class="mt-10 flex flex-wrap items-center gap-4">
+      <CTA href="/">Volver al inicio</CTA>
+      <WhatsAppButton message={whatsappMessages.notFound} />
+    </div>
+  </Section>
+</BaseLayout>

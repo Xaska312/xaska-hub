@@ -1,0 +1,55 @@
+---
+/**
+ * Logo oficial de XASKA. Usa los archivos de public/brand sin modificarlos.
+ * Muestra la versión normal en tema claro y la versión "-blanco" en tema oscuro.
+ * El cambio lo hace CSS según data-theme (definido antes de pintar), así que no parpadea.
+ * Proporción del archivo: 308.7 × 72.
+ */
+interface Props {
+  /** Alto en píxeles. */
+  height?: number | undefined;
+  class?: string | undefined;
+}
+
+const { height = 32, class: className } = Astro.props;
+const width = Math.round((height * 308.7) / 72);
+---
+
+<span class:list={['logo inline-flex shrink-0', className]}>
+  <img
+    class="logo-light"
+    src="/brand/svg/xaska-horizontal.svg"
+    alt="XASKA"
+    width={width}
+    height={height}
+    decoding="async"
+  />
+  <img
+    class="logo-dark"
+    src="/brand/svg/xaska-horizontal-blanco.svg"
+    alt="XASKA"
+    width={width}
+    height={height}
+    decoding="async"
+  />
+</span>
+
+<style>
+  .logo-dark {
+    display: none;
+  }
+  :global([data-theme='dark']) .logo-light {
+    display: none;
+  }
+  :global([data-theme='dark']) .logo-dark {
+    display: block;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) .logo-light {
+      display: none;
+    }
+    :global(:root:not([data-theme])) .logo-dark {
+      display: block;
+    }
+  }
+</style>

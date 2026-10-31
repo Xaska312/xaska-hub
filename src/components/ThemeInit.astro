@@ -1,0 +1,22 @@
+---
+/**
+ * Aplica el tema antes de pintar la página para evitar el parpadeo.
+ * Es un script en línea mínimo; Astro calcula su hash y lo agrega a la CSP (script-src).
+ * Si se cambia este código, el hash se recalcula solo en el build.
+ */
+---
+
+<script is:inline>
+  (function () {
+    let stored;
+    try {
+      stored = localStorage.getItem('theme');
+    } catch {
+      stored = null;
+    }
+    const dark =
+      stored === 'dark' ||
+      (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  })();
+</script>

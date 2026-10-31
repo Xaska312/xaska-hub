@@ -1,0 +1,49 @@
+---
+/**
+ * Preguntas frecuentes con <details>: accesibles con teclado y lectores de pantalla, sin JavaScript.
+ */
+interface Props {
+  title: string;
+  items: { question: string; answer: string }[];
+  headingId?: string | undefined;
+}
+
+const { title, items, headingId = 'preguntas' } = Astro.props;
+---
+
+<div>
+  <h2 id={headingId} class="text-2xl sm:text-3xl">
+    {title}
+  </h2>
+  <div class="mt-8 max-w-(--container-prose) border-t border-line">
+    {items.map((item) => (
+      <details class="faq group border-b border-line">
+        <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 text-lg font-semibold">
+          <span>{item.question}</span>
+          <span class="rombo-toggle" aria-hidden="true" />
+        </summary>
+        <p class="pb-6 text-muted">{item.answer}</p>
+      </details>
+    ))}
+  </div>
+</div>
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .rombo-toggle {
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 1.5px solid var(--c-accent);
+    transform: rotate(45deg);
+    transition:
+      background-color 150ms,
+      transform 150ms;
+  }
+  details[open] .rombo-toggle {
+    background-color: var(--c-accent);
+    transform: rotate(45deg) scale(1.15);
+  }
+</style>

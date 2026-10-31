@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import CTA from '@/components/CTA.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import { whatsappMessages } from '@/config/site';
+---
+
+<BaseLayout
+  title="No pudimos enviar tu mensaje"
+  description="Hubo un problema al enviar el formulario."
+  whatsappMessage={whatsappMessages.general}
+  noindex
+>
+  <PageHeader
+    title="No pudimos enviar tu mensaje"
+    lead="Revisa que todos los campos estén completos y que hayas marcado la autorización, o escríbenos directamente por WhatsApp."
+  >
+    <CTA href="/contacto">Volver al formulario</CTA>
+    <WhatsAppButton message={whatsappMessages.general} />
+  </PageHeader>
+</BaseLayout>

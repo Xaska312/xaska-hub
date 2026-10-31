@@ -1,0 +1,92 @@
+---
+import Logo from './Logo.astro';
+import { contact, mainNav, products, site, whatsappUrl, whatsappMessages } from '@/config/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line">
+  <div class="mx-auto grid w-full max-w-(--container-page) gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
+    <div>
+      <Logo height={28} />
+      <p class="tagline mt-4 text-sm text-muted">{site.tagline}</p>
+      <p class="mt-6 max-w-xs text-sm text-muted">{site.city}</p>
+    </div>
+
+    <nav aria-label="Pie de página">
+      <h2 class="text-sm font-bold text-ink">Sitio</h2>
+      <ul class="mt-3 space-y-1">
+        {mainNav.map((item) => (
+          <li>
+            <a href={item.href} class="inline-flex min-h-9 items-center text-muted hover:text-ink">
+              {item.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a
+            href={products.pos.loginUrl}
+            target="_blank"
+            rel="noopener"
+            class="inline-flex min-h-9 items-center text-muted hover:text-ink"
+          >
+            Entrar a XASKA POS
+            <span class="sr-only">(se abre en una pestaña nueva)</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="text-sm font-bold text-ink">Contacto</h2>
+      <ul class="mt-3 space-y-1">
+        <li>
+          <a
+            href={whatsappUrl(whatsappMessages.general)}
+            target="_blank"
+            rel="noopener"
+            class="inline-flex min-h-9 items-center text-muted hover:text-ink"
+          >
+            WhatsApp <span class="ms-1 whitespace-nowrap">{contact.whatsapp.display}</span>
+            <span class="sr-only">(se abre en una pestaña nueva)</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href={`mailto:${contact.email}`}
+            class="inline-flex min-h-9 items-center text-muted hover:text-ink"
+          >
+            {contact.email}
+          </a>
+        </li>
+        {contact.hours && <li class="text-muted">{contact.hours}</li>}
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-line">
+    <div class="mx-auto flex w-full max-w-(--container-page) flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-6 text-sm text-muted sm:px-6 lg:px-8">
+      <p>{`© ${year} ${site.name}`}</p>
+      <ul class="flex flex-wrap gap-x-6">
+        <li>
+          <a href="/legal/privacidad" class="inline-flex min-h-9 items-center hover:text-ink">
+            Política de privacidad
+          </a>
+        </li>
+        <li>
+          <a href="/legal/terminos" class="inline-flex min-h-9 items-center hover:text-ink">
+            Términos de uso
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* "SOLUCIONES TECNOLÓGICAS": mayúsculas espaciadas en Plus Jakarta Sans, la letra de la marca. */
+  .tagline {
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+  }
+</style>

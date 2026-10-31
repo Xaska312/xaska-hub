@@ -1,0 +1,22 @@
+XASKA · logo (Ruta D, Convergencia)
+
+Colores
+  Noche          #111827   letras y símbolo sobre fondo claro; fondo del ícono
+  Índigo         #4F46E5   el punto (rombo) sobre fondo claro
+  Índigo claro   #818CF8   el punto sobre fondo oscuro
+  Blanco         #FFFFFF   letras y símbolo sobre fondo oscuro
+
+Tipografía de apoyo: IBM Plex Sans (textos, "SOLUCIONES TECNOLÓGICAS" en mayúsculas espaciadas).
+El nombre XASKA está dibujado a medida: no es una fuente, úsalo siempre desde estos archivos.
+
+Archivos
+  svg/   vectores para impresión, web y diseño (escalan sin perder calidad)
+    xaska-horizontal.svg / -blanco    símbolo + nombre (versión principal)
+    xaska-nombre.svg / -blanco        solo el nombre
+    xaska-simbolo.svg / -blanco       solo el símbolo
+    xaska-icono.svg                   ícono de app (cuadrado redondeado)
+    xaska-favicon.svg                 ícono para la pestaña del navegador
+  png/   imágenes con fondo transparente para redes, documentos y presentaciones
+  web/   favicon.ico, favicon.svg, apple-touch-icon.png, icon-192/512 y maskable para el sitio
+
+"-blanco" = para fondos oscuros. Deja alrededor del logo un margen libre de al menos el alto del rombo.

@@ -1,0 +1,217 @@
+---
+import { getEntry } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import ScreenShowcase from '@/components/ScreenShowcase.astro';
+import sellScreen from '@/assets/pos/header-vender.png';
+import type { ImageMetadata } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Card from '@/components/Card.astro';
+import CTA from '@/components/CTA.astro';
+import Faq from '@/components/Faq.astro';
+import Steps from '@/components/Steps.astro';
+import RomboList from '@/components/RomboList.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import { flags, primaryCta, primaryCtaIsWhatsApp, products, whatsappMessages } from '@/config/site';
+import { posApplication } from '@/lib/structured-data';
+
+const posEntry = await getEntry('pos', 'index');
+const faqEntry = await getEntry('faq', 'xaska-pos');
+if (!posEntry || !faqEntry) throw new Error('Falta el contenido de XASKA POS o sus preguntas');
+const pos = posEntry.data;
+const faq = faqEntry.data;
+
+// Capturas: cada `image` del contenido es un archivo de src/assets/pos/.
+const screenFiles = import.meta.glob<{ default: ImageMetadata }>('/src/assets/pos/*.png', {
+  eager: true,
+});
+const screens = await Promise.all(
+  pos.screens.items.map(async (item) => {
+    const file = screenFiles[`/src/assets/pos/${item.image}.png`];
+    if (!file) throw new Error(`Falta la captura src/assets/pos/${item.image}.png`);
+    // Versión grande en WebP para verla completa al tocar la miniatura.
+    const full = await getImage({ src: file.default, format: 'webp' });
+    return { ...item, src: file.default, fullSrc: full.src };
+  }),
+);
+const [mainScreen, ...otherScreens] = screens;
+
+// Factura electrónica: con la bandera encendida se suma su grupo de funciones y cambia su respuesta.
+const capabilityGroups = flags.E_INVOICING
+  ? [...pos.capabilities.groups, pos.eInvoicing.group]
+  : pos.capabilities.groups;
+const faqItems = faq.items.map((item) =>
+  flags.E_INVOICING && item.id === 'factura-electronica'
+    ? { ...item, answer: pos.eInvoicing.faqAnswer }
+    : item,
+);
+---
+
+<BaseLayout
+  title={pos.seo.title}
+  description={pos.seo.description}
+  whatsappMessage={whatsappMessages.pos}
+  jsonLd={[posApplication(pos.seo.description)]}
+>
+  <PageHeader
+    title={products.pos.name}
+    lead={pos.lead}
+    slogan={pos.slogan}
+    trail={[{ label: 'Productos', href: '/productos' }]}
+    bleed
+  >
+    <CTA href={primaryCta.href} external>
+      {primaryCta.longLabel}
+    </CTA>
+    {primaryCtaIsWhatsApp ? (
+      <CTA href="#planes-seccion" variant="secondary">
+        Ver planes
+      </CTA>
+    ) : (
+      <WhatsAppButton message={whatsappMessages.pos} label="Pregúntanos por WhatsApp" />
+    )}
+    <ScreenShowcase
+      slot="visual"
+      src={sellScreen}
+      alt="Pantalla de ventas de XASKA POS en un minimercado: buscador por código de barras, categorías, productos con precio y existencias, y el total a cobrar."
+    />
+  </PageHeader>
+
+  <Section tone="surface" labelledby="resuelve">
+    <h2 id="resuelve" class="text-2xl sm:text-3xl">
+      {pos.problems.title}
+    </h2>
+    <dl class="mt-10 grid gap-x-16 gap-y-10 md:grid-cols-2">
+      {pos.problems.items.map((item) => (
+        <div class="border-t border-line-strong pt-5">
+          <dt class="text-lg font-bold">{item.title}</dt>
+          <dd class="mt-2 text-muted">{item.text}</dd>
+        </div>
+      ))}
+    </dl>
+  </Section>
+
+  <Section labelledby="para-quien">
+    <div class="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
+      <h2 id="para-quien" class="text-2xl sm:text-3xl">
+        {pos.audience.title}
+      </h2>
+      <p class="max-w-(--container-prose) text-lg">{pos.audience.text}</p>
+    </div>
+  </Section>
+
+  {mainScreen && (
+    <Section tone="surface" labelledby="asi-se-ve">
+      <h2 id="asi-se-ve" class="text-2xl sm:text-3xl">
+        {pos.screens.title}
+      </h2>
+      <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{pos.screens.lead}</p>
+      <figure class="mt-10">
+        <div class="screen overflow-hidden rounded-block border border-line-strong bg-bg">
+          <Image
+            src={mainScreen.src}
+            alt={mainScreen.alt}
+            widths={[640, 960, 1280, 1914]}
+            sizes="(min-width: 1152px) 1088px, calc(100vw - 2rem)"
+            class="h-auto w-full"
+            loading="lazy"
+          />
+        </div>
+        <figcaption class="mt-3 text-muted">{mainScreen.caption}</figcaption>
+      </figure>
+      {otherScreens.length > 0 && (
+        <ul class="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2">
+          {otherScreens.map((screen) => (
+            <li>
+              <figure>
+                <a
+                  href={screen.fullSrc}
+                  target="_blank"
+                  rel="noopener"
+                  class="screen flex aspect-[4/3] items-center justify-center overflow-hidden rounded-block border border-line-strong bg-bg p-4 transition-colors hover:border-accent"
+                >
+                  <Image
+                    src={screen.src}
+                    alt={screen.alt}
+                    widths={[480, 720, 1080]}
+                    sizes="(min-width: 1152px) 528px, (min-width: 640px) 45vw, calc(100vw - 2rem)"
+                    class="max-h-full w-auto max-w-full rounded-control object-contain"
+                    loading="lazy"
+                  />
+                  <span class="sr-only"> (ver la imagen completa en una pestaña nueva)</span>
+                </a>
+                <figcaption class="mt-3 text-muted">{screen.caption}</figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Section>
+  )}
+
+  <Section labelledby="funciones">
+    <h2 id="funciones" class="text-2xl sm:text-3xl">
+      {pos.capabilities.title}
+    </h2>
+    <div class="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+      {capabilityGroups.map((group) => (
+        <div>
+          <h3 class="text-lg">{group.title}</h3>
+          <RomboList items={group.items} class="mt-4 text-muted" />
+        </div>
+      ))}
+    </div>
+    <p class="mt-10">
+      <a class="link" href={products.pos.manualUrl} target="_blank" rel="noopener">
+        Ver el manual de uso de XASKA POS
+        <span class="sr-only"> (se abre en una pestaña nueva)</span>
+      </a>
+    </p>
+  </Section>
+
+  <Section tone="surface" labelledby="empezar">
+    <h2 id="empezar" class="text-2xl sm:text-3xl">
+      {pos.start.title}
+    </h2>
+    <div class="mt-10">
+      <Steps steps={pos.start.steps} />
+    </div>
+  </Section>
+
+  <Section id="planes-seccion" labelledby="planes" class="scroll-mt-20">
+    <h2 id="planes" class="text-2xl sm:text-3xl">
+      {pos.plans.title}
+    </h2>
+    <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{pos.plans.lead}</p>
+    <ul class="mt-10 grid gap-4 md:grid-cols-2">
+      {pos.plans.items.map((plan) => (
+        <Card as="li">
+          <h3 class="text-xl">{plan.name}</h3>
+          <p class="mt-2 text-2xl font-extrabold">{plan.price}</p>
+          <RomboList items={plan.features} class="mt-6 text-muted" />
+        </Card>
+      ))}
+    </ul>
+    <p class="mt-6 text-muted">{pos.plans.note}</p>
+    <p class="mt-8 max-w-(--container-prose) border-l-2 border-accent pl-4 text-lg">
+      {pos.plans.equipment.text}{' '}
+      <a class="link" href="/servicios#equipos-y-computadores">
+        {pos.plans.equipment.linkLabel}
+      </a>
+    </p>
+    <div class="mt-8">
+      <CTA href={primaryCta.href} external>
+        {primaryCta.longLabel}
+      </CTA>
+    </div>
+  </Section>
+
+  <Section tone="surface" labelledby="preguntas">
+    <Faq title={faq.title} items={faqItems} headingId="preguntas" />
+    <div class="mt-10 flex flex-wrap items-center gap-4">
+      <p class="text-muted">¿Tienes otra pregunta?</p>
+      <WhatsAppButton message={whatsappMessages.pos} label="Escríbenos" />
+    </div>
+  </Section>
+</BaseLayout>

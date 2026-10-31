@@ -1,0 +1,159 @@
+---
+import Logo from './Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import CTA from './CTA.astro';
+import { mainNav, primaryCta, whatsappMessages } from '@/config/site';
+
+interface Props {
+  whatsappMessage?: string | undefined;
+}
+
+const { whatsappMessage = whatsappMessages.general } = Astro.props;
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+
+function isCurrent(href: string): boolean {
+  if (href === '/') return path === '/';
+  return path === href || path.startsWith(`${href}/`);
+}
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur-sm">
+  <div class="mx-auto flex h-16 w-full max-w-(--container-page) items-center gap-2 px-4 sm:px-6 lg:h-20 lg:px-8">
+    <a href="/" class="mr-auto inline-flex py-3 pr-3" aria-label="XASKA, ir al inicio">
+      <Logo height={28} class="shrink-0" />
+    </a>
+
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {mainNav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+              class="nav-link inline-flex min-h-11 items-center rounded-control px-3 text-muted hover:text-ink"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-1 lg:ml-4">
+      <WhatsAppButton variant="icon" message={whatsappMessage} class="lg:hidden" />
+      <ThemeToggle />
+      <span class="ml-2 hidden sm:inline-flex">
+        <CTA href={primaryCta.href} external>
+          {primaryCta.label}
+        </CTA>
+      </span>
+      <button
+        type="button"
+        class="inline-flex size-11 items-center justify-center rounded-control text-ink hover:bg-surface lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <span class="sr-only" data-menu-label>
+          Abrir menú
+        </span>
+        <svg
+          class="menu-open"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+        <svg
+          class="menu-close hidden"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6 6 18"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden border-t border-line bg-bg lg:hidden" data-menu-panel>
+    <nav aria-label="Principal (móvil)" class="mx-auto max-w-(--container-page) px-4 py-4 sm:px-6">
+      <ul class="flex flex-col">
+        {mainNav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+              class="nav-link flex min-h-12 items-center text-lg text-ink"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="sm:hidden">
+        <CTA href={primaryCta.href} external class="mt-4 w-full">
+          {primaryCta.label}
+        </CTA>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav-link[aria-current='page'] {
+    color: var(--c-text);
+    font-weight: 600;
+  }
+  .nav-link[aria-current='page']::before {
+    content: '';
+    display: inline-block;
+    width: 0.4rem;
+    height: 0.4rem;
+    margin-right: 0.5rem;
+    background-color: var(--c-accent);
+    transform: rotate(45deg);
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+  const label = toggle?.querySelector<HTMLElement>('[data-menu-label]');
+
+  function setOpen(open: boolean): void {
+    if (!toggle || !panel) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    panel.classList.toggle('hidden', !open);
+    toggle.querySelector('.menu-open')?.classList.toggle('hidden', open);
+    toggle.querySelector('.menu-close')?.classList.toggle('hidden', !open);
+    if (label) label.textContent = open ? 'Cerrar menú' : 'Abrir menú';
+  }
+
+  toggle?.addEventListener('click', () => {
+    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+
+  window.matchMedia('(min-width: 64rem)').addEventListener('change', (event) => {
+    if (event.matches) setOpen(false);
+  });
+</script>
