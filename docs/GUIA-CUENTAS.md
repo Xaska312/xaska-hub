@@ -35,20 +35,23 @@ Se usa un subdominio de envío (`envios.xaska.co`) para no tocar los registros d
 
 1. Crea una cuenta en https://resend.com y activa la verificación en dos pasos.
 2. **Domains → Add domain:** escribe `envios.xaska.co`. Elige la región que te ofrezca más cercana (por ejemplo, São Paulo si aparece).
-3. Resend te muestra unos registros DNS. Agrégalos en **Spaceship → tu dominio → DNS**, copiando exactamente lo que diga Resend. Normalmente son estos (en "Host" va solo la parte antes de `.xaska.co`):
+3. Resend te muestra los registros DNS (formato de octubre de 2026, región São Paulo). Agrégalos en **Spaceship → tu dominio → DNS** copiando el valor completo de cada uno con el botón de copiar de Resend (en pantalla salen recortados). En "Host" va solo la parte antes de `.xaska.co`:
 
-   | Tipo | Host                       | Valor                                  | Prioridad |
-   | ---- | -------------------------- | -------------------------------------- | --------- |
-   | TXT  | `resend._domainkey.envios` | (la clave larga que da Resend)         |           |
-   | MX   | `send.envios`              | `feedback-smtp.<región>.amazonses.com` | 10        |
-   | TXT  | `send.envios`              | `v=spf1 include:amazonses.com ~all`    |           |
+   | Tipo  | Host                       | Valor (cópialo de Resend)             |
+   | ----- | -------------------------- | ------------------------------------- |
+   | TXT   | `resend._domainkey.envios` | `p=MIGfMA…` (la clave DKIM, completa) |
+   | CNAME | `rsend.envios`             | `rsend-sa….mta.net`                   |
+   | CNAME | `send.envios`              | `send.for….mta.net`                   |
+   - Deja **apagado** "Enable receiving": el subdominio solo envía.
    - **No cambies** los registros que ya existen: el MX, SPF, DKIM, SRV y DMARC de Spacemail, ni el registro A de `app`.
    - El DMARC que ya tienes en `xaska.co` (`p=none`) también cubre el subdominio. No hace falta otro.
+   - **Cuando el DNS pase a Cloudflare (etapa D de la guía de publicación):** estos tres registros se copian igual y van con la **nube gris (DNS only)**. Si los dos CNAME quedan con la nube naranja, Resend deja de poder enviar.
 
 4. En Resend, pulsa **Verify**. Puede tardar desde minutos hasta unas horas. Para comprobarlo desde PowerShell:
    ```powershell
    nslookup -type=TXT resend._domainkey.envios.xaska.co
-   nslookup -type=MX send.envios.xaska.co
+   nslookup -type=CNAME send.envios.xaska.co
+   nslookup -type=CNAME rsend.envios.xaska.co
    ```
 5. **API Keys → Create API key:**
    - **Permission:** Sending access.
