@@ -306,7 +306,8 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 
 ### Preparación de la publicación (2026-10-31)
 
-- **Ramas:** se trabaja en `desarrollo`, con previsualizaciones en Cloudflare. `main` es producción y se crea el día de publicación, porque su build falla a propósito mientras queden pendientes. La CI corre en `desarrollo`, en `main` y en los pull requests.
+- **Ramas:** se trabaja en `desarrollo`. Hasta publicar, `desarrollo` es la rama de producción de Cloudflare: así se crea el Worker y queda en su dirección `*.workers.dev`, siempre como versión de prueba, porque el modo producción del build solo se activa con `WORKERS_CI_BRANCH=main`. El día de publicación se crea `main` y pasa a ser la rama de producción. La CI corre en `desarrollo`, en `main` y en los pull requests.
+- **Descartado:** `wrangler versions upload` para las ramas que no son de producción, porque exige que el Worker ya exista; y `wrangler preview`, que sigue en beta abierta y maneja sus propios secretos.
 - **DNS:** pasa de Spaceship a Cloudflare (Spaceship sigue como registrador). `app.xaska.co` y todo el correo quedan en "DNS only" (nube gris), para que XASKA POS y Spacemail no pasen por Cloudflare. El hub se conecta como dominio propio del Worker. `www` se resuelve con un registro `AAAA 100::` con proxy y una regla de redirección 301 a la raíz. Pasos en `docs/GUIA-PUBLICACION.md`.
 - **Capturas del encabezado al doble de resolución:** Daniel las tomó con device pixel ratio 2 (2880 px de ancho) para la portada (`header-reportes.png`) y XASKA POS (`header-vender.png`). `ScreenShowcase` ofrece hasta 2080 px, así que se ven nítidas también en pantallas de alta densidad.
 

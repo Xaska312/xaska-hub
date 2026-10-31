@@ -20,8 +20,8 @@ Pasos para publicar el hub en `xaska.co`. Todo lo hace Daniel con su cuenta. Los
 
 Las ramas funcionan así:
 
-- **`desarrollo`:** donde se trabaja. Cada cambio genera una previsualización en Cloudflare (versión de prueba, con `noindex`).
-- **`main`:** producción. Su build falla a propósito mientras quede algún `PENDIENTE:` (hoy, la fecha de vigencia y los textos de la factura electrónica). Por eso `main` se crea el día de publicación.
+- **`desarrollo`:** donde se trabaja. Hasta el día de publicación, Cloudflare la publica en su dirección de prueba (`*.workers.dev`) como versión de prueba, con franja y `noindex`.
+- **`main`:** producción. Su build falla a propósito mientras quede algún `PENDIENTE:` (hoy, la fecha de vigencia y los textos de la factura electrónica). Por eso `main` se crea el día de publicación, y ese día pasa a ser la rama de producción en Cloudflare.
 
 ---
 
@@ -60,18 +60,23 @@ Las ramas funcionan así:
 
 ## B. Conectar el repositorio a Cloudflare
 
+Mientras no publiquemos, la rama de producción de Cloudflare es **`desarrollo`**. Así Cloudflare crea el Worker y lo publica solo en su dirección de prueba (`*.workers.dev`), siempre como versión de prueba: con franja y `noindex`, porque el sitio solo se arma en modo producción desde la rama `main`. El día de publicación se cambia a `main` (etapa E).
+
 1. Entra a https://dash.cloudflare.com (crea la cuenta si aún no la tienes y activa la verificación en dos pasos).
-2. **Workers & Pages → Create → Import a repository.** Conecta tu cuenta de GitHub y elige `xaska-hub`.
+2. **Workers & Pages → Create application → Import a repository** (o "Continue with GitHub"). Autoriza la app de Cloudflare en GitHub **solo para el repositorio `xaska-hub`** y elígelo.
 3. Configura:
    - **Project name:** `xaska-hub` (igual a `name` en `wrangler.jsonc`).
-   - **Production branch:** `main`.
+   - **Git branch / Production branch:** `desarrollo`.
    - **Build command:** `pnpm build`
    - **Deploy command:** `pnpm exec wrangler deploy`
-   - **Non-production branch deploy command:** `pnpm exec wrangler versions upload`
-   - **Builds for non-production branches:** activado.
-4. **Settings → Build → Variables and secrets:** agrega `PUBLIC_TURNSTILE_SITE_KEY` cuando la tengas (etapa C). Mientras no exista, la versión de prueba usa la clave de prueba de Cloudflare.
-5. Haz cualquier cambio pequeño en `desarrollo` (o vuelve a ejecutar el build desde Cloudflare) y abre la **dirección de previsualización** que te muestra Cloudflare. Debe verse igual que con `pnpm preview`, con la franja "Versión de prueba".
-6. Anota la dirección `xaska-hub.<tu-cuenta>.workers.dev`. Hay que agregarla a los hostnames del widget de Turnstile.
+   - **Root directory:** vacío (la raíz del repositorio).
+   - Node y pnpm no hay que configurarlos: Cloudflare usa la versión de `.nvmrc` (Node 24.22.1) y la de `packageManager` en `package.json` (pnpm 12.15.0).
+4. **Create and deploy.** El primer build tarda unos minutos. Si falla, cópiame el registro (**View build → Build log**) desde la primera línea en rojo.
+5. Cuando termine, Cloudflare muestra la dirección `https://xaska-hub.<tu-subdominio>.workers.dev`. Ábrela: debe verse igual que con `pnpm preview`, con la franja "Versión de prueba".
+6. **Anota esa dirección.** Hay que agregarla a los hostnames del widget de Turnstile (etapa C).
+7. **Settings → Build → Variables and secrets:** agrega `PUBLIC_TURNSTILE_SITE_KEY` cuando la tengas (etapa C). Mientras no exista, la versión de prueba usa la clave de prueba de Cloudflare.
+
+Desde ahora, cada `git push` a `desarrollo` vuelve a publicar la versión de prueba en esa dirección.
 
 Si al desplegar Cloudflare dice que tu plan no admite `ratelimits`, sigue la sección "Límite de envíos" de `docs/GUIA-CUENTAS.md`.
 
@@ -145,7 +150,9 @@ Si algo falla, el arreglo casi siempre es un registro que no se copió: compára
    git push -u origin main
    ```
 
-   Cloudflare construye `main` en modo producción: sin franja de prueba, sin `noindex` y con la revisión de pendientes estricta. Si el build falla por un pendiente, el mensaje dice cuál.
+   En Cloudflare: **Workers & Pages → xaska-hub → Settings → Build → Branch control → Production branch: `main`** → guarda y vuelve a desplegar (**Deployments → Retry** o un `git push` a `main`). Cloudflare construye `main` en modo producción: sin franja de prueba, sin `noindex` y con la revisión de pendientes estricta. Si el build falla por un pendiente, el mensaje dice cuál.
+
+   Desde ese día se trabaja así: los cambios se hacen en `desarrollo` y, cuando estén listos, se pasan a `main` con un pull request en GitHub (la CI debe quedar en verde antes de fusionar).
 
 5. **Dominio:** **Workers & Pages → xaska-hub → Settings → Domains & Routes → Add → Custom domain → `xaska.co`.** Cloudflare crea el registro y el certificado solo.
 6. Abre https://xaska.co. Debe cargar el sitio sin la franja "Versión de prueba".
