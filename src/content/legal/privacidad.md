@@ -2,7 +2,7 @@
 title: Política de tratamiento de datos personales
 description: Cómo XASKA trata los datos personales que recibe por el sitio xaska.co, conforme a la Ley 1581 de 2012.
 reviewed: true
-updated: '2026-10-31'
+updated: '2026-11-02'
 ---
 
 Esta política explica cómo tratamos los datos personales que nos envías por el sitio web **xaska.co** (formulario de contacto, correo y WhatsApp). Cumple la Ley Estatutaria 1581 de 2012 y su reglamentación (Decreto 1377 de 2013, compilado en el Decreto Único 1074 de 2015).
@@ -78,4 +78,4 @@ Para saber cuántas personas visitan el sitio y qué páginas consultan, usamos 
 
 ## 10. Vigencia y cambios
 
-Esta política rige desde PENDIENTE: fecha de publicación. Si la cambiamos de forma importante, lo indicaremos en esta página con la nueva fecha.
+Esta política rige desde el 2 de noviembre de 2026. Si la cambiamos de forma importante, lo indicaremos en esta página con la nueva fecha.

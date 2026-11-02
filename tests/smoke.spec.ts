@@ -152,7 +152,7 @@ test.describe('versión de prueba', () => {
   test('muestra la franja con pendientes y no se indexa', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.preview-banner')).toContainText(
-      /Versión de prueba — hay \d+ pendientes/,
+      /Versión de prueba — (hay \d+ pendientes?|sin pendientes)/,
     );
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
   });

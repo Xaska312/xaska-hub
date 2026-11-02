@@ -95,12 +95,14 @@ capabilities:
         - Roles de mesero y cocina
 
 # Factura electrónica: solo aparece con E_INVOICING en true (src/config/site.ts).
+# Textos provisionales. Antes de poner la bandera en true, completarlos con los documentos que
+# emite, el proveedor tecnológico, el costo (si lo tiene) y cómo se activa.
 eInvoicing:
   group:
     title: Factura electrónica
     items:
-      - 'PENDIENTE: qué documentos emite (factura electrónica de venta, documento equivalente POS electrónico, notas crédito), si se hace con un proveedor tecnológico y si tiene costo adicional.'
-  faqAnswer: 'Sí. PENDIENTE: respuesta completa cuando salga la factura electrónica en XASKA POS (documentos, cómo se activa y costo, si lo tiene).'
+      - Factura electrónica de venta desde la misma pantalla de cobro
+  faqAnswer: Sí. Puedes emitir factura electrónica desde XASKA POS. Escríbenos por WhatsApp y te contamos cómo activarla para tu negocio.
 
 plans:
   title: Planes

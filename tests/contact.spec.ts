@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import { expect, test } from '@playwright/test';
 import { DUMMY_TOKEN, stubTurnstile } from './helpers';
 
@@ -14,11 +15,13 @@ function validForm(overrides: Record<string, string> = {}): Record<string, strin
   };
 }
 
-let ipCounter = 0;
-/** Cada prueba usa su propia IP para no chocar con el límite de envíos de las demás. */
+/**
+ * Cada prueba usa su propia IP para no chocar con el límite de envíos de las demás.
+ * Es aleatoria (no un contador) porque las pruebas corren en paralelo en varios procesos y un
+ * contador por proceso repetiría las mismas IP.
+ */
 function freshIp(): string {
-  ipCounter += 1;
-  return `198.51.100.${(ipCounter % 250) + 1}`;
+  return `10.${randomInt(256)}.${randomInt(256)}.${randomInt(1, 255)}`;
 }
 
 test.describe('API del formulario', () => {

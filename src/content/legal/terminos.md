@@ -2,7 +2,7 @@
 title: Términos de uso del sitio
 description: Condiciones para usar el sitio informativo xaska.co.
 reviewed: true
-updated: '2026-10-31'
+updated: '2026-11-02'
 ---
 
 Estos términos aplican al sitio informativo **xaska.co**. El uso de **XASKA POS** (`app.xaska.co`) se rige por sus propios [términos](https://app.xaska.co/terminos) y su [política de privacidad](https://app.xaska.co/privacidad).
