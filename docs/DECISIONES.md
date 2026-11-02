@@ -311,6 +311,17 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **DNS:** pasa de Spaceship a Cloudflare (Spaceship sigue como registrador). `app.xaska.co` y todo el correo quedan en "DNS only" (nube gris), para que XASKA POS y Spacemail no pasen por Cloudflare. El hub se conecta como dominio propio del Worker. `www` se resuelve con un registro `AAAA 100::` con proxy y una regla de redirección 301 a la raíz. Pasos en `docs/GUIA-PUBLICACION.md`.
 - **Capturas del encabezado al doble de resolución:** Daniel las tomó con device pixel ratio 2 (2880 px de ancho) para la portada (`header-reportes.png`) y XASKA POS (`header-vender.png`). `ScreenShowcase` ofrece hasta 2080 px, así que se ven nítidas también en pantallas de alta densidad.
 
+### Publicación (2026-11-02)
+
+- **Fecha de lanzamiento:** 2026-11-02. La política de privacidad rige desde ese día y las dos páginas legales llevan esa fecha de actualización.
+- **Factura electrónica:** se publica sin ella (la página dice "Todavía no"). Los textos de `eInvoicing` quedan provisionales, sin `PENDIENTE:`, y solo se ven con `E_INVOICING: true`. Alternativa descartada: esperar al contador para publicar.
+- **Soporte:** XASKA POS menciona WhatsApp y correo (`soporte@xaska.co`).
+- **CI en `main`:** el build de producción exige el token de analítica, que solo está en Cloudflare. La CI hace dos builds: uno de producción estricto con las claves públicas (Turnstile y Analytics no son secretas) y otro de prueba (`XASKA_ENV=preview`) sobre el que corren las pruebas. Alternativa descartada: que el build no exija el token (se perdería el freno contra publicar sin medir).
+- **Prueba del límite de envíos:** cada prueba usa una IP aleatoria, porque un contador por proceso repetía IPs con las pruebas en paralelo.
+- **Analítica:** Cloudflare Web Analytics con instalación manual. La inyección automática se apagó porque la CSP con hashes bloquearía el script inyectado.
+- **`www`:** AAAA `100::` con proxy y una Redirect Rule 301 (plantilla "Redirect from WWW to root", conservando la query string). "Always Use HTTPS" activado. El HSTS de Cloudflare **no** se activa: el sitio ya manda HSTS sin `includeSubDomains`, y el de Cloudflare podría alcanzar a `app.xaska.co`.
+- **DNSSEC:** se apagó en Spaceship antes de cambiar los nameservers (el DS desapareció del registro de `.co` el 2026-10-31) y se vuelve a activar con Cloudflare.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

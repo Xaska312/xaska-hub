@@ -2,6 +2,8 @@
 
 Pasos para publicar el hub en `xaska.co`. Todo lo hace Daniel con su cuenta. Los pasos van en orden: cada etapa supone que la anterior quedó bien.
 
+> **Estado:** publicado el 2026-11-02. Faltan D5 (DNSSEC) y apagar `workers.dev` (F, paso 7).
+
 > **Reglas de seguridad**
 >
 > - Nunca pegues claves secretas (`TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`) en un chat, un archivo del repositorio o una captura.
@@ -191,4 +193,5 @@ Cuando todo lleve un día funcionando bien:
 
 5. **Formulario en producción:** envía un mensaje desde https://xaska.co/contacto y revisa que llegue a `soporte@xaska.co`.
 6. **Tarjetas:** ya se pueden repartir.
-7. Avísame para cerrar la fase 4: actualizo el roadmap, las decisiones y los pendientes.
+7. **Apagar la dirección de prueba:** Workers & Pages → xaska-hub → Settings → Domains & Routes → `workers.dev` → **Disable** (y las Preview URLs, si aparecen).
+8. Avísame para cerrar la fase 4: actualizo el roadmap, las decisiones y los pendientes.

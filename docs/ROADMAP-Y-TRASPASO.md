@@ -1,6 +1,6 @@
 # HUB de XASKA — roadmap y prompt de traspaso
 
-Actualizado: 2026-10-31.
+Actualizado: 2026-11-02. **El sitio está publicado en https://xaska.co desde el 2026-11-02.**
 
 Este documento sirve para seguir el proyecto desde otra conversación o cuenta de Claude. Tiene dos partes:
 
@@ -13,14 +13,14 @@ Este documento sirve para seguir el proyecto desde otra conversación o cuenta d
 
 ### Estado por fases
 
-| Fase                                 | Qué incluye                                                                                                              | Estado                                                                                                                                                                                                                                                            |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0 — Esqueleto y marca                | Astro + Tailwind, tokens de color y tipografía, Header/Footer, logo con tema claro/oscuro sin parpadeo, CSP, CI, pruebas | ✅ Aprobada en local                                                                                                                                                                                                                                              |
-| 1 — Páginas y contenido              | Inicio, Nosotros, Servicios, Productos, XASKA POS, Contacto, 404; textos en `src/content/`; `check:pendientes`           | ✅ Hecha. Misión (opción 2) y visión (opción 1) elegidas. Faltan aprobar los demás textos                                                                                                                                                                         |
-| 2 — Contacto y legal                 | Formulario con Turnstile + Resend (Worker), campo trampa, límite por IP, páginas `/legal/privacidad` y `/legal/terminos` | ✅ Cerrada el 2026-10-31: probada con Turnstile y Resend reales en la versión de prueba de Cloudflare; textos legales revisados por el abogado                                                                                                                    |
-| 3 — SEO, rendimiento y accesibilidad | Metadatos, JSON-LD, imagen Open Graph, sitemap, analítica sin cookies, Lighthouse ≥ 95, revisión con teclado             | ✅ Aprobada el 2026-10-31 (revisión con teclado hecha por Daniel; Lighthouse 98–100 sin antivirus)                                                                                                                                                                |
-| 4 — Publicación                      | GitHub, Cloudflare, DNS a Cloudflare, dominio `xaska.co`, `www` → 301, Search Console                                    | 🚧 En curso: etapas A (GitHub), B (Cloudflare, `xaska-hub.daniimejia1558.workers.dev`), C (Turnstile y Resend) y D1–D4 (DNS en Cloudflare desde el 2026-11-02, POS y correo comprobados) hechas. Falta D5 (DNSSEC) y siguen E y F. Ver `docs/GUIA-PUBLICACION.md` |
-| Después                              | Blog, casos de éxito, estado del servicio, documentación, empleo, portal de clientes, inglés                             | ⏳                                                                                                                                                                                                                                                                |
+| Fase                                 | Qué incluye                                                                                                              | Estado                                                                                                                                                                                                                                                                               |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0 — Esqueleto y marca                | Astro + Tailwind, tokens de color y tipografía, Header/Footer, logo con tema claro/oscuro sin parpadeo, CSP, CI, pruebas | ✅ Aprobada en local                                                                                                                                                                                                                                                                 |
+| 1 — Páginas y contenido              | Inicio, Nosotros, Servicios, Productos, XASKA POS, Contacto, 404; textos en `src/content/`; `check:pendientes`           | ✅ Cerrada: todos los textos aprobados (2026-10-31)                                                                                                                                                                                                                                  |
+| 2 — Contacto y legal                 | Formulario con Turnstile + Resend (Worker), campo trampa, límite por IP, páginas `/legal/privacidad` y `/legal/terminos` | ✅ Cerrada el 2026-10-31: probada con Turnstile y Resend reales en la versión de prueba de Cloudflare; textos legales revisados por el abogado                                                                                                                                       |
+| 3 — SEO, rendimiento y accesibilidad | Metadatos, JSON-LD, imagen Open Graph, sitemap, analítica sin cookies, Lighthouse ≥ 95, revisión con teclado             | ✅ Aprobada el 2026-10-31 (revisión con teclado hecha por Daniel; Lighthouse 98–100 sin antivirus)                                                                                                                                                                                   |
+| 4 — Publicación                      | GitHub, Cloudflare, DNS a Cloudflare, dominio `xaska.co`, `www` → 301, Search Console                                    | ✅ Publicada el 2026-11-02 en https://xaska.co: DNS en Cloudflare, `www` → 301, cabeceras comprobadas, analítica, Search Console con sitemap y PageSpeed 100 en las cuatro categorías. Quedan: DNSSEC con Cloudflare (D5), apagar `workers.dev` y probar el formulario en producción |
+| Después                              | Blog, casos de éxito, estado del servicio, documentación, empleo, portal de clientes, inglés                             | ⏳                                                                                                                                                                                                                                                                                   |
 
 ### Fase 2 — cerrada
 
@@ -55,33 +55,26 @@ Este documento sirve para seguir el proyecto desde otra conversación o cuenta d
 - Lighthouse móvil (`pnpm lighthouse`, en la CI) sin la regla "página indexable" mientras haya `noindex`; axe en todas las páginas en tema claro y oscuro; corrección de la lista de valores de `/nosotros`.
 - Detalle y motivos en `docs/DECISIONES.md` (2026-10-30).
 
-### Fase 4 — publicación (resumen)
+### Fase 4 — publicación (cerrada el 2026-11-02)
 
-Pasos completos y en orden en `docs/GUIA-PUBLICACION.md`. Se trabaja en la rama `desarrollo`; `main` se crea el día de publicación.
+Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
 
-- Crear el repositorio `xaska-hub` en GitHub y subir el proyecto. La CI ya existe en `.github/workflows/ci.yml`.
-- Conectarlo a Cloudflare (Workers & Pages → Import a repository):
-  - Build: `pnpm build`.
-  - Deploy: `pnpm exec wrangler deploy`.
-  - Previsualizaciones: `pnpm exec wrangler versions upload`.
-- Cargar los secretos `TURNSTILE_SECRET_KEY` y `RESEND_API_KEY` y la variable de build `PUBLIC_TURNSTILE_SITE_KEY`.
-- **Mover el DNS de Spaceship a Cloudflare.** El registrador sigue siendo Spaceship. Hay que copiar todos los registros actuales: el A de `app` (hacia el servidor de Contabo, en "solo DNS", nube gris), y los MX, SPF, DKIM, SRV y DMARC de Spacemail. Después se agregan los de Resend.
-- Dominio `xaska.co` en el Worker y redirección 301 de `www.xaska.co` → `xaska.co`.
-- Google Search Console: verificar y enviar el sitemap (`https://xaska.co/sitemap-index.xml`).
-- **Analítica:** en Cloudflare → Web Analytics → Add a site → `xaska.co`, elegir la instalación manual (JS snippet), dejar **apagada** la inyección automática y copiar el token. Cargar `PUBLIC_CF_ANALYTICS_TOKEN` como variable de build y poner `ANALYTICS: true` en `site.ts`.
-- Medir el build de producción con `$env:LIGHTHOUSE_STRICT=1; pnpm lighthouse` (PowerShell) (sin la excepción de "página indexable").
-- El build de producción (rama `main`) falla mientras haya marcadores `PENDIENTE:` o `[BORRADOR]`, o páginas legales con `reviewed: false`.
+- **Repositorio:** `Xaska312/xaska-hub`. Se trabaja en `desarrollo`; lo listo se pasa a `main` (producción) con un pull request o un `git merge`, con la CI en verde.
+- **Cloudflare Workers (`xaska-hub`):** la rama de producción es `main` y sirve `xaska.co`. `desarrollo` se construye como versión de prueba (franja y `noindex`) sin tocar la publicada.
+- **Variables de build (públicas):** `PUBLIC_TURNSTILE_SITE_KEY` y `PUBLIC_CF_ANALYTICS_TOKEN`. **Secretos del Worker:** `TURNSTILE_SECRET_KEY` y `RESEND_API_KEY`.
+- **DNS en Cloudflare** desde el 2026-11-02 (Spaceship sigue de registrador). `app` y todo el correo (Spacemail y Resend) en "DNS only" (nube gris). `www` es un AAAA `100::` con proxy y una Redirect Rule 301 a `xaska.co`. "Always Use HTTPS" activado; el HSTS de Cloudflare **no** (lo manda el sitio, sin `includeSubDomains`).
+- **Web Analytics** con instalación manual (sin inyección automática, por la CSP).
+- **Search Console:** propiedad de dominio `xaska.co` verificada (TXT puesto por Cloudflare; no se borra) y sitemap `https://xaska.co/sitemap-index.xml` enviado.
+- **CI:** hace un build de producción estricto (con las claves públicas) y otro de prueba para las pruebas.
 
-### Datos que faltan aportar
+### Lo que falta
 
-- Horario de atención.
-- Respuesta oficial sobre DIAN / factura electrónica (pregunta frecuente de XASKA POS).
-- Bio y foto de Daniel Mejía.
-- Capturas de XASKA POS sin datos de clientes reales.
-- Cédula y dirección para notificaciones (política de privacidad), y fecha de vigencia.
-- Revisión del abogado de la política y los términos (incluida la propuesta de conservar los mensajes 2 años).
-- Nombre definitivo de la línea de hardware y si se incluye (hoy oculta).
-- Aprobar los textos marcados `[BORRADOR]` (13 archivos). `pnpm pendientes` los lista.
+- [ ] DNSSEC con Cloudflare (guía, D5).
+- [ ] Apagar la dirección `workers.dev` (guía, F).
+- [ ] Probar el formulario en https://xaska.co/contacto.
+- [ ] **Factura electrónica:** cuando salga en XASKA POS, completar `eInvoicing` en `src/content/pos/index.yaml` (documentos, proveedor, costo y cómo se activa) y poner `E_INVOICING: true`.
+- [ ] Nombre definitivo de la línea de hardware y si se incluye (hoy oculta).
+- [ ] `POS_LAUNCHED: true` cuando el registro del POS ya no exija código de activación.
 
 ---
 
@@ -99,7 +92,7 @@ Pasos completos y en orden en `docs/GUIA-PUBLICACION.md`. Se trabaja en la rama 
 ### Texto para pegar
 
 ```text
-Hola. Vamos a continuar el sitio corporativo de mi empresa, XASKA (xaska.co). Ya están hechas las fases 0, 1 y 2, y la 3 está construida y pendiente de mi revisión; después sigue la fase 4. Te adjunto el proyecto completo (o tienes la carpeta conectada) y el prompt maestro original (PROMPT-MAESTRO-HUB.md). Antes de escribir código, lee estos archivos del proyecto en este orden:
+Hola. Vamos a continuar el sitio corporativo de mi empresa, XASKA (xaska.co). Las fases 0 a 4 están cerradas: el sitio está publicado en https://xaska.co desde el 2026-11-02. Te adjunto el proyecto completo (o tienes la carpeta conectada) y el prompt maestro original (PROMPT-MAESTRO-HUB.md). Antes de escribir código, lee estos archivos del proyecto en este orden:
 
 1. docs/ROADMAP-Y-TRASPASO.md (estado y lo que falta)
 2. docs/DECISIONES.md (decisiones técnicas y de diseño ya tomadas; respétalas)
@@ -109,17 +102,17 @@ Hola. Vamos a continuar el sitio corporativo de mi empresa, XASKA (xaska.co). Ya
 Contexto mío:
 - Soy Daniel Mejía, de Ibagué (Colombia). Trabajo en Windows con PowerShell. XASKA está en proceso de formalización: hoy opero como persona natural. Nunca escribas "S.A.S.", NIT ni razón social.
 - Nuestro producto es XASKA POS (https://app.xaska.co), un sistema de punto de venta en la web, en producción en un servidor de Contabo. Este proyecto NO toca app.xaska.co (ni su código, ni su DNS, ni sus cabeceras). El código del POS es público: https://github.com/Xaska312/sistema-facturacion-pos (revísalo si necesitas confirmar funciones; no inventes).
-- El dominio está en Spaceship (registrador y DNS). El correo soporte@xaska.co está en Spacemail. No toques esos registros.
+- El dominio está registrado en Spaceship y su DNS está en Cloudflare. `app` y los registros del correo (soporte@xaska.co en Spacemail, envios.xaska.co en Resend) van en "DNS only"; no los toques.
 - Respondes en español de Colombia, claro y práctico. Tuteo.
 
 Cómo está hecho el sitio (no lo cambies sin preguntarme):
 - Astro 7.4.2 (salida estática) + Tailwind 4.3.3 + TypeScript 6.0.3 estricto, pnpm 12.15.0, Node 24.22.1 (.nvmrc). Versiones exactas, sin ^ ni ~; el lockfile se versiona. Antes de agregar una dependencia, verifica su versión estable actual y su configuración vigente en la documentación oficial.
-- Hosting: Cloudflare Workers con assets estáticos. worker/index.ts solo atiende /api/contacto (run_worker_first ["/api/*"]). Todavía no está publicado: trabajo en local y lo subo en la fase 4.
+- Hosting: Cloudflare Workers con assets estáticos. worker/index.ts solo atiende /api/contacto (run_worker_first ["/api/*"]). Se trabaja en la rama desarrollo (versión de prueba en Cloudflare) y se publica pasando los cambios a main.
 - Textos en src/content/ (colecciones con esquema). Marcadores: "PENDIENTE:" = dato que debo aportar; "[BORRADOR]" = texto tuyo que debo aprobar. `pnpm pendientes` los lista; en producción (rama main o XASKA_ENV=production) el build falla si queda alguno; en prueba se ve la franja "Versión de prueba" y todas las páginas llevan noindex.
 - CSP generada por Astro (security.csp) con hashes, sin unsafe-inline en scripts. Solo /contacto permite challenges.cloudflare.com (Astro.csp, volviendo a incluir 'self'). frame-ancestors y el resto de cabeceras van en public/_headers. HSTS sin includeSubDomains ni preload.
-- Banderas en site.ts: POS_LAUNCHED=false (el botón principal es "Pedir una demo" por WhatsApp, porque el registro del POS exige un código de activación) y SHOW_HARDWARE=false (no se genera /hardware).
+- Banderas en site.ts: POS_LAUNCHED=false (el botón principal es "Pedir una demo" por WhatsApp, porque el registro del POS exige un código de activación), SHOW_HARDWARE=false (no se genera /hardware), ANALYTICS=true (Cloudflare Web Analytics) y E_INVOICING=false (la página dice que todavía no emite factura electrónica).
 - Marca: Noche #111827, Índigo #4F46E5 (sobre claro), Índigo claro #818CF8 (sobre oscuro). Logo oficial en public/brand/ sin modificar; no se redibuja ni se reescribe con texto. Plus Jakarta Sans variable (400–800) autoalojada, la misma letra de XASKA POS; títulos en 800, subtítulos 700, botones 600, texto 400. El motivo gráfico es el rombo, con moderación. Contraste WCAG 2.2 AA (tabla en DECISIONES.md).
-- Contenido aprobado: misión = opción 2, visión = opción 1. Planes Básico $49.900/mes (1 sucursal, 3 usuarios) y Pro $99.900/mes (5 sucursales, usuarios sin límite), ambos con todas las funciones; prueba gratis de 1 mes sin tarjeta; estoy excluido de IVA (no se menciona IVA). No uses la palabra "facturación" para describir el producto, y no digas ni insinúes que emite factura electrónica DIAN.
+- Contenido aprobado: misión = opción 2, visión = opción 1. Planes Básico $49.900/mes (1 sucursal, 3 usuarios) y Pro $99.900/mes (5 sucursales, 15 usuarios), ambos con todas las funciones; prueba gratis de 14 días sin tarjeta; estoy excluido de IVA (no se menciona IVA). No uses la palabra "facturación" para describir el producto, y no digas ni insinúes que emite factura electrónica DIAN.
 - Prohibido inventar clientes, testimonios, cifras, calificaciones, equipo o años de experiencia.
 
 Cómo trabajamos:
@@ -129,7 +122,7 @@ Cómo trabajamos:
 - Lo que solo yo puedo hacer (cuentas, DNS, claves, conectar el repo) no lo simules: dame los pasos exactos y espera mi confirmación. Nunca me pidas pegar claves secretas en el chat.
 - Al terminar cada fase: actualiza docs/ROADMAP-Y-TRASPASO.md, docs/DECISIONES.md, docs/PENDIENTES.md (con `pnpm pendientes`) y el README, y dime cómo probarlo en mi PC.
 
-Primera tarea: confirma en pocas líneas que entendiste el estado, dime si ves algo inconsistente en el proyecto, y dime qué me falta para cerrar las fases 2 y 3 antes de proponer el plan de la fase 4.
+Primera tarea: confirma en pocas líneas que entendiste el estado, dime si ves algo inconsistente en el proyecto y espera lo que te pida.
 ```
 
 ---
