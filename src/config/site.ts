@@ -17,9 +17,10 @@ export const flags = {
   SHOW_HARDWARE: false,
   /**
    * Cloudflare Web Analytics (sin cookies). Solo se carga si además existe la variable de build
-   * PUBLIC_CF_ANALYTICS_TOKEN. Hoy en false: se activa en la fase 4, cuando el sitio esté publicado.
+   * PUBLIC_CF_ANALYTICS_TOKEN (configurada en Cloudflare). En local y en la CI no hay token, así
+   * que no se carga. Activada el 2026-11-02 (fase 4).
    */
-  ANALYTICS: false,
+  ANALYTICS: true,
   /**
    * Factura electrónica en XASKA POS. En false el sitio dice que todavía no la tiene.
    * Se pone en true el mismo día que salga en el POS (textos en src/content/pos/index.yaml, eInvoicing).

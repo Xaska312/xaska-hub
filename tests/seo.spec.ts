@@ -119,7 +119,7 @@ test.describe('sitemap y robots.txt', () => {
 });
 
 test.describe('analítica', () => {
-  test('con ANALYTICS=false no se carga ni se abre la CSP', async ({ page }) => {
+  test('sin PUBLIC_CF_ANALYTICS_TOKEN no se carga ni se abre la CSP', async ({ page }) => {
     for (const path of ['/', '/contacto']) {
       await page.goto(path);
       await expect(page.locator('script[src*="cloudflareinsights"]')).toHaveCount(0);

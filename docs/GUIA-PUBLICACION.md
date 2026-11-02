@@ -155,7 +155,7 @@ Cuando todo lleve un día funcionando bien:
    - Elige la instalación **manual (JS snippet)** y deja **desactivada** la inyección automática.
    - Copia el **token** (el valor de `"token"` en el fragmento). Es público.
    - Agrégalo en **Workers & Pages → xaska-hub → Settings → Build → Variables** como `PUBLIC_CF_ANALYTICS_TOKEN`.
-   - Me avisas y pongo `ANALYTICS: true` en `site.ts`.
+   - Me avisas y pongo `ANALYTICS: true` en `site.ts`. ✅ Hecho el 2026-11-02.
 3. **Fecha de vigencia:** pongo la fecha del día en la política de privacidad.
 4. Con todo en verde en `desarrollo` (`pnpm verify` y la CI), crea la rama de producción:
 
