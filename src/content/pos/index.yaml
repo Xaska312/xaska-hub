@@ -116,7 +116,7 @@ plans:
       features:
         - Hasta 5 sucursales
         - Hasta 15 usuarios
-  note: Los dos planes incluyen todas las funciones y soporte por WhatsApp.
+  note: Los dos planes incluyen todas las funciones y soporte por WhatsApp y por correo (soporte@xaska.co).
   equipment:
     text: '¿Necesitas los equipos? Te armamos el punto de venta completo: computador, lector de código de barras, impresora térmica, cajón monedero y UPS, instalados y con garantía.'
     linkLabel: Ver equipos y computadores
