@@ -99,7 +99,13 @@ Spaceship sigue siendo el **registrador** (allí pagas el dominio). Solo cambia 
    - **TXT** de SPF (`v=spf1 …`), **TXT** de DKIM y **TXT** `_dmarc`.
    - **SRV** y **CNAME** del correo (por ejemplo, `autodiscover`), si existen.
    - Los de Resend, si ya los agregaste.
-2. Revisa si **DNSSEC** está activado en Spaceship. Si lo está, **desactívalo** y espera unas horas antes de cambiar los nameservers. Si no lo haces, el dominio puede dejar de resolver.
+2. Revisa si **DNSSEC** está activado en Spaceship. Si lo está, **desactívalo** y espera **al menos 24 horas** antes de cambiar los nameservers. Si no lo haces, el dominio completo (POS y correo incluidos) puede dejar de resolver. Para saber si ya se puede, en PowerShell:
+
+   ```powershell
+   nslookup -type=DS xaska.co 1.1.1.1
+   ```
+
+   Si la respuesta ya **no** trae registros `DS` (sale algo como "No answer" o solo datos de `SOA`), se puede cambiar. Si todavía aparecen, espera más.
 
 ### D2. En Cloudflare
 
@@ -133,6 +139,14 @@ nslookup -type=MX xaska.co
 - Envíate un correo a `soporte@xaska.co` desde otra cuenta y responde uno desde Spacemail.
 
 Si algo falla, el arreglo casi siempre es un registro que no se copió: compáralo con tus capturas. Como último recurso, en Spaceship puedes volver a sus nameservers por defecto.
+
+### D5. Volver a activar DNSSEC, ahora con Cloudflare
+
+Cuando todo lleve un día funcionando bien:
+
+1. Cloudflare → **xaska.co → DNS → Settings → DNSSEC → Enable**. Te muestra un registro **DS** (Key Tag, Algorithm, Digest Type y Digest).
+2. Spaceship → **xaska.co → DNSSEC** → agrega ese DS con los mismos datos.
+3. Cloudflare marca DNSSEC como **Active** en unas horas.
 
 ## E. Día de publicación
 

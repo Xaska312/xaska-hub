@@ -5,7 +5,7 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
 ## Pasos que te tocan
 
 - [x] Node 24 en tu equipo (fase 0 probada en local).
-- [ ] Conectar el repositorio a Cloudflare (cuando lo subas a GitHub). Los pasos están en el README.
+- [x] Repositorio en GitHub (`Xaska312/xaska-hub`) y conectado a Cloudflare (versión de prueba en `xaska-hub.daniimejia1558.workers.dev`).
 
 ## Datos de la empresa (sección 10 del prompt)
 
@@ -20,9 +20,10 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
 - [x] Misión (opción 2) y visión (opción 1) elegidas.
 - [ ] Aprobar valores y textos (fase 1).
 - [ ] Nombre definitivo de la línea de hardware y si se incluye (hoy "Xaska Tech", oculta).
-- [ ] Cuentas de Cloudflare (Turnstile), Resend y GitHub, y registros DNS de `envios.xaska.co`. Pasos en `docs/GUIA-CUENTAS.md`.
+- [x] Cuentas de Cloudflare (Turnstile), Resend y GitHub, y registros DNS de `envios.xaska.co`.
 - [ ] Revisión del abogado de la política de datos y los términos del sitio.
-- [ ] Probar el formulario en tu navegador con `pnpm preview` (Turnstile real + CSP).
+- [x] Formulario probado con Turnstile y Resend reales (2026-10-31).
+- [ ] Mover el DNS a Cloudflare, publicar en `xaska.co` y Search Console (`docs/GUIA-PUBLICACION.md`, etapas D a F).
 
 ## Marcadores en el código
 

@@ -13,23 +13,20 @@ Este documento sirve para seguir el proyecto desde otra conversación o cuenta d
 
 ### Estado por fases
 
-| Fase                                 | Qué incluye                                                                                                              | Estado                                                                                                                            |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| 0 — Esqueleto y marca                | Astro + Tailwind, tokens de color y tipografía, Header/Footer, logo con tema claro/oscuro sin parpadeo, CSP, CI, pruebas | ✅ Aprobada en local                                                                                                              |
-| 1 — Páginas y contenido              | Inicio, Nosotros, Servicios, Productos, XASKA POS, Contacto, 404; textos en `src/content/`; `check:pendientes`           | ✅ Hecha. Misión (opción 2) y visión (opción 1) elegidas. Faltan aprobar los demás textos                                         |
-| 2 — Contacto y legal                 | Formulario con Turnstile + Resend (Worker), campo trampa, límite por IP, páginas `/legal/privacidad` y `/legal/terminos` | 🧪 Construida y probada con claves de prueba (67 pruebas en verde). Falta la prueba de Daniel en su navegador y crear las cuentas |
-| 3 — SEO, rendimiento y accesibilidad | Metadatos, JSON-LD, imagen Open Graph, sitemap, analítica sin cookies, Lighthouse ≥ 95, revisión con teclado             | ✅ Aprobada el 2026-10-31 (revisión con teclado hecha por Daniel; Lighthouse 98–100 sin antivirus)                                |
-| 4 — Publicación                      | GitHub, Cloudflare, DNS a Cloudflare, dominio `xaska.co`, `www` → 301, Search Console                                    | ⏳ Siguiente                                                                                                                      |
-| Después                              | Blog, casos de éxito, estado del servicio, documentación, empleo, portal de clientes, inglés                             | ⏳                                                                                                                                |
+| Fase                                 | Qué incluye                                                                                                              | Estado                                                                                                                                                                   |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0 — Esqueleto y marca                | Astro + Tailwind, tokens de color y tipografía, Header/Footer, logo con tema claro/oscuro sin parpadeo, CSP, CI, pruebas | ✅ Aprobada en local                                                                                                                                                     |
+| 1 — Páginas y contenido              | Inicio, Nosotros, Servicios, Productos, XASKA POS, Contacto, 404; textos en `src/content/`; `check:pendientes`           | ✅ Hecha. Misión (opción 2) y visión (opción 1) elegidas. Faltan aprobar los demás textos                                                                                |
+| 2 — Contacto y legal                 | Formulario con Turnstile + Resend (Worker), campo trampa, límite por IP, páginas `/legal/privacidad` y `/legal/terminos` | ✅ Cerrada el 2026-10-31: probada con Turnstile y Resend reales en la versión de prueba de Cloudflare; textos legales revisados por el abogado                           |
+| 3 — SEO, rendimiento y accesibilidad | Metadatos, JSON-LD, imagen Open Graph, sitemap, analítica sin cookies, Lighthouse ≥ 95, revisión con teclado             | ✅ Aprobada el 2026-10-31 (revisión con teclado hecha por Daniel; Lighthouse 98–100 sin antivirus)                                                                       |
+| 4 — Publicación                      | GitHub, Cloudflare, DNS a Cloudflare, dominio `xaska.co`, `www` → 301, Search Console                                    | 🚧 En curso: etapas A (GitHub), B (Cloudflare, `xaska-hub.daniimejia1558.workers.dev`) y C (Turnstile y Resend) hechas. Sigue la D (DNS). Ver `docs/GUIA-PUBLICACION.md` |
+| Después                              | Blog, casos de éxito, estado del servicio, documentación, empleo, portal de clientes, inglés                             | ⏳                                                                                                                                                                       |
 
-### Para cerrar la fase 2 (te toca a ti)
+### Fase 2 — cerrada
 
-- [ ] **Probar el formulario en tu PC:**
-  - Copia `.dev.vars.example` como `.dev.vars` y ejecuta `pnpm preview`.
-  - Abre http://localhost:8787/contacto y envía un mensaje.
-  - Debe salir "Recibimos tu mensaje", sin errores de "Content Security Policy" en la consola (F12).
-- [ ] **Crear las cuentas de Turnstile y Resend** (pasos en `docs/GUIA-CUENTAS.md`). Resend necesita 3 registros DNS en Spaceship para `envios.xaska.co`.
-- [ ] **Prueba con correo real:** un mensaje llega a `soporte@xaska.co` y, al responderlo, el destinatario es el visitante.
+- [x] Formulario probado en la versión de prueba de Cloudflare, con Turnstile real y envío por Resend (`formulario@envios.xaska.co` → `soporte@xaska.co`, con `Reply-To` al visitante).
+- [x] Cuentas de Turnstile y Resend creadas; dominio `envios.xaska.co` verificado.
+- [x] Textos legales revisados por el abogado.
 
 ### Para cerrar la fase 3 (te toca a ti)
 
