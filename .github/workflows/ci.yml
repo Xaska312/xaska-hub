@@ -39,8 +39,21 @@ jobs:
       - name: astro check (TypeScript)
         run: pnpm check
 
-      - name: Build
+      # Revisión estricta, como la hará Cloudflare en main: sin pendientes ni borradores y con
+      # las claves públicas de Turnstile y Web Analytics (no son secretas: van en el HTML).
+      - name: Build de producción (revisión estricta)
         run: pnpm build
+        env:
+          XASKA_ENV: production
+          PUBLIC_TURNSTILE_SITE_KEY: 0x4AAAAAAFubYiEgTgIqzsfG
+          PUBLIC_CF_ANALYTICS_TOKEN: a67671177baf4c8cb39c818b75f6acb9
+
+      # Las pruebas corren sobre la versión de prueba (con la franja, la clave de prueba de
+      # Turnstile y sin analítica), también en main.
+      - name: Build para las pruebas
+        run: pnpm build
+        env:
+          XASKA_ENV: preview
 
       - name: Instalar navegador de Playwright
         run: pnpm exec playwright install --with-deps chromium
