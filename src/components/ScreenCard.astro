@@ -1,0 +1,64 @@
+---
+/**
+ * Pantalla real de XASKA POS dentro de una tarjeta bento.
+ * - fit "full": la pantalla completa, a lo ancho de la tarjeta.
+ * - fit "zoom": un acercamiento a la esquina superior izquierda, en un marco de proporción
+ *   fija, para que el texto se lea nítido también en el celular (el recorte es a propósito).
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  fit?: 'full' | 'zoom' | undefined;
+  /** Ancho que ocupa la tarjeta en escritorio, para elegir el tamaño de imagen. */
+  sizes?: string | undefined;
+  eager?: boolean | undefined;
+  class?: string | undefined;
+}
+
+const {
+  src,
+  alt,
+  fit = 'full',
+  sizes = '(min-width: 1280px) 1216px, calc(100vw - 2rem)',
+  eager = false,
+  class: className,
+} = Astro.props;
+---
+
+<figure class:list={['bento flex flex-col overflow-hidden rounded-panel p-2 sm:p-3', className]}>
+  {fit === 'zoom' ? (
+    <div class="relative aspect-[5/4] flex-1 overflow-hidden rounded-block border border-line bg-white sm:aspect-[4/3] lg:aspect-auto lg:min-h-80">
+      <Image
+        src={src}
+        alt={alt}
+        widths={[720, 1080, 1440, 1920]}
+        sizes={sizes}
+        quality={90}
+        class="absolute top-0 left-0 h-auto w-[175%] max-w-none sm:w-[150%]"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : 'auto'}
+      />
+    </div>
+  ) : (
+    <div class="overflow-hidden rounded-block border border-line bg-white">
+      <Image
+        src={src}
+        alt={alt}
+        widths={[640, 960, 1280, 1920, 2560]}
+        sizes={sizes}
+        quality={90}
+        class="block h-auto w-full"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : 'auto'}
+      />
+    </div>
+  )}
+  {Astro.slots.has('default') && (
+    <figcaption class="px-3 pt-3 pb-2 text-sm text-muted">
+      <slot />
+    </figcaption>
+  )}
+</figure>

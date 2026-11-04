@@ -3,13 +3,14 @@ import { whatsappUrl, whatsappMessages } from '@/config/site';
 
 /**
  * Enlace a WhatsApp con mensaje prellenado.
- * - variant "button": botón con texto.
+ * - variant "button": botón con texto (borde).
+ * - variant "solid": botón con texto y relleno de acento.
  * - variant "icon": solo ícono (encabezado móvil), con nombre accesible.
  */
 interface Props {
   message?: string | undefined;
   label?: string | undefined;
-  variant?: 'button' | 'icon' | undefined;
+  variant?: 'button' | 'solid' | 'icon' | undefined;
   class?: string | undefined;
 }
 
@@ -54,7 +55,10 @@ const href = whatsappUrl(message);
     target="_blank"
     rel="noopener"
     class:list={[
-      'inline-flex min-h-11 items-center gap-2 rounded-control border border-line-strong px-4 font-semibold text-ink hover:border-ink',
+      'inline-flex min-h-12 items-center gap-2 rounded-control px-6 font-semibold transition-colors',
+      variant === 'solid'
+        ? 'bg-accent text-on-accent hover:bg-accent-strong'
+        : 'border-[1.5px] border-line-strong text-ink hover:border-ink',
       className,
     ]}
   >

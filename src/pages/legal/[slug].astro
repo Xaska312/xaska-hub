@@ -29,16 +29,19 @@ const updated = new Intl.DateTimeFormat('es-CO', {
   description={doc.data.description}
   whatsappMessage={whatsappMessages.general}
 >
-  <Section class="pt-12 sm:pt-20">
-    <div class="max-w-(--container-prose)">
+  <Section class="pt-4 sm:pt-8">
+    <div class="on-feature rounded-panel p-6 sm:p-10">
       {!doc.data.reviewed && (
-        <p class="mb-8 rounded-control border border-line-strong bg-surface px-4 py-3 font-semibold">
+        <p class="mb-8 rounded-control border border-line-strong px-4 py-3 font-semibold">
           Borrador pendiente de revisión legal
         </p>
       )}
-      <h1 class="text-3xl sm:text-4xl">{doc.data.title}</h1>
-      <p class="mt-4 text-sm text-muted">{`Última actualización: ${updated}`}</p>
-      <div class="prose-xaska legal mt-10">
+      <span class="chip">Legal</span>
+      <h1 class="mt-6 max-w-[20ch] text-4xl sm:text-5xl">{doc.data.title}</h1>
+      <p class="mt-4 font-medium">{`Última actualización: ${updated}`}</p>
+    </div>
+    <div class="bento mt-4 rounded-panel p-6 sm:p-10">
+      <div class="prose-xaska legal max-w-(--container-prose)">
         <Content />
       </div>
     </div>

@@ -5,6 +5,8 @@ import founderPhoto from '@/assets/team/daniel-mejia.jpg';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Section from '@/components/Section.astro';
 import PageHeader from '@/components/PageHeader.astro';
+import Card from '@/components/Card.astro';
+import Icon from '@/components/Icon.astro';
 import WhatsAppButton from '@/components/WhatsAppButton.astro';
 import { founder, whatsappMessages } from '@/config/site';
 import { isProductionBuild } from '@/lib/pendientes';
@@ -29,106 +31,114 @@ if (isProductionBuild() && statements.some((s) => s.data.selected === null)) {
   description={about.seo.description}
   whatsappMessage={whatsappMessages.about}
 >
-  <PageHeader title={about.title} lead={about.lead}>
-    <figure slot="visual" class="flex flex-col items-center gap-5 lg:items-end">
+  <PageHeader title={about.title} lead={about.lead} badge="Desde Ibagué">
+    <figure
+      slot="visual"
+      class="bento flex flex-1 flex-col items-center justify-center gap-6 rounded-panel p-8"
+    >
       {/* La foto original ya viene recortada en círculo sobre negro: el recorte redondo y la
           ampliación leve ocultan las esquinas y el borde. */}
-      <div class="size-56 overflow-hidden rounded-full border-4 border-accent sm:size-64 lg:size-72">
+      <div class="size-52 overflow-hidden rounded-full border-4 border-accent sm:size-64">
         <Image
           src={founderPhoto}
           alt={`${founder.name}, fundador de XASKA`}
-          widths={[224, 288, 448, 576]}
-          sizes="(min-width: 1024px) 288px, (min-width: 640px) 256px, 224px"
+          widths={[208, 256, 416, 512]}
+          sizes="(min-width: 640px) 256px, 208px"
           class="size-full scale-[1.03] object-cover"
           loading="eager"
         />
       </div>
-      <figcaption class="text-center lg:text-right">
-        <span class="block text-lg font-bold">{founder.name}</span>
-        <span class="block text-muted">{founder.role}</span>
+      <figcaption class="text-center">
+        <span class="block text-xl font-bold">{founder.name}</span>
+        <span class="mt-1 block text-muted">{founder.role}</span>
       </figcaption>
     </figure>
   </PageHeader>
 
   <Section labelledby="quienes-somos">
-    <div class="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
-      <h2 id="quienes-somos" class="text-2xl sm:text-3xl">
+    <Card size="panel" class="grid gap-6 lg:grid-cols-[1fr_2fr] lg:gap-16">
+      <h2 id="quienes-somos" class="text-3xl sm:text-4xl">
         Quiénes somos
       </h2>
       <div class="prose-xaska max-w-(--container-prose) text-lg">
         <Content />
       </div>
-    </div>
+    </Card>
   </Section>
 
-  <Section tone="surface" labelledby="proposito">
+  <Section labelledby="proposito">
     <h2 id="proposito" class="sr-only">
       Misión y visión
     </h2>
-    <div class="grid gap-14 lg:grid-cols-2 lg:gap-16">
-      {statements.map(({ id, title, data }) => {
+    <div class="grid gap-4 lg:grid-cols-2">
+      {statements.map(({ id, title, data }, index) => {
         const chosen = data.selected === null ? null : data.options[data.selected];
         return (
-          <div>
-            <h3 id={id} class="text-sm font-semibold text-muted">
+          <Card tone={index === 0 ? 'feature' : 'deep'} size="panel" class="flex flex-col">
+            <h3 id={id} class="chip self-start">
               {title}
             </h3>
             {chosen ? (
-              <p class="mt-4 text-2xl leading-snug font-semibold">{chosen.text}</p>
+              <p class="mt-10 text-2xl leading-snug font-bold sm:text-3xl sm:leading-tight">
+                {chosen.text}
+              </p>
             ) : (
               <>
                 <p class="mt-2 text-sm text-muted">Por elegir entre tres opciones.</p>
                 <ol class="mt-6 space-y-6">
-                  {data.options.map((option, index) => (
+                  {data.options.map((option, optionIndex) => (
                     <li class="border-l-2 border-line-strong pl-4">
-                      <p class="text-sm text-muted">{`Opción ${index + 1} · ${option.label}`}</p>
+                      <p class="text-sm text-muted">{`Opción ${optionIndex + 1} · ${option.label}`}</p>
                       <p class="mt-1 text-lg">{option.text}</p>
                     </li>
                   ))}
                 </ol>
               </>
             )}
-          </div>
+          </Card>
         );
       })}
     </div>
   </Section>
 
   <Section labelledby="valores">
-    <h2 id="valores" class="text-2xl sm:text-3xl">
+    <h2 id="valores" class="text-3xl sm:text-4xl">
       Lo que nos importa
     </h2>
-    <dl class="mt-10 grid gap-x-16 gap-y-10 md:grid-cols-2">
+    <dl class="mt-8 grid gap-4 md:grid-cols-2">
       {about.values.map((value) => (
-        <div>
-          {/* El rombo va dentro del dt: un <div> de <dl> solo puede tener dt y dd (axe, definition-list). */}
-          <dt class="flex gap-4 text-lg font-bold">
-            <span class="rombo mt-[0.55em] text-sm" aria-hidden="true" />
-            <span>{value.title}</span>
+        <div class="bento rounded-block p-6 sm:p-8 md:[&:last-child:nth-child(odd)]:col-span-2">
+          <dt class="flex items-center gap-4 text-lg font-bold">
+            <span class="icon-tile">
+              <span class="rombo text-sm" aria-hidden="true" />
+            </span>
+            {value.title}
           </dt>
-          {/* Sangría = ancho del rombo (0,5em de text-sm) + gap-4, para alinear con el título. */}
-          <dd class="mt-2 pl-[1.4375rem] text-muted">{value.text}</dd>
+          <dd class="mt-4 text-muted">{value.text}</dd>
         </div>
       ))}
     </dl>
   </Section>
 
-  <Section tone="surface" labelledby="fundador">
-    <div class="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
-      <h2 id="fundador" class="text-2xl sm:text-3xl">
+  <Section labelledby="fundador">
+    <Card size="panel" class="grid gap-6 lg:grid-cols-[1fr_2fr] lg:gap-16">
+      <h2 id="fundador" class="text-3xl sm:text-4xl">
         Quién está detrás
       </h2>
       <div class="max-w-(--container-prose)">
-        <p class="text-xl font-bold">{founder.name}</p>
-        <p class="text-muted">{founder.role}</p>
+        <p class="flex items-center gap-3 text-xl font-bold">
+          <Icon name="users" class="text-accent" />
+          {founder.name}
+        </p>
+        <p class="mt-1 text-muted">{founder.role}</p>
         <p class="mt-6 text-lg">{about.founder.bio}</p>
         <div class="mt-8 flex flex-wrap items-center gap-4">
-          <WhatsAppButton message={whatsappMessages.about} />
-          <a class="link" href="/servicios#como-trabajamos">
+          <WhatsAppButton message={whatsappMessages.about} variant="solid" />
+          <a class="link font-semibold" href="/servicios#como-trabajamos">
             Cómo trabajamos
           </a>
         </div>
       </div>
-    </div>
+    </Card>
   </Section>
 </BaseLayout>

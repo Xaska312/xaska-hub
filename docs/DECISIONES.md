@@ -322,36 +322,53 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **`www`:** AAAA `100::` con proxy y una Redirect Rule 301 (plantilla "Redirect from WWW to root", conservando la query string). "Always Use HTTPS" activado. El HSTS de Cloudflare **no** se activa: el sitio ya manda HSTS sin `includeSubDomains`, y el de Cloudflare podría alcanzar a `app.xaska.co`.
 - **DNSSEC:** se apagó en Spaceship antes de cambiar los nameservers (el DS desapareció del registro de `.co` el 2026-10-31) y se vuelve a activar con Cloudflare.
 
+### Rediseño en estilo bento (2026-11-04)
+
+- **Decisión:** todo el sitio pasa al estilo de XASKA POS (boceto 1, "Bento", elegido por Daniel entre seis): bloques en tarjetas redondeadas con borde fino, una tarjeta destacada en degradado índigo claro (como "Vender" en el inicio del POS) y paneles en índigo profundo con "POS" gigante cortado (como el ingreso al POS).
+- **Colores:** en tema oscuro el fondo es el del POS (`#0b1215`, tarjetas `#121b1f`) en lugar de Noche; Noche sigue siendo el color del texto en tema claro, y los dos índigos de marca no cambian. Tema claro: fondo `#f3f5f7` y tarjetas blancas. La tarjeta destacada y el panel profundo son iguales en los dos temas y redefinen los tokens (`.on-feature`, `.on-deep` en `global.css`).
+- **Encabezados:** ya no hay banda en Noche ni capturas que se salen del borde. El título va en la tarjeta grande y, al lado, tarjetas propias de cada página. Las capturas van dentro de tarjetas: completas (`fit="full"`) o con acercamiento recortado a propósito (`fit="zoom"`), así se ven bien en el celular.
+- **Firma al pie:** el nombre oficial (`public/brand/svg/xaska-nombre*.svg`, sin modificar) en grande y translúcido, cortado por el borde. No se escribe "XASKA" con la fuente: el logo no se reescribe con texto. Las palabras gigantes en texto son solo "POS", "Hola" y "404".
+- **Componentes:** `Card` (tonos default, feature y deep), `PageHeader` (tarjeta grande + slot `visual`), `ScreenCard` (reemplaza a `ScreenShowcase`), `Icon` (íconos de trazo), `Steps` y `Faq` en tarjetas. Se eliminaron `ScreenShowcase` y `Convergence`.
+- **Alternativa descartada:** dejar el oscuro por defecto aunque el sistema esté en claro. Se mantiene la preferencia del sistema y el selector de tema.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
 
-| Tema   | Uso                    | Colores                   | Contraste | Mínimo | Resultado |
-| ------ | ---------------------- | ------------------------- | --------- | ------ | --------- |
-| Claro  | Texto                  | `#111827` sobre `#ffffff` | 17.74:1   | 4.5:1  | Cumple    |
-| Claro  | Texto                  | `#111827` sobre `#f4f5f8` | 16.27:1   | 4.5:1  | Cumple    |
-| Claro  | Texto secundario       | `#4b5563` sobre `#ffffff` | 7.56:1    | 4.5:1  | Cumple    |
-| Claro  | Texto secundario       | `#4b5563` sobre `#f4f5f8` | 6.93:1    | 4.5:1  | Cumple    |
-| Claro  | Enlace / acento        | `#4f46e5` sobre `#ffffff` | 6.29:1    | 4.5:1  | Cumple    |
-| Claro  | Enlace / acento        | `#4f46e5` sobre `#f4f5f8` | 5.77:1    | 4.5:1  | Cumple    |
-| Claro  | Texto de botón         | `#ffffff` sobre `#4f46e5` | 6.29:1    | 4.5:1  | Cumple    |
-| Claro  | Texto de botón (hover) | `#ffffff` sobre `#443ec3` | 7.71:1    | 4.5:1  | Cumple    |
-| Claro  | Borde de control       | `#6b7280` sobre `#ffffff` | 4.83:1    | 3:1    | Cumple    |
-| Claro  | Foco (contorno)        | `#4f46e5` sobre `#ffffff` | 6.29:1    | 3:1    | Cumple    |
-| Oscuro | Texto                  | `#f3f4f6` sobre `#111827` | 16.12:1   | 4.5:1  | Cumple    |
-| Oscuro | Texto                  | `#f3f4f6` sobre `#1a2232` | 14.47:1   | 4.5:1  | Cumple    |
-| Oscuro | Texto secundario       | `#aab1be` sobre `#111827` | 8.23:1    | 4.5:1  | Cumple    |
-| Oscuro | Texto secundario       | `#aab1be` sobre `#1a2232` | 7.39:1    | 4.5:1  | Cumple    |
-| Oscuro | Enlace / acento        | `#818cf8` sobre `#111827` | 5.95:1    | 4.5:1  | Cumple    |
-| Oscuro | Enlace / acento        | `#818cf8` sobre `#1a2232` | 5.34:1    | 4.5:1  | Cumple    |
-| Oscuro | Texto de botón         | `#111827` sobre `#818cf8` | 5.95:1    | 4.5:1  | Cumple    |
-| Oscuro | Texto de botón (hover) | `#111827` sobre `#9aa3f9` | 7.59:1    | 4.5:1  | Cumple    |
-| Oscuro | Borde de control       | `#8b93a3` sobre `#111827` | 5.74:1    | 3:1    | Cumple    |
-| Oscuro | Foco (contorno)        | `#818cf8` sobre `#111827` | 5.95:1    | 3:1    | Cumple    |
-| Claro  | Error de formulario    | `#b91c1c` sobre `#ffffff` | 6.47:1    | 4.5:1  | Cumple    |
-| Claro  | Error de formulario    | `#b91c1c` sobre `#f4f5f8` | 5.93:1    | 4.5:1  | Cumple    |
-| Oscuro | Error de formulario    | `#fca5a5` sobre `#111827` | 9.35:1    | 4.5:1  | Cumple    |
-| Oscuro | Error de formulario    | `#fca5a5` sobre `#1a2232` | 8.39:1    | 4.5:1  | Cumple    |
+| Tema      | Uso                          | Colores                   | Contraste | Mínimo | Resultado |
+| --------- | ---------------------------- | ------------------------- | --------- | ------ | --------- |
+| Claro     | Texto                        | `#111827` sobre `#f3f5f7` | 16.23:1   | 4.5:1  | Cumple    |
+| Claro     | Texto en tarjeta             | `#111827` sobre `#ffffff` | 17.74:1   | 4.5:1  | Cumple    |
+| Claro     | Texto secundario             | `#4b5563` sobre `#f3f5f7` | 6.91:1    | 4.5:1  | Cumple    |
+| Claro     | Texto secundario en tarjeta  | `#4b5563` sobre `#ffffff` | 7.56:1    | 4.5:1  | Cumple    |
+| Claro     | Texto secundario en recuadro | `#4b5563` sobre `#eef1f4` | 6.67:1    | 4.5:1  | Cumple    |
+| Claro     | Enlace / acento              | `#4f46e5` sobre `#f3f5f7` | 5.75:1    | 4.5:1  | Cumple    |
+| Claro     | Enlace / acento en tarjeta   | `#4f46e5` sobre `#ffffff` | 6.29:1    | 4.5:1  | Cumple    |
+| Claro     | Etiqueta (chip) y número     | `#4f46e5` sobre `#e0e7ff` | 5.10:1    | 4.5:1  | Cumple    |
+| Claro     | Texto de botón               | `#ffffff` sobre `#4f46e5` | 6.29:1    | 4.5:1  | Cumple    |
+| Claro     | Texto de botón (hover)       | `#ffffff` sobre `#443ec3` | 7.71:1    | 4.5:1  | Cumple    |
+| Claro     | Borde de control             | `#6b7280` sobre `#ffffff` | 4.83:1    | 3:1    | Cumple    |
+| Claro     | Error de formulario          | `#b91c1c` sobre `#ffffff` | 6.47:1    | 4.5:1  | Cumple    |
+| Oscuro    | Texto                        | `#f3f4f6` sobre `#0b1215` | 17.17:1   | 4.5:1  | Cumple    |
+| Oscuro    | Texto en tarjeta             | `#f3f4f6` sobre `#121b1f` | 15.87:1   | 4.5:1  | Cumple    |
+| Oscuro    | Texto secundario             | `#9ea9b1` sobre `#0b1215` | 7.88:1    | 4.5:1  | Cumple    |
+| Oscuro    | Texto secundario en tarjeta  | `#9ea9b1` sobre `#121b1f` | 7.29:1    | 4.5:1  | Cumple    |
+| Oscuro    | Texto secundario en recuadro | `#9ea9b1` sobre `#0e1619` | 7.64:1    | 4.5:1  | Cumple    |
+| Oscuro    | Enlace / acento              | `#818cf8` sobre `#0b1215` | 6.33:1    | 4.5:1  | Cumple    |
+| Oscuro    | Enlace / acento en tarjeta   | `#818cf8` sobre `#121b1f` | 5.86:1    | 4.5:1  | Cumple    |
+| Oscuro    | Etiqueta (chip) y número     | `#818cf8` sobre `#1e2550` | 4.90:1    | 4.5:1  | Cumple    |
+| Oscuro    | Texto de botón               | `#111827` sobre `#818cf8` | 5.95:1    | 4.5:1  | Cumple    |
+| Oscuro    | Texto de botón (hover)       | `#111827` sobre `#9aa3f9` | 7.59:1    | 4.5:1  | Cumple    |
+| Oscuro    | Borde de control             | `#6b7880` sobre `#121b1f` | 3.85:1    | 3:1    | Cumple    |
+| Oscuro    | Error de formulario          | `#fca5a5` sobre `#121b1f` | 9.20:1    | 4.5:1  | Cumple    |
+| Destacada | Texto (extremo más oscuro)   | `#1e1b4b` sobre `#7c83f7` | 4.91:1    | 4.5:1  | Cumple    |
+| Destacada | Texto (extremo más claro)    | `#1e1b4b` sobre `#a5b4fc` | 8.02:1    | 4.5:1  | Cumple    |
+| Destacada | Texto de botón               | `#ffffff` sobre `#1e1b4b` | 15.99:1   | 4.5:1  | Cumple    |
+| Profunda  | Texto (extremo más claro)    | `#ffffff` sobre `#3730a3` | 9.93:1    | 4.5:1  | Cumple    |
+| Profunda  | Texto secundario             | `#c7d2fe` sobre `#3730a3` | 6.66:1    | 4.5:1  | Cumple    |
+| Profunda  | Acento                       | `#a5b4fc` sobre `#3730a3` | 4.98:1    | 4.5:1  | Cumple    |
+| Profunda  | Texto de botón               | `#1e1b4b` sobre `#a5b4fc` | 8.02:1    | 4.5:1  | Cumple    |
+| Profunda  | Borde de control             | `#9aa3f0` sobre `#3730a3` | 4.20:1    | 3:1    | Cumple    |
 
-Comprobación: el Índigo `#4f46e5` sobre Noche `#111827` da 2.82:1 y **no** cumple; por eso en tema oscuro el acento es el Índigo claro.
-Los bordes `--c-line` (`#e1e4ea` / `#2b3446`) son solo decorativos (separadores); los controles usan `--c-line-strong`.
+Comprobación: el Índigo `#4f46e5` sobre fondo oscuro no cumple (2,8:1 sobre Noche); por eso en tema oscuro el acento es el Índigo claro.
+Los bordes `--c-line` (`#e2e6eb` / `#222e34`) son solo decorativos (contorno de tarjetas); los controles usan `--c-line-strong`.

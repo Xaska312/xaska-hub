@@ -3,10 +3,12 @@ import { getCollection, getEntry, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Section from '@/components/Section.astro';
 import PageHeader from '@/components/PageHeader.astro';
+import Card from '@/components/Card.astro';
+import Icon from '@/components/Icon.astro';
 import Steps from '@/components/Steps.astro';
 import RomboList from '@/components/RomboList.astro';
 import WhatsAppButton from '@/components/WhatsAppButton.astro';
-import Convergence from '@/components/Convergence.astro';
+import { serviceIcon } from '@/lib/service-icons';
 import { contact, whatsappMessages } from '@/config/site';
 
 const pageEntry = await getEntry('servicesPage', 'index');
@@ -25,19 +27,29 @@ const services = await Promise.all(
   description={page.seo.description}
   whatsappMessage={whatsappMessages.services}
 >
-  <PageHeader title={page.title} lead={page.lead}>
-    <WhatsAppButton message={whatsappMessages.services} label="Cuéntanos tu proyecto" />
-    {/* El motivo de la marca: cuatro trazos que convergen en un rombo, como los servicios en tu proyecto. */}
-    <Convergence slot="visual" class="mx-auto hidden w-full max-w-xs lg:block" />
-    <nav slot="below" aria-label="Servicios">
-      <ul class="flex flex-wrap gap-3">
-        {services.map(({ entry }) => (
-          <li>
+  <PageHeader title={page.title} lead={page.lead} badge="A la medida">
+    <WhatsAppButton
+      message={whatsappMessages.services}
+      label="Cuéntanos tu proyecto"
+      variant="solid"
+    />
+
+    {/* Atajos a cada servicio, como las tarjetas del inicio del POS. */}
+    <nav slot="visual" aria-label="Servicios" class="flex-1">
+      <ul class="grid h-full gap-4 sm:grid-cols-2">
+        {services.map(({ entry }, index) => (
+          <li class:list={['flex', index === 0 && 'sm:col-span-2']}>
             <a
               href={`#${entry.id}`}
-              class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-5 font-semibold transition-colors hover:border-accent hover:text-accent"
+              class="bento bento-link flex w-full items-center justify-between gap-4 rounded-block p-5"
             >
-              {entry.data.title}
+              <span class="flex items-center gap-4">
+                <span class="icon-tile">
+                  <Icon name={serviceIcon(entry.id)} />
+                </span>
+                <span class="font-bold">{entry.data.title}</span>
+              </span>
+              <Icon name="arrow" class="shrink-0 text-muted" />
             </a>
           </li>
         ))}
@@ -46,54 +58,63 @@ const services = await Promise.all(
   </PageHeader>
 
   {services.map(({ entry, Content }, index) => (
-    <Section
-      id={entry.id}
-      labelledby={`${entry.id}-titulo`}
-      tone={index % 2 === 1 ? 'surface' : 'default'}
-      class="scroll-mt-20"
-    >
-      <div class="grid gap-10 lg:grid-cols-[3fr_2fr] lg:gap-16">
-        <div class="max-w-(--container-prose)">
-          <h2 id={`${entry.id}-titulo`} class="text-2xl sm:text-3xl">
+    <Section id={entry.id} labelledby={`${entry.id}-titulo`} class="scroll-mt-20">
+      <div class="grid gap-4 lg:grid-cols-12">
+        <Card size="panel" class="lg:col-span-7">
+          <span class="icon-tile">
+            <Icon name={serviceIcon(entry.id)} />
+          </span>
+          <h2 id={`${entry.id}-titulo`} class="mt-8 text-3xl sm:text-4xl">
             {entry.data.title}
           </h2>
-          <p class="mt-4 text-xl">{entry.data.summary}</p>
-          <div class="prose-xaska mt-4 text-lg text-muted">
+          <p class="mt-4 text-xl font-semibold">{entry.data.summary}</p>
+          <div class="prose-xaska mt-4 max-w-(--container-prose) text-lg text-muted">
             <Content />
           </div>
-          <h3 class="mt-8 text-sm font-semibold text-muted">Para quién</h3>
-          <p class="mt-2">{entry.data.forWho}</p>
-        </div>
-        <div class="space-y-8">
-          <div>
-            <h3 class="text-sm font-semibold text-muted">Por ejemplo</h3>
+          <div class="mt-8 rounded-block bg-inset p-5">
+            <h3 class="text-sm font-bold text-muted">Para quién</h3>
+            <p class="mt-2">{entry.data.forWho}</p>
+          </div>
+        </Card>
+        <div class:list={['grid gap-4 lg:col-span-5', index % 2 === 1 && 'lg:order-first']}>
+          <Card>
+            <h3 class="text-sm font-bold text-muted">Por ejemplo</h3>
             <RomboList items={entry.data.examples} class="mt-4" />
-          </div>
-          <div>
-            <h3 class="text-sm font-semibold text-muted">Qué recibes</h3>
+          </Card>
+          <Card tone="deep">
+            <h3 class="text-sm font-bold text-muted">Qué recibes</h3>
             <RomboList items={entry.data.deliverables} class="mt-4" />
-          </div>
+          </Card>
         </div>
       </div>
     </Section>
   ))}
 
-  <Section
-    id="como-trabajamos"
-    labelledby="como-trabajamos-titulo"
-    class="scroll-mt-20 border-t border-line"
-  >
-    <h2 id="como-trabajamos-titulo" class="text-2xl sm:text-3xl">
+  <Section id="como-trabajamos" labelledby="como-trabajamos-titulo" class="scroll-mt-20">
+    <h2 id="como-trabajamos-titulo" class="text-3xl sm:text-4xl">
       {page.process.title}
     </h2>
-    <div class="mt-10">
+    <div class="mt-8">
       <Steps steps={page.process.steps} />
     </div>
-    <div class="mt-12 flex flex-wrap items-center gap-x-6 gap-y-4">
-      <WhatsAppButton message={whatsappMessages.services} label="Cuéntanos tu proyecto" />
-      <a class="link" href={`mailto:${contact.email}`}>
-        {contact.email}
-      </a>
-    </div>
+    <Card
+      tone="feature"
+      size="panel"
+      class="mt-4 flex flex-wrap items-center justify-between gap-6"
+    >
+      <p class="text-2xl font-extrabold tracking-tight sm:text-3xl">
+        ¿Tienes un proyecto en mente?
+      </p>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
+        <WhatsAppButton
+          message={whatsappMessages.services}
+          label="Cuéntanos tu proyecto"
+          variant="solid"
+        />
+        <a class="link font-semibold" href={`mailto:${contact.email}`}>
+          {contact.email}
+        </a>
+      </div>
+    </Card>
   </Section>
 </BaseLayout>
