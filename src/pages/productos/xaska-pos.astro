@@ -1,7 +1,8 @@
 ---
 import { getEntry } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
-import ScreenShowcase from '@/components/ScreenShowcase.astro';
+import ScreenCard from '@/components/ScreenCard.astro';
+import Icon from '@/components/Icon.astro';
 import sellScreen from '@/assets/pos/header-vender.png';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -36,6 +37,8 @@ const screens = await Promise.all(
   }),
 );
 const [mainScreen, ...otherScreens] = screens;
+const problemIcons = ['book', 'box', 'register', 'chart'] as const;
+const [basicPlan] = pos.plans.items;
 
 // Factura electrónica: con la bandera encendida se suma su grupo de funciones y cambia su respuesta.
 const capabilityGroups = flags.E_INVOICING
@@ -54,12 +57,14 @@ const faqItems = faq.items.map((item) =>
   whatsappMessage={whatsappMessages.pos}
   jsonLd={[posApplication(pos.seo.description)]}
 >
+  {/* Como el ingreso a XASKA POS: panel índigo profundo con el lema y "POS" gigante al pie. */}
   <PageHeader
     title={products.pos.name}
     lead={pos.lead}
     slogan={pos.slogan}
     trail={[{ label: 'Productos', href: '/productos' }]}
-    bleed
+    tone="deep"
+    word="POS"
   >
     <CTA href={primaryCta.href} external>
       {primaryCta.longLabel}
@@ -71,77 +76,100 @@ const faqItems = faq.items.map((item) =>
     ) : (
       <WhatsAppButton message={whatsappMessages.pos} label="Pregúntanos por WhatsApp" />
     )}
-    <ScreenShowcase
-      slot="visual"
-      src={sellScreen}
-      alt="Pantalla de ventas de XASKA POS en un minimercado: buscador por código de barras, categorías, productos con precio y existencias, y el total a cobrar."
-    />
+
+    <Fragment slot="visual">
+      <ScreenCard
+        src={sellScreen}
+        alt="Pantalla de ventas de XASKA POS en un minimercado: buscador por código de barras, categorías, productos con precio y existencias, y el total a cobrar."
+        fit="zoom"
+        sizes="(min-width: 1280px) 760px, (min-width: 1024px) 62vw, 175vw"
+        eager
+        class="flex-1"
+      />
+      {basicPlan && (
+        <a
+          href="#planes-seccion"
+          class="bento bento-link flex items-center justify-between gap-4 rounded-block p-5 sm:p-6"
+        >
+          <span class="flex items-center gap-4">
+            <span class="icon-tile">
+              <Icon name="register" />
+            </span>
+            <span>
+              <span class="block text-sm text-muted">Planes desde</span>
+              <span class="block text-xl font-extrabold">{basicPlan.price}</span>
+            </span>
+          </span>
+          <Icon name="arrow" class="text-muted" />
+        </a>
+      )}
+    </Fragment>
   </PageHeader>
 
-  <Section tone="surface" labelledby="resuelve">
-    <h2 id="resuelve" class="text-2xl sm:text-3xl">
+  <Section labelledby="resuelve">
+    <h2 id="resuelve" class="text-3xl sm:text-4xl">
       {pos.problems.title}
     </h2>
-    <dl class="mt-10 grid gap-x-16 gap-y-10 md:grid-cols-2">
-      {pos.problems.items.map((item) => (
-        <div class="border-t border-line-strong pt-5">
-          <dt class="text-lg font-bold">{item.title}</dt>
-          <dd class="mt-2 text-muted">{item.text}</dd>
+    <dl class="mt-8 grid gap-4 md:grid-cols-2">
+      {pos.problems.items.map((item, index) => (
+        <div class="bento rounded-block p-6 sm:p-8">
+          <dt class="flex items-center gap-4 text-lg font-bold">
+            <span class="icon-tile">
+              <Icon name={problemIcons[index % problemIcons.length] ?? 'check'} />
+            </span>
+            {item.title}
+          </dt>
+          <dd class="mt-4 text-muted">{item.text}</dd>
         </div>
       ))}
     </dl>
   </Section>
 
   <Section labelledby="para-quien">
-    <div class="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
-      <h2 id="para-quien" class="text-2xl sm:text-3xl">
+    <Card size="panel" class="grid gap-6 lg:grid-cols-[1fr_2fr] lg:gap-16">
+      <h2 id="para-quien" class="text-3xl sm:text-4xl">
         {pos.audience.title}
       </h2>
       <p class="max-w-(--container-prose) text-lg">{pos.audience.text}</p>
-    </div>
+    </Card>
   </Section>
 
   {mainScreen && (
-    <Section tone="surface" labelledby="asi-se-ve">
-      <h2 id="asi-se-ve" class="text-2xl sm:text-3xl">
+    <Section labelledby="asi-se-ve">
+      <h2 id="asi-se-ve" class="text-3xl sm:text-4xl">
         {pos.screens.title}
       </h2>
       <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{pos.screens.lead}</p>
-      <figure class="mt-10">
-        <div class="screen overflow-hidden rounded-block border border-line-strong bg-bg">
-          <Image
-            src={mainScreen.src}
-            alt={mainScreen.alt}
-            widths={[640, 960, 1280, 1914]}
-            sizes="(min-width: 1152px) 1088px, calc(100vw - 2rem)"
-            class="h-auto w-full"
-            loading="lazy"
-          />
-        </div>
-        <figcaption class="mt-3 text-muted">{mainScreen.caption}</figcaption>
-      </figure>
+      <ScreenCard
+        src={mainScreen.src}
+        alt={mainScreen.alt}
+        sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
+        class="mt-8"
+      >
+        {mainScreen.caption}
+      </ScreenCard>
       {otherScreens.length > 0 && (
-        <ul class="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2">
+        <ul class="mt-4 grid gap-4 sm:grid-cols-2">
           {otherScreens.map((screen) => (
             <li>
-              <figure>
+              <figure class="bento h-full rounded-panel p-2 sm:p-3">
                 <a
                   href={screen.fullSrc}
                   target="_blank"
                   rel="noopener"
-                  class="screen flex aspect-[4/3] items-center justify-center overflow-hidden rounded-block border border-line-strong bg-bg p-4 transition-colors hover:border-accent"
+                  class="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-block border border-line bg-inset p-4 transition-colors hover:border-accent"
                 >
                   <Image
                     src={screen.src}
                     alt={screen.alt}
                     widths={[480, 720, 1080]}
-                    sizes="(min-width: 1152px) 528px, (min-width: 640px) 45vw, calc(100vw - 2rem)"
+                    sizes="(min-width: 1280px) 580px, (min-width: 640px) 45vw, calc(100vw - 2rem)"
                     class="max-h-full w-auto max-w-full rounded-control object-contain"
                     loading="lazy"
                   />
                   <span class="sr-only"> (ver la imagen completa en una pestaña nueva)</span>
                 </a>
-                <figcaption class="mt-3 text-muted">{screen.caption}</figcaption>
+                <figcaption class="px-3 pt-3 pb-2 text-sm text-muted">{screen.caption}</figcaption>
               </figure>
             </li>
           ))}
@@ -151,65 +179,72 @@ const faqItems = faq.items.map((item) =>
   )}
 
   <Section labelledby="funciones">
-    <h2 id="funciones" class="text-2xl sm:text-3xl">
+    <h2 id="funciones" class="text-3xl sm:text-4xl">
       {pos.capabilities.title}
     </h2>
-    <div class="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {capabilityGroups.map((group) => (
-        <div>
+        <div class="bento rounded-block p-6 sm:p-8">
           <h3 class="text-lg">{group.title}</h3>
-          <RomboList items={group.items} class="mt-4 text-muted" />
+          <RomboList items={group.items} class="mt-5 text-muted" />
         </div>
       ))}
     </div>
-    <p class="mt-10">
-      <a class="link" href={products.pos.manualUrl} target="_blank" rel="noopener">
+    <p class="mt-6">
+      <a class="link font-semibold" href={products.pos.manualUrl} target="_blank" rel="noopener">
         Ver el manual de uso de XASKA POS
         <span class="sr-only"> (se abre en una pestaña nueva)</span>
       </a>
     </p>
   </Section>
 
-  <Section tone="surface" labelledby="empezar">
-    <h2 id="empezar" class="text-2xl sm:text-3xl">
+  <Section labelledby="empezar">
+    <h2 id="empezar" class="text-3xl sm:text-4xl">
       {pos.start.title}
     </h2>
-    <div class="mt-10">
+    <div class="mt-8">
       <Steps steps={pos.start.steps} />
     </div>
   </Section>
 
   <Section id="planes-seccion" labelledby="planes" class="scroll-mt-20">
-    <h2 id="planes" class="text-2xl sm:text-3xl">
+    <h2 id="planes" class="text-3xl sm:text-4xl">
       {pos.plans.title}
     </h2>
     <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{pos.plans.lead}</p>
-    <ul class="mt-10 grid gap-4 md:grid-cols-2">
-      {pos.plans.items.map((plan) => (
-        <Card as="li">
+    <ul class="mt-8 grid gap-4 md:grid-cols-2">
+      {pos.plans.items.map((plan, index) => (
+        <Card as="li" tone={index === 1 ? 'deep' : 'default'} size="panel">
           <h3 class="text-xl">{plan.name}</h3>
-          <p class="mt-2 text-2xl font-extrabold">{plan.price}</p>
-          <RomboList items={plan.features} class="mt-6 text-muted" />
+          <p class="mt-3 text-4xl font-extrabold tracking-tight">{plan.price}</p>
+          <RomboList items={plan.features} class="mt-8 text-muted" />
         </Card>
       ))}
     </ul>
-    <p class="mt-6 text-muted">{pos.plans.note}</p>
-    <p class="mt-8 max-w-(--container-prose) border-l-2 border-accent pl-4 text-lg">
-      {pos.plans.equipment.text}{' '}
-      <a class="link" href="/servicios#equipos-y-computadores">
-        {pos.plans.equipment.linkLabel}
-      </a>
-    </p>
-    <div class="mt-8">
-      <CTA href={primaryCta.href} external>
-        {primaryCta.longLabel}
-      </CTA>
+    <p class="mt-4 text-muted">{pos.plans.note}</p>
+    <div class="mt-6 grid gap-4 lg:grid-cols-[1fr_auto]">
+      <Card class="flex items-start gap-5">
+        <span class="icon-tile">
+          <Icon name="monitor" />
+        </span>
+        <p class="text-lg">
+          {pos.plans.equipment.text}{' '}
+          <a class="link font-semibold" href="/servicios#equipos-y-computadores">
+            {pos.plans.equipment.linkLabel}
+          </a>
+        </p>
+      </Card>
+      <Card tone="feature" class="flex items-center justify-center">
+        <CTA href={primaryCta.href} external>
+          {primaryCta.longLabel}
+        </CTA>
+      </Card>
     </div>
   </Section>
 
-  <Section tone="surface" labelledby="preguntas">
+  <Section labelledby="preguntas">
     <Faq title={faq.title} items={faqItems} headingId="preguntas" />
-    <div class="mt-10 flex flex-wrap items-center gap-4">
+    <div class="mt-6 flex flex-wrap items-center gap-4">
       <p class="text-muted">¿Tienes otra pregunta?</p>
       <WhatsAppButton message={whatsappMessages.pos} label="Escríbenos" />
     </div>

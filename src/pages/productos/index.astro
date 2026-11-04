@@ -5,13 +5,21 @@ import Section from '@/components/Section.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import Card from '@/components/Card.astro';
 import CTA from '@/components/CTA.astro';
+import Icon from '@/components/Icon.astro';
+import RomboList from '@/components/RomboList.astro';
+import ScreenCard from '@/components/ScreenCard.astro';
+import sellScreen from '@/assets/pos/header-vender.png';
 import { primaryCta, products, whatsappMessages } from '@/config/site';
 
 const entry = await getEntry('products', 'index');
 const posEntry = await getEntry('pos', 'index');
-if (!entry || !posEntry) throw new Error('Falta el contenido de productos o de XASKA POS');
+const homeEntry = await getEntry('home', 'index');
+if (!entry || !posEntry || !homeEntry) {
+  throw new Error('Falta el contenido de productos, de XASKA POS o de la portada');
+}
 const page = entry.data;
 const pos = posEntry.data;
+const highlights = homeEntry.data.pos.highlights;
 ---
 
 <BaseLayout
@@ -19,39 +27,76 @@ const pos = posEntry.data;
   description={page.seo.description}
   whatsappMessage={whatsappMessages.pos}
 >
-  <PageHeader title={page.title} lead={page.lead} bleed>
+  {/* Como el ingreso a XASKA POS: panel índigo profundo con "POS" gigante al pie. */}
+  <PageHeader title={page.title} lead={page.lead} tone="deep" word="POS">
     <CTA href={products.pos.path}>Conocer XASKA POS</CTA>
-    {/* Como en la tarjeta impresa: "POS" en letra gigante que se corta en el borde de la banda. */}
-    <p
-      slot="visual"
-      aria-hidden="true"
-      class="pos-type -mb-[0.2em] text-[8.5rem] leading-[0.8] font-extrabold tracking-[-0.05em] select-none sm:text-[13rem] lg:text-right lg:text-[15rem]"
-    >
-      POS
-    </p>
+
+    <Fragment slot="visual">
+      <a
+        href={products.pos.path}
+        class="bento bento-link flex flex-1 flex-col justify-between gap-8 rounded-panel p-6 sm:p-8"
+      >
+        <span class="flex items-center justify-between gap-4">
+          <span class="icon-tile">
+            <Icon name="cart" />
+          </span>
+          <Icon name="arrow" class="text-muted" />
+        </span>
+        <span>
+          <span class="block text-3xl font-extrabold tracking-tight">{products.pos.name}</span>
+          <span class="mt-1 block font-bold text-accent">{pos.slogan.join(' ')}</span>
+          <span class="mt-3 block text-muted">{pos.lead}</span>
+        </span>
+      </a>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="bento flex items-center gap-4 rounded-block p-5">
+          <span class="icon-tile">
+            <Icon name="monitor" />
+          </span>
+          <p class="font-semibold">Computador, tablet o celular</p>
+        </div>
+        <div class="bento flex items-center gap-4 rounded-block p-5">
+          <span class="icon-tile">
+            <Icon name="check" />
+          </span>
+          <p class="font-semibold">14 días de prueba gratis</p>
+        </div>
+      </div>
+    </Fragment>
   </PageHeader>
 
   <Section labelledby="lista-productos">
     <h2 id="lista-productos" class="sr-only">
       Nuestros productos
     </h2>
-    <Card tone="surface" class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-      <div class="max-w-(--container-prose)">
-        <h3 class="text-2xl sm:text-3xl">
-          <a href={products.pos.path} class="hover:underline">
-            {products.pos.name}
-          </a>
-        </h3>
-        <p class="mt-4 text-lg text-muted">{pos.lead}</p>
-      </div>
-      <div class="flex flex-wrap items-center gap-4">
-        <CTA href={products.pos.path} variant="secondary">
-          Ver lo que hace
-        </CTA>
-        <CTA href={primaryCta.href} external>
-          {primaryCta.longLabel}
-        </CTA>
-      </div>
-    </Card>
+    <div class="grid gap-4 lg:grid-cols-12">
+      <Card size="panel" class="flex flex-col justify-between gap-10 lg:col-span-5">
+        <div>
+          <span class="chip">POS</span>
+          <h3 class="mt-6 text-3xl sm:text-4xl">
+            <a href={products.pos.path} class="hover:underline">
+              {products.pos.name}
+            </a>
+          </h3>
+          <p class="mt-4 text-lg text-muted">{pos.audience.text}</p>
+          <RomboList items={highlights.slice(0, 5)} class="mt-8" />
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <CTA href={products.pos.path} variant="secondary">
+            Ver lo que hace
+          </CTA>
+          <CTA href={primaryCta.href} external>
+            {primaryCta.longLabel}
+          </CTA>
+        </div>
+      </Card>
+      <ScreenCard
+        src={sellScreen}
+        alt="Pantalla de ventas de XASKA POS: buscador por código de barras, categorías, productos con precio y existencias, y el total a cobrar."
+        fit="zoom"
+        sizes="(min-width: 1280px) 1100px, (min-width: 1024px) 88vw, 175vw"
+        class="lg:col-span-7"
+      />
+    </div>
   </Section>
 </BaseLayout>

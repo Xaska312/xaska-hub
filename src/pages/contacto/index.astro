@@ -4,6 +4,8 @@ import Section from '@/components/Section.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import ContactForm from '@/components/ContactForm.astro';
 import CTA from '@/components/CTA.astro';
+import Card from '@/components/Card.astro';
+import Icon from '@/components/Icon.astro';
 import { contact, site, whatsappMessages, whatsappUrl } from '@/config/site';
 import { TURNSTILE_ORIGIN } from '@/lib/turnstile';
 
@@ -23,19 +25,22 @@ Astro.csp.insertDirective(`frame-src ${TURNSTILE_ORIGIN}`);
   <PageHeader
     title="Contacto"
     lead="Escríbenos por el canal que prefieras. Te responde directamente el equipo de XASKA."
+    tone="deep"
+    word="Hola"
   >
-    <aside
-      slot="visual"
-      aria-labelledby="otros-canales"
-      class="rounded-block border border-line bg-surface p-6 sm:p-8"
-    >
+    <aside slot="visual" aria-labelledby="otros-canales" class="flex-1">
       <h2 id="otros-canales" class="sr-only">
         Canales directos
       </h2>
-      <dl class="space-y-7">
-        <div>
-          <dt class="text-sm font-semibold text-muted">WhatsApp, la forma más rápida</dt>
-          <dd class="mt-2 flex flex-wrap items-center justify-between gap-4">
+      <dl class="grid h-full gap-4">
+        <div class="bento flex flex-col justify-between gap-6 rounded-panel p-6 sm:p-8">
+          <dt class="flex items-center gap-4 font-semibold text-muted">
+            <span class="icon-tile">
+              <Icon name="chat" />
+            </span>
+            WhatsApp, la forma más rápida
+          </dt>
+          <dd class="flex flex-wrap items-center justify-between gap-4">
             <span class="text-2xl font-extrabold whitespace-nowrap sm:text-3xl">
               {contact.whatsapp.display}
             </span>
@@ -44,18 +49,26 @@ Astro.csp.insertDirective(`frame-src ${TURNSTILE_ORIGIN}`);
             </CTA>
           </dd>
         </div>
-        <div class="border-t border-line pt-7">
-          <dt class="text-sm font-semibold text-muted">Correo, para propuestas y documentos</dt>
-          <dd class="mt-2">
+        <div class="bento rounded-block p-6">
+          <dt class="flex items-center gap-4 font-semibold text-muted">
+            <span class="icon-tile">
+              <Icon name="mail" />
+            </span>
+            Correo, para propuestas y documentos
+          </dt>
+          <dd class="mt-4">
             <a class="link text-xl font-bold break-all" href={`mailto:${contact.email}`}>
               {contact.email}
             </a>
           </dd>
         </div>
-        <div class="border-t border-line pt-7 text-muted">
-          <dt class="sr-only">Ubicación y horario</dt>
+        <div class="bento flex items-start gap-4 rounded-block p-6 text-muted">
+          <dt class="icon-tile">
+            <Icon name="pin" />
+            <span class="sr-only">Ubicación y horario</span>
+          </dt>
           <dd>
-            <p>{`Estamos en ${site.city}.`}</p>
+            <p class="font-semibold text-ink">{`Estamos en ${site.city}.`}</p>
             {contact.hours && (
               <p class="mt-1">{`Horario de atención: ${contact.hours.charAt(0).toLowerCase()}${contact.hours.slice(1)}`}</p>
             )}
@@ -66,16 +79,36 @@ Astro.csp.insertDirective(`frame-src ${TURNSTILE_ORIGIN}`);
   </PageHeader>
 
   <Section labelledby="formulario">
-    <div class="max-w-2xl">
-      <h2 id="formulario" class="text-2xl sm:text-3xl">
-        Déjanos un mensaje
-      </h2>
-      <p class="mt-4 text-lg text-muted">
-        Cuéntanos qué necesitas y te respondemos al correo que escribas.
-      </p>
-      <div class="mt-8">
-        <ContactForm />
-      </div>
+    <div class="grid gap-4 lg:grid-cols-12">
+      <Card size="panel" class="lg:col-span-8">
+        <h2 id="formulario" class="text-3xl sm:text-4xl">
+          Déjanos un mensaje
+        </h2>
+        <p class="mt-4 text-lg text-muted">
+          Cuéntanos qué necesitas y te respondemos al correo que escribas.
+        </p>
+        <div class="mt-8">
+          <ContactForm />
+        </div>
+      </Card>
+      <Card
+        tone="feature"
+        size="panel"
+        class="flex flex-col justify-between gap-10 self-start lg:col-span-4"
+      >
+        <span class="icon-tile">
+          <Icon name="chat" />
+        </span>
+        <div>
+          <h3 class="text-2xl">¿Prefieres hablar ya?</h3>
+          <p class="mt-3 font-medium">Por WhatsApp te respondemos más rápido, de lunes a sábado.</p>
+          <div class="mt-6">
+            <CTA href={whatsappUrl(whatsappMessages.general)} external>
+              Abrir WhatsApp
+            </CTA>
+          </div>
+        </div>
+      </Card>
     </div>
   </Section>
 </BaseLayout>

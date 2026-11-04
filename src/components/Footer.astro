@@ -1,71 +1,78 @@
 ---
 import Logo from './Logo.astro';
+import Icon from './Icon.astro';
 import { contact, mainNav, products, site, whatsappUrl, whatsappMessages } from '@/config/site';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-line">
-  <div class="mx-auto grid w-full max-w-(--container-page) gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
-    <div>
-      <Logo height={28} />
-      <p class="tagline mt-4 text-sm text-muted">{site.tagline}</p>
-      <p class="mt-6 max-w-xs text-sm text-muted">{site.city}</p>
-    </div>
+<footer class="mt-8 overflow-hidden sm:mt-12">
+  <div class="mx-auto w-full max-w-(--container-page) px-4 sm:px-6 lg:px-8">
+    <div class="bento grid gap-10 rounded-panel p-6 sm:p-10 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+        <Logo height={28} />
+        <p class="tagline mt-4 text-sm text-muted">{site.tagline}</p>
+        <p class="mt-6 flex max-w-xs items-center gap-2 text-sm text-muted">
+          <Icon name="pin" size={18} class="shrink-0" />
+          {site.city}
+        </p>
+      </div>
 
-    <nav aria-label="Pie de página">
-      <h2 class="text-sm font-bold text-ink">Sitio</h2>
-      <ul class="mt-3 space-y-1">
-        {mainNav.map((item) => (
+      <nav aria-label="Pie de página">
+        <h2 class="text-sm font-bold text-ink">Sitio</h2>
+        <ul class="mt-3 space-y-1">
+          {mainNav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="inline-flex min-h-9 items-center text-muted hover:text-ink"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
           <li>
-            <a href={item.href} class="inline-flex min-h-9 items-center text-muted hover:text-ink">
-              {item.label}
+            <a
+              href={products.pos.loginUrl}
+              target="_blank"
+              rel="noopener"
+              class="inline-flex min-h-9 items-center text-muted hover:text-ink"
+            >
+              Entrar a XASKA POS
+              <span class="sr-only">(se abre en una pestaña nueva)</span>
             </a>
           </li>
-        ))}
-        <li>
-          <a
-            href={products.pos.loginUrl}
-            target="_blank"
-            rel="noopener"
-            class="inline-flex min-h-9 items-center text-muted hover:text-ink"
-          >
-            Entrar a XASKA POS
-            <span class="sr-only">(se abre en una pestaña nueva)</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+        </ul>
+      </nav>
 
-    <div>
-      <h2 class="text-sm font-bold text-ink">Contacto</h2>
-      <ul class="mt-3 space-y-1">
-        <li>
-          <a
-            href={whatsappUrl(whatsappMessages.general)}
-            target="_blank"
-            rel="noopener"
-            class="inline-flex min-h-9 items-center text-muted hover:text-ink"
-          >
-            WhatsApp <span class="ms-1 whitespace-nowrap">{contact.whatsapp.display}</span>
-            <span class="sr-only">(se abre en una pestaña nueva)</span>
-          </a>
-        </li>
-        <li>
-          <a
-            href={`mailto:${contact.email}`}
-            class="inline-flex min-h-9 items-center text-muted hover:text-ink"
-          >
-            {contact.email}
-          </a>
-        </li>
-        {contact.hours && <li class="text-muted">{contact.hours}</li>}
-      </ul>
+      <div>
+        <h2 class="text-sm font-bold text-ink">Contacto</h2>
+        <ul class="mt-3 space-y-1">
+          <li>
+            <a
+              href={whatsappUrl(whatsappMessages.general)}
+              target="_blank"
+              rel="noopener"
+              class="inline-flex min-h-9 items-center text-muted hover:text-ink"
+            >
+              WhatsApp <span class="ms-1 whitespace-nowrap">{contact.whatsapp.display}</span>
+              <span class="sr-only">(se abre en una pestaña nueva)</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href={`mailto:${contact.email}`}
+              class="inline-flex min-h-9 items-center text-muted hover:text-ink"
+            >
+              {contact.email}
+            </a>
+          </li>
+          {contact.hours && <li class="text-sm text-muted">{contact.hours}</li>}
+        </ul>
+      </div>
     </div>
-  </div>
 
-  <div class="border-t border-line">
-    <div class="mx-auto flex w-full max-w-(--container-page) flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-6 text-sm text-muted sm:px-6 lg:px-8">
+    <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-2 py-6 text-sm text-muted">
       <p>{`© ${year} ${site.name}`}</p>
       <ul class="flex flex-wrap gap-x-6">
         <li>
@@ -81,6 +88,29 @@ const year = new Date().getFullYear();
       </ul>
     </div>
   </div>
+
+  {/* Firma de la marca: el nombre oficial (archivo de public/brand, sin modificar) en grande,
+      cortado por el borde inferior, como el "POS" del ingreso al POS. Decorativo. */}
+  <div class="signature mx-auto max-w-(--container-page) px-4 sm:px-6 lg:px-8" aria-hidden="true">
+    <img
+      class="signature-light"
+      src="/brand/svg/xaska-nombre.svg"
+      alt=""
+      width="379"
+      height="73"
+      loading="lazy"
+      decoding="async"
+    />
+    <img
+      class="signature-dark"
+      src="/brand/svg/xaska-nombre-blanco.svg"
+      alt=""
+      width="379"
+      height="73"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
 </footer>
 
 <style>
@@ -88,5 +118,33 @@ const year = new Date().getFullYear();
   .tagline {
     text-transform: uppercase;
     letter-spacing: 0.22em;
+  }
+
+  .signature {
+    height: clamp(3.5rem, 11vw, 10rem);
+    overflow: hidden;
+    opacity: 0.1;
+  }
+  .signature img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .signature-dark {
+    display: none !important;
+  }
+  :global([data-theme='dark']) .signature-light {
+    display: none !important;
+  }
+  :global([data-theme='dark']) .signature-dark {
+    display: block !important;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) .signature-light {
+      display: none !important;
+    }
+    :global(:root:not([data-theme])) .signature-dark {
+      display: block !important;
+    }
   }
 </style>

@@ -1,21 +1,36 @@
 ---
 /**
- * Bloque con borde para agrupar contenido relacionado (un servicio, un plan, un producto).
- * Se usa con moderación: no todo va en tarjetas.
+ * Tarjeta bento: el bloque básico del estilo de XASKA POS.
+ * - tone "default": superficie con borde fino.
+ * - tone "feature": degradado índigo claro (la tarjeta destacada, como "Vender" en el POS).
+ * - tone "deep": índigo profundo (como el panel de ingreso al POS).
+ * - size "panel": radio y relleno mayores, para bloques grandes.
  */
 interface Props {
-  as?: 'article' | 'div' | 'li' | undefined;
-  tone?: 'default' | 'surface' | undefined;
+  as?: 'article' | 'div' | 'li' | 'aside' | 'section' | undefined;
+  tone?: 'default' | 'feature' | 'deep' | undefined;
+  size?: 'card' | 'panel' | undefined;
   class?: string | undefined;
+  [key: `aria-${string}`]: string | undefined;
+  id?: string | undefined;
 }
 
-const { as: Tag = 'article', tone = 'default', class: className } = Astro.props;
+const {
+  as: Tag = 'article',
+  tone = 'default',
+  size = 'card',
+  class: className,
+  ...rest
+} = Astro.props;
 ---
 
 <Tag
+  {...rest}
   class:list={[
-    'rounded-block border border-line p-6 sm:p-8',
-    tone === 'surface' ? 'bg-surface' : 'bg-bg',
+    tone === 'default' && 'bento',
+    tone === 'feature' && 'on-feature',
+    tone === 'deep' && 'on-deep',
+    size === 'panel' ? 'rounded-panel p-6 sm:p-10' : 'rounded-block p-6 sm:p-8',
     className,
   ]}
 >

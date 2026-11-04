@@ -18,20 +18,20 @@ function isCurrent(href: string): boolean {
 }
 ---
 
-<header class="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur-sm">
+<header class="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
   <div class="mx-auto flex h-16 w-full max-w-(--container-page) items-center gap-2 px-4 sm:px-6 lg:h-20 lg:px-8">
     <a href="/" class="mr-auto inline-flex py-3 pr-3" aria-label="XASKA, ir al inicio">
       <Logo height={28} class="shrink-0" />
     </a>
 
     <nav aria-label="Principal" class="hidden lg:block">
-      <ul class="flex items-center gap-1">
+      <ul class="flex items-center gap-1 rounded-full border border-line bg-surface p-1">
         {mainNav.map((item) => (
           <li>
             <a
               href={item.href}
               aria-current={isCurrent(item.href) ? 'page' : undefined}
-              class="nav-link inline-flex min-h-11 items-center rounded-control px-3 text-muted hover:text-ink"
+              class="nav-link inline-flex min-h-10 items-center rounded-full px-4 text-[0.9375rem] font-medium text-muted transition-colors hover:text-ink"
             >
               {item.label}
             </a>
@@ -88,15 +88,18 @@ function isCurrent(href: string): boolean {
     </div>
   </div>
 
-  <div id="mobile-menu" class="hidden border-t border-line bg-bg lg:hidden" data-menu-panel>
-    <nav aria-label="Principal (móvil)" class="mx-auto max-w-(--container-page) px-4 py-4 sm:px-6">
-      <ul class="flex flex-col">
+  <div id="mobile-menu" class="hidden px-4 pb-4 sm:px-6 lg:hidden" data-menu-panel>
+    <nav
+      aria-label="Principal (móvil)"
+      class="bento mx-auto max-w-(--container-page) rounded-panel p-3 shadow-float"
+    >
+      <ul class="flex flex-col gap-1">
         {mainNav.map((item) => (
           <li>
             <a
               href={item.href}
               aria-current={isCurrent(item.href) ? 'page' : undefined}
-              class="nav-link flex min-h-12 items-center text-lg text-ink"
+              class="nav-link flex min-h-12 items-center rounded-control px-4 text-lg font-semibold text-ink"
             >
               {item.label}
             </a>
@@ -104,7 +107,7 @@ function isCurrent(href: string): boolean {
         ))}
       </ul>
       <div class="sm:hidden">
-        <CTA href={primaryCta.href} external class="mt-4 w-full">
+        <CTA href={primaryCta.href} external class="mt-2 w-full">
           {primaryCta.label}
         </CTA>
       </div>
@@ -113,18 +116,11 @@ function isCurrent(href: string): boolean {
 </header>
 
 <style>
+  /* Página actual: la "píldora" se rellena, como la pestaña activa del POS. */
   .nav-link[aria-current='page'] {
-    color: var(--c-text);
-    font-weight: 600;
-  }
-  .nav-link[aria-current='page']::before {
-    content: '';
-    display: inline-block;
-    width: 0.4rem;
-    height: 0.4rem;
-    margin-right: 0.5rem;
-    background-color: var(--c-accent);
-    transform: rotate(45deg);
+    background-color: var(--c-accent-soft);
+    color: var(--c-accent);
+    font-weight: 700;
   }
 </style>
 
