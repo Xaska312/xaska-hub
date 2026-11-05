@@ -1,6 +1,6 @@
 seo:
   title: XASKA POS
-  description: Sistema de punto de venta en la web para comercios en Colombia. Ventas con código de barras, inventario por sucursal, tallas y colores, caja con arqueo. Prueba gratis de 14 días.
+  description: Sistema de punto de venta en la web para comercios, restaurantes y droguerías en Colombia. Ventas con código de barras, inventario por sucursal, tallas y colores, caja con arqueo. Prueba gratis de 14 días.
 # Lema: el mismo de las tarjetas impresas. La última palabra sale resaltada.
 slogan:
   - Vende.
@@ -23,7 +23,7 @@ problems:
 
 audience:
   title: Para quién es
-  text: Para comercios de barrio y de centro comercial que quieren dejar el cuaderno o el programa viejo, y para restaurantes que atienden a la mesa. Funciona especialmente bien en tiendas de ropa y calzado, porque maneja tallas y colores, y también en minimercados, papelerías y otros negocios con mostrador.
+  text: Para comercios de barrio y de centro comercial que quieren dejar el cuaderno o el programa viejo, para restaurantes que atienden a la mesa y para droguerías, con fórmulas, lotes y vencimientos. Funciona especialmente bien en tiendas de ropa y calzado, porque maneja tallas y colores, y también en minimercados, papelerías y otros negocios con mostrador.
 
 # Capturas de un negocio de prueba (sin datos de clientes reales). Archivos en src/assets/pos/.
 screens:
@@ -59,6 +59,7 @@ capabilities:
         - Precio libre para lo que no tiene precio fijo
         - Pausar una venta y retomarla después
         - Tiquete imprimible de 58 u 80 mm
+        - Impresión directa en la térmica y apertura del cajón monedero
         - Pantalla de ventas que funciona en el celular
     - title: Clientes
       items:
@@ -73,6 +74,8 @@ capabilities:
         - Carga de productos desde una hoja de cálculo
         - Etiquetas de báscula para productos por peso
         - Aviso de productos que no se venden
+        - Compras con la factura del proveedor y cuentas por pagar
+        - Traslados de inventario entre sedes
     - title: Caja
       items:
         - Apertura y cierre de caja con arqueo
@@ -93,6 +96,15 @@ capabilities:
         - Cobro de la cuenta por partes y propina voluntaria con su reparto
         - Impuesto al consumo (INC) en las categorías que lo llevan
         - Roles de mesero y cocina
+        - Mapa de mesas y caja por zona
+    - title: Droguerías
+      items:
+        - Ficha del medicamento con el catálogo CUM del INVIMA
+        - Lotes y vencimientos, para vender primero lo que vence primero
+        - Venta con fórmula médica, confirmada por quien tiene el permiso
+        - Registro de temperatura y humedad del local y la nevera
+        - Eventos adversos e informe para la visita de la Secretaría de Salud
+        - Roles de director técnico y auxiliar de farmacia
 
 # Factura electrónica: solo aparece con E_INVOICING en true (src/config/site.ts).
 # Textos provisionales. Antes de poner la bandera en true, completarlos con los documentos que
@@ -106,19 +118,54 @@ eInvoicing:
 
 plans:
   title: Planes
-  lead: Hay dos planes, Básico y Pro. Los dos empiezan con 14 días de prueba gratis.
+  lead: Tres planes, según el tamaño de tu negocio. Todos empiezan con 14 días de prueba gratis, sin tarjeta.
   items:
-    - name: Básico
-      price: $49.900 al mes
+    - name: Emprende
+      price: $34.900
+      annual: $349.000 al año
+      limits: 1 sede, 1 caja y 2 usuarios
       features:
-        - 1 sucursal
-        - Hasta 3 usuarios
-    - name: Pro
-      price: $99.900 al mes
+        - Vender, caja, inventario y reportes
+        - Fiado y clientes
+    - name: Negocio
+      price: $69.900
+      annual: $699.000 al año
+      limits: 1 sede, 3 cajas y 6 usuarios
       features:
-        - Hasta 5 sucursales
-        - Hasta 15 usuarios
-  note: Los dos planes incluyen todas las funciones y soporte por WhatsApp y por correo (soporte@xaska.co).
+        - Todo lo de Emprende
+        - Pedidos, cotizaciones, tallas y colores, y báscula
+        - Compras y cuentas por pagar
+        - Impresión directa en la térmica y cajón monedero
+        - El módulo de tu sector, restaurante o droguería
+    - name: Empresa
+      price: $129.900
+      annual: $1.299.000 al año
+      limits: Hasta 5 sedes, con cajas y usuarios sin límite
+      features:
+        - Todo lo de Negocio
+        - Auditoría
+        - Caja por zona
+        - Traslados entre sedes
+  comparison:
+    title: Compara los planes
+    rows:
+      - label: Precio al mes
+        values: [$34.900, $69.900, $129.900]
+      - label: Precio al año (pagas 10 meses)
+        values: [$349.000, $699.000, $1.299.000]
+      - label: Sedes / cajas / usuarios
+        values: [1 / 1 / 2, 1 / 3 / 6, 5 / sin límite / sin límite]
+      - label: Vender, caja, inventario, fiado, clientes y reportes
+        values: ['sí', 'sí', 'sí']
+      - label: Pedidos, cotizaciones, tallas y colores, y báscula
+        values: ['no', 'sí', 'sí']
+      - label: Compras y cuentas por pagar, impresión directa y cajón
+        values: ['no', 'sí', 'sí']
+      - label: 'Módulo del sector: restaurante (mesas, cocina, adiciones y propinas) o droguería (fórmulas, lotes, temperatura e informe)'
+        values: ['no', 'sí', 'sí']
+      - label: Auditoría, caja por zona y traslados entre sedes
+        values: ['no', 'no', 'sí']
+  note: El plan anual vale 10 meses. Todos los planes incluyen soporte por WhatsApp y por correo (soporte@xaska.co).
   equipment:
     text: '¿Necesitas los equipos? Te armamos el punto de venta completo: computador, lector de código de barras, impresora térmica, cajón monedero y UPS, instalados y con garantía.'
     linkLabel: Ver equipos y computadores

@@ -51,11 +51,18 @@ El formulario de contacto necesita el Worker, así que solo funciona con `pnpm p
 
 - **Datos de la empresa, contacto, enlaces y banderas:** `src/config/site.ts`. Ninguna página repite estos datos.
 - **Colores, tipografía, espaciado, radios y sombras:** `src/styles/global.css` (tokens). La tabla de contrastes está en `docs/DECISIONES.md`.
+- **Estilo bento (el de XASKA POS):** las piezas que arman cada página están en `src/components/`:
+  - `PageHeader.astro`: encabezado con la tarjeta grande (`tone="feature"`, degradado índigo, o `tone="deep"`, índigo profundo), la palabra gigante opcional (`word="POS"`) y las tarjetas de al lado (slot `visual`).
+  - `Card.astro`: tarjeta (`tone` default, feature o deep; `size="panel"` para bloques grandes).
+  - `ScreenCard.astro`: captura de XASKA POS en tarjeta, completa (`fit="full"`) o con acercamiento (`fit="zoom"`).
+  - `Icon.astro`: íconos de trazo. El ícono de cada servicio se elige en `src/lib/service-icons.ts`.
+  - `Steps.astro`, `Faq.astro`, `RomboList.astro`, `CTA.astro` y `WhatsAppButton.astro`.
+- **Capturas de XASKA POS:** `src/assets/pos/` (sin datos de clientes reales; las del encabezado, al doble de resolución).
 - **Tipografía:** Plus Jakarta Sans variable (la misma de XASKA POS), en `src/assets/fonts/plus-jakarta-sans/` y declarada en `astro.config.mjs`. Títulos en 800, subtítulos 700, botones 600 y texto 400.
 - **Logo y favicons:** `public/brand/` (archivos oficiales, sin modificar).
 - **Páginas:** `src/pages/`. **Componentes:** `src/components/`. **Plantilla base:** `src/layouts/BaseLayout.astro`.
 - **Formulario de contacto:** `src/components/ContactForm.astro` (pantalla), `src/lib/contact.ts` (reglas de validación) y `worker/index.ts` (servidor: Turnstile y Resend).
-- **Textos legales:** `src/content/legal/` (cuando el abogado los apruebe, cambia `reviewed: false` por `true` y borra la línea de borrador).
+- **Textos legales:** `src/content/legal/` (revisados por el abogado: `reviewed: true`). Si cambias uno, actualiza su fecha `updated`.
 - **Cabeceras de seguridad:** `public/_headers` (la CSP de scripts y estilos la genera Astro en cada página; ver `astro.config.mjs`).
 - **Textos del sitio:** `src/content/` (ver "Cómo editar textos").
 - **SEO:** el título y la descripción de cada página están en su archivo de `src/content/` (campo `seo`). Open Graph, Twitter Card, canonical y el JSON-LD de la organización los pone `BaseLayout.astro`; los datos estructurados se arman en `src/lib/structured-data.ts`. La imagen para redes es `public/og/xaska-og.png` (`pnpm og:image`).
@@ -80,30 +87,24 @@ El formulario de contacto necesita el Worker, así que solo funciona con `pnpm p
 
 ## Banderas (`src/config/site.ts`)
 
-| Bandera         | Valor   | Efecto                                                                                                                                             |
-| --------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POS_LAUNCHED`  | `false` | Botón principal "Pedir una demo" por WhatsApp. En `true` pasa a "Probar gratis" hacia el registro de XASKA POS.                                    |
-| `SHOW_HARDWARE` | `false` | Línea de hardware oculta: no hay `/hardware`, ni enlaces, ni opción en el formulario, ni entrada en el sitemap.                                    |
-| `ANALYTICS`     | `false` | Cloudflare Web Analytics apagada. En `true` y con la variable `PUBLIC_CF_ANALYTICS_TOKEN`, carga el script sin cookies y abre la CSP solo para él. |
+| Bandera         | Valor   | Efecto                                                                                                                                                                          |
+| --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POS_LAUNCHED`  | `false` | Botón principal "Pedir una demo" por WhatsApp. En `true` pasa a "Probar gratis" hacia el registro de XASKA POS.                                                                 |
+| `SHOW_HARDWARE` | `false` | Línea de hardware oculta: no hay `/hardware`, ni enlaces, ni opción en el formulario, ni entrada en el sitemap.                                                                 |
+| `ANALYTICS`     | `true`  | Cloudflare Web Analytics, sin cookies. Solo carga si además existe la variable de build `PUBLIC_CF_ANALYTICS_TOKEN` (está en Cloudflare; en tu PC y en la CI no).               |
+| `E_INVOICING`   | `false` | La página de XASKA POS dice que todavía no emite factura electrónica. En `true` muestra los textos de `eInvoicing` (`src/content/pos/index.yaml`), que hay que completar antes. |
 
-## Despliegue en Cloudflare (lo haces tú)
+## Cómo se publica un cambio
 
-La guía completa, con GitHub, Cloudflare, DNS, dominio y Search Console, está en `docs/GUIA-PUBLICACION.md`. Resumen:
+El sitio está publicado en https://xaska.co. Cloudflare lo construye solo desde GitHub; no se sube nada a mano.
 
-Primero sube el proyecto a un repositorio de GitHub llamado `xaska-hub`. Después:
+1. Trabaja en la rama `desarrollo`. Revisa en tu PC con `pnpm dev` y corre `pnpm verify` (debe terminar en verde).
+2. Sube: `git add -A`, `git commit -m "..."` y `git push`. Lo que llega a `desarrollo` es una versión de prueba: no cambia `xaska.co`.
+3. Publica: en GitHub, **Pull requests → New pull request**, con **base `main`** y **compare `desarrollo`**. Cuando la CI quede en verde, **Merge pull request**. (O en PowerShell: `git checkout main`, `git pull`, `git merge desarrollo`, `git push`, `git checkout desarrollo`.)
+4. En Cloudflare (**Workers & Pages → xaska-hub → Deployments**) aparece el despliegue de `main`; en unos 2 minutos está en `xaska.co`.
+5. **Volver atrás:** en esa misma lista, en una versión anterior, **··· → Deploy version**.
 
-1. Entra a https://dash.cloudflare.com → **Workers & Pages** → **Create**.
-2. Elige **Import a repository** y conecta tu cuenta de GitHub; selecciona `xaska-hub`.
-3. Configura:
-   - **Project name:** `xaska-hub` (debe coincidir con `name` en `wrangler.jsonc`).
-   - **Build command:** `pnpm build`
-   - **Deploy command:** `pnpm exec wrangler deploy`
-   - **Non-production branch deploy command:** `pnpm exec wrangler versions upload` (crea una previsualización por rama o PR).
-   - **Production branch:** `main`.
-4. Guarda y despliega. Cloudflare usa la versión de Node de `.nvmrc`.
-5. Comprueba la URL `*.workers.dev` que te da Cloudflare.
-
-El dominio `xaska.co` se conecta en la fase 4, sin tocar los registros de `app.xaska.co` ni los del correo.
+El build de `main` es de producción: falla a propósito si queda algún `PENDIENTE:` o `[BORRADOR]`. Cómo se montó todo (GitHub, Cloudflare, DNS, dominio, Search Console) está en `docs/GUIA-PUBLICACION.md`.
 
 ## Lighthouse en tu PC
 
@@ -111,6 +112,8 @@ El dominio `xaska.co` se conecta en la fase 4, sin tocar los registros de `app.x
 
 ## Documentación
 
-- `docs/DECISIONES.md`: decisiones técnicas y de diseño, con motivo y alternativa descartada.
-- `docs/PENDIENTES.md`: lo que falta aportar.
+- `docs/ROADMAP-Y-TRASPASO.md`: estado del proyecto, lo que falta y el texto para seguir en otra conversación.
+- `docs/DECISIONES.md`: decisiones técnicas y de diseño, con motivo y alternativa descartada, y la tabla de contrastes.
+- `docs/PENDIENTES.md`: lo que falta aportar o decidir.
+- `docs/GUIA-PUBLICACION.md`: cómo se publicó (GitHub, Cloudflare, DNS, dominio, Search Console).
 - `docs/GUIA-CUENTAS.md`: pasos para Turnstile, Resend y el límite de envíos.

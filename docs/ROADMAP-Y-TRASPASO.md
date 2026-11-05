@@ -1,6 +1,6 @@
 # HUB de XASKA — roadmap y prompt de traspaso
 
-Actualizado: 2026-11-02. **El sitio está publicado en https://xaska.co desde el 2026-11-02.**
+Actualizado: 2026-11-05. **El sitio está publicado en https://xaska.co desde el 2026-11-02.**
 
 Este documento sirve para seguir el proyecto desde otra conversación o cuenta de Claude. Tiene dos partes:
 
@@ -20,6 +20,8 @@ Este documento sirve para seguir el proyecto desde otra conversación o cuenta d
 | 2 — Contacto y legal                 | Formulario con Turnstile + Resend (Worker), campo trampa, límite por IP, páginas `/legal/privacidad` y `/legal/terminos` | ✅ Cerrada el 2026-10-31: probada con Turnstile y Resend reales en la versión de prueba de Cloudflare; textos legales revisados por el abogado                                                                                                                                       |
 | 3 — SEO, rendimiento y accesibilidad | Metadatos, JSON-LD, imagen Open Graph, sitemap, analítica sin cookies, Lighthouse ≥ 95, revisión con teclado             | ✅ Aprobada el 2026-10-31 (revisión con teclado hecha por Daniel; Lighthouse 98–100 sin antivirus)                                                                                                                                                                                   |
 | 4 — Publicación                      | GitHub, Cloudflare, DNS a Cloudflare, dominio `xaska.co`, `www` → 301, Search Console                                    | ✅ Publicada el 2026-11-02 en https://xaska.co: DNS en Cloudflare, `www` → 301, cabeceras comprobadas, analítica, Search Console con sitemap y PageSpeed 100 en las cuatro categorías. Quedan: DNSSEC con Cloudflare (D5), apagar `workers.dev` y probar el formulario en producción |
+| Rediseño bento                       | Todo el sitio con el estilo de XASKA POS (boceto 1 de 6), tarjetas, encabezados nuevos, capturas sin cortes en celular   | ✅ Hecho el 2026-11-04 y publicado. Ver `docs/DECISIONES.md`                                                                                                                                                                                                                         |
+| Planes por nivel                     | Emprende, Negocio y Empresa, tabla para comparar, módulo de droguerías y funciones nuevas del POS                        | ✅ Hecho el 2026-11-05 (por publicar). Ver `docs/DECISIONES.md`                                                                                                                                                                                                                      |
 | Después                              | Blog, casos de éxito, estado del servicio, documentación, empleo, portal de clientes, inglés                             | ⏳                                                                                                                                                                                                                                                                                   |
 
 ### Fase 2 — cerrada
@@ -28,24 +30,7 @@ Este documento sirve para seguir el proyecto desde otra conversación o cuenta d
 - [x] Cuentas de Turnstile y Resend creadas; dominio `envios.xaska.co` verificado.
 - [x] Textos legales revisados por el abogado.
 
-### Para cerrar la fase 3 (te toca a ti)
-
-- [x] **Instalar y verificar en tu PC** (PowerShell, en la carpeta del proyecto):
-  - `pnpm install` (hay dependencias nuevas: `@astrojs/sitemap`, `@axe-core/playwright` y `lighthouse`).
-  - `pnpm verify` debe terminar en verde.
-  - `pnpm lighthouse` muestra la tabla de notas por página (meta ≥ 95) y deja los informes en `lighthouse-report/`.
-- [ ] **Mirar la imagen para redes:** `public/og/xaska-og.png`. Si quieres otro diseño, dime qué cambiar.
-- [x] **Revisión con teclado** (hecha el 2026-10-31: Tab y Shift+Tab en orden) (`pnpm preview`, http://localhost:8787, solo con el teclado: Tab, Shift+Tab, Enter, Espacio, Escape):
-  - En cada página, el primer Tab muestra "Saltar al contenido" y Enter lleva al contenido.
-  - El foco se ve siempre (contorno índigo) y avanza en el orden en que se lee la página.
-  - Menú móvil (ventana angosta): se abre con Enter, se recorre con Tab, se cierra con Escape y el foco vuelve al botón.
-  - Selector de tema: cambia con Enter o Espacio.
-  - Preguntas frecuentes de XASKA POS: se abren y cierran con Enter.
-  - Formulario de contacto: se llena y se envía sin ratón; con errores, el foco va al primer campo con error; Turnstile no atrapa el foco.
-  - En tema claro y en oscuro.
-- [x] **Aprobar la fase 3.** Los dos textos nuevos de la política de privacidad sobre Cloudflare Web Analytics (secciones 5 y 9) entran en la revisión del abogado.
-
-### Fase 3 — qué se hizo
+### Fase 3 — qué se hizo (cerrada el 2026-10-31)
 
 - Open Graph y Twitter Card en todas las páginas, con la imagen `public/og/xaska-og.png` (1200×630, logo oficial sin modificar; se regenera con `pnpm og:image`).
 - Canonical corregido en la portada (antes salía `/index`) y título de portada "XASKA | Soluciones tecnológicas".
@@ -67,11 +52,18 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
 - **Search Console:** propiedad de dominio `xaska.co` verificada (TXT puesto por Cloudflare; no se borra) y sitemap `https://xaska.co/sitemap-index.xml` enviado.
 - **CI:** hace un build de producción estricto (con las claves públicas) y otro de prueba para las pruebas.
 
+### Rediseño y planes (después de publicar)
+
+- **Rediseño bento (2026-11-04):** se hicieron 6 bocetos del inicio (en un lienzo de diseño en Claude) y Daniel eligió el 1, "Bento". Se aplicó a todas las páginas. Componentes nuevos: `Card`, `PageHeader`, `ScreenCard`, `Icon`; se eliminaron `ScreenShowcase` y `Convergence`. Pruebas: 149 en verde; Lighthouse 100 en casi todo (Contacto 96 en buenas prácticas, por Turnstile).
+- **Planes por nivel (2026-11-05):** tomados del repositorio del POS (decisión 288). Ver `docs/DECISIONES.md`.
+- **Cómo se publica un cambio:** README, sección "Cómo se publica un cambio".
+
 ### Lo que falta
 
-- [ ] DNSSEC con Cloudflare (guía, D5).
-- [ ] Apagar la dirección `workers.dev` (guía, F).
-- [ ] Probar el formulario en https://xaska.co/contacto.
+- [ ] Confirmar DNSSEC con Cloudflare (guía, D5).
+- [ ] Confirmar que se apagó la dirección `workers.dev` (guía, F).
+- [ ] Confirmar una prueba del formulario en https://xaska.co/contacto.
+- [ ] Opcional: revisar la imagen para redes (`public/og/xaska-og.png`); se hizo antes del rediseño.
 - [ ] **Factura electrónica:** cuando salga en XASKA POS, completar `eInvoicing` en `src/content/pos/index.yaml` (documentos, proveedor, costo y cómo se activa) y poner `E_INVOICING: true`.
 - [ ] Nombre definitivo de la línea de hardware y si se incluye (hoy oculta).
 - [ ] `POS_LAUNCHED: true` cuando el registro del POS ya no exija código de activación.
@@ -92,7 +84,7 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
 ### Texto para pegar
 
 ```text
-Hola. Vamos a continuar el sitio corporativo de mi empresa, XASKA (xaska.co). Las fases 0 a 4 están cerradas: el sitio está publicado en https://xaska.co desde el 2026-11-02. Te adjunto el proyecto completo (o tienes la carpeta conectada) y el prompt maestro original (PROMPT-MAESTRO-HUB.md). Antes de escribir código, lee estos archivos del proyecto en este orden:
+Hola. Vamos a continuar el sitio corporativo de mi empresa, XASKA (xaska.co). Las fases 0 a 4 están cerradas: el sitio está publicado en https://xaska.co desde el 2026-11-02, con el estilo bento de XASKA POS desde el 2026-11-04. Te adjunto el proyecto completo (o tienes la carpeta conectada) y el prompt maestro original (PROMPT-MAESTRO-HUB.md). Antes de escribir código, lee estos archivos del proyecto en este orden:
 
 1. docs/ROADMAP-Y-TRASPASO.md (estado y lo que falta)
 2. docs/DECISIONES.md (decisiones técnicas y de diseño ya tomadas; respétalas)
@@ -101,7 +93,7 @@ Hola. Vamos a continuar el sitio corporativo de mi empresa, XASKA (xaska.co). La
 
 Contexto mío:
 - Soy Daniel Mejía, de Ibagué (Colombia). Trabajo en Windows con PowerShell. XASKA está en proceso de formalización: hoy opero como persona natural. Nunca escribas "S.A.S.", NIT ni razón social.
-- Nuestro producto es XASKA POS (https://app.xaska.co), un sistema de punto de venta en la web, en producción en un servidor de Contabo. Este proyecto NO toca app.xaska.co (ni su código, ni su DNS, ni sus cabeceras). El código del POS es público: https://github.com/Xaska312/sistema-facturacion-pos (revísalo si necesitas confirmar funciones; no inventes).
+- Nuestro producto es XASKA POS (https://app.xaska.co), un sistema de punto de venta en la web, en producción en un servidor de Contabo. Este proyecto NO toca app.xaska.co (ni su código, ni su DNS, ni sus cabeceras). El código del POS está en el repositorio privado `Xaska312/sistema-facturacion-pos` (copia local en `C:\Users\danii\Documents\GitHub\Pos-Hibrid-Dan`; pídeme acceso a esa carpeta). Su README y su `docs/DECISIONES.md` son la fuente de funciones, planes y precios: no inventes.
 - El dominio está registrado en Spaceship y su DNS está en Cloudflare. `app` y los registros del correo (soporte@xaska.co en Spacemail, envios.xaska.co en Resend) van en "DNS only"; no los toques.
 - Respondes en español de Colombia, claro y práctico. Tuteo.
 
@@ -112,7 +104,7 @@ Cómo está hecho el sitio (no lo cambies sin preguntarme):
 - CSP generada por Astro (security.csp) con hashes, sin unsafe-inline en scripts. Solo /contacto permite challenges.cloudflare.com (Astro.csp, volviendo a incluir 'self'). frame-ancestors y el resto de cabeceras van en public/_headers. HSTS sin includeSubDomains ni preload.
 - Banderas en site.ts: POS_LAUNCHED=false (el botón principal es "Pedir una demo" por WhatsApp, porque el registro del POS exige un código de activación), SHOW_HARDWARE=false (no se genera /hardware), ANALYTICS=true (Cloudflare Web Analytics) y E_INVOICING=false (la página dice que todavía no emite factura electrónica).
 - Marca: Noche #111827, Índigo #4F46E5 (sobre claro), Índigo claro #818CF8 (sobre oscuro). Logo oficial en public/brand/ sin modificar; no se redibuja ni se reescribe con texto. Plus Jakarta Sans variable (400–800) autoalojada, la misma letra de XASKA POS; títulos en 800, subtítulos 700, botones 600, texto 400. El motivo gráfico es el rombo, con moderación. Estilo bento, el de XASKA POS: tarjetas redondeadas, tarjeta destacada en degradado índigo y paneles en índigo profundo (componentes Card, PageHeader y ScreenCard). Contraste WCAG 2.2 AA (tabla en DECISIONES.md).
-- Contenido aprobado: misión = opción 2, visión = opción 1. Planes Básico $49.900/mes (1 sucursal, 3 usuarios) y Pro $99.900/mes (5 sucursales, 15 usuarios), ambos con todas las funciones; prueba gratis de 14 días sin tarjeta; estoy excluido de IVA (no se menciona IVA). No uses la palabra "facturación" para describir el producto, y no digas ni insinúes que emite factura electrónica DIAN.
+- Contenido aprobado: misión = opción 2, visión = opción 1. Planes Emprende $34.900/mes, Negocio $69.900/mes y Empresa $129.900/mes (el año vale 10 meses; detalle en DECISIONES.md, "Planes por nivel"); prueba gratis de 14 días sin tarjeta; estoy excluido de IVA (no se menciona IVA). No uses la palabra "facturación" para describir el producto, y no digas ni insinúes que emite factura electrónica DIAN.
 - Prohibido inventar clientes, testimonios, cifras, calificaciones, equipo o años de experiencia.
 
 Cómo trabajamos:
