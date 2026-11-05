@@ -150,7 +150,23 @@ const pos = defineCollection({
     plans: z.object({
       title: text,
       lead: text,
-      items: z.array(z.object({ name: text, price: text, features: z.array(text) })).length(2),
+      items: z
+        .array(
+          z.object({
+            name: text,
+            /** Precio mensual sin "al mes" (la página lo agrega), p. ej. "$34.900". */
+            price: text,
+            annual: text,
+            limits: text,
+            features: z.array(text).min(1),
+          }),
+        )
+        .length(3),
+      /** Tabla para comparar: en `values`, "sí" y "no" se muestran como íconos. */
+      comparison: z.object({
+        title: text,
+        rows: z.array(z.object({ label: text, values: z.array(text).length(3) })).min(1),
+      }),
       note: text,
       /** Invitación a comprar los equipos con XASKA (servicio "Equipos y computadores"). */
       equipment: z.object({ text: text, linkLabel: text }),

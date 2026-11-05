@@ -2,7 +2,7 @@
 
 Pasos para publicar el hub en `xaska.co`. Todo lo hace Daniel con su cuenta. Los pasos van en orden: cada etapa supone que la anterior quedó bien.
 
-> **Estado:** publicado el 2026-11-02. Faltan D5 (DNSSEC) y apagar `workers.dev` (F, paso 7).
+> **Estado:** publicado el 2026-11-02. Por confirmar: D5 (DNSSEC) y apagar `workers.dev` (F, paso 7). Para publicar cambios de ahora en adelante, mira la sección "Cómo se publica un cambio" del README.
 
 > **Reglas de seguridad**
 >

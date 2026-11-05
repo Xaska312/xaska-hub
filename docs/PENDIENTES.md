@@ -11,7 +11,7 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
 
 - [x] Horario de atención (lunes a sábado, 8:00 a. m. a 6:00 p. m.).
 - [x] Botón principal: "Pedir una demo" por WhatsApp. Condiciones de la prueba tomadas del repositorio del POS.
-- [x] Planes Básico ($49.900) y Pro ($99.900) publicados.
+- [x] Planes por nivel publicados: Emprende ($34.900), Negocio ($69.900) y Empresa ($129.900), según el POS (2026-11-05).
 - [x] Respuesta sobre DIAN en las preguntas frecuentes ("Todavía no").
 - [x] Capturas de XASKA POS sin datos de clientes reales.
 - [x] Bio y foto de Daniel Mejía.
@@ -25,7 +25,7 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
 - [x] Formulario probado con Turnstile y Resend reales (2026-10-31).
 - [x] Mover el DNS a Cloudflare (2026-11-02).
 - [x] Publicado en `xaska.co` con Search Console (2026-11-02).
-- [ ] DNSSEC con Cloudflare y apagar `workers.dev` (`docs/GUIA-PUBLICACION.md`, D5 y F).
+- [ ] Confirmar DNSSEC con Cloudflare, `workers.dev` apagado y el formulario probado en `xaska.co` (`docs/GUIA-PUBLICACION.md`, D5 y F).
 - [ ] Factura electrónica en XASKA POS: cuando salga, completar `eInvoicing` en `src/content/pos/index.yaml` y poner `E_INVOICING: true`.
 
 ## Marcadores en el código

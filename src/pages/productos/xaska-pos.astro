@@ -97,7 +97,7 @@ const faqItems = faq.items.map((item) =>
             </span>
             <span>
               <span class="block text-sm text-muted">Planes desde</span>
-              <span class="block text-xl font-extrabold">{basicPlan.price}</span>
+              <span class="block text-xl font-extrabold">{`${basicPlan.price} al mes`}</span>
             </span>
           </span>
           <Icon name="arrow" class="text-muted" />
@@ -212,15 +212,73 @@ const faqItems = faq.items.map((item) =>
       {pos.plans.title}
     </h2>
     <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{pos.plans.lead}</p>
-    <ul class="mt-8 grid gap-4 md:grid-cols-2">
+    <ul class="mt-8 grid gap-4 lg:grid-cols-3">
       {pos.plans.items.map((plan, index) => (
-        <Card as="li" tone={index === 1 ? 'deep' : 'default'} size="panel">
+        <Card as="li" tone={index === 1 ? 'deep' : 'default'} size="panel" class="flex flex-col">
           <h3 class="text-xl">{plan.name}</h3>
-          <p class="mt-3 text-4xl font-extrabold tracking-tight">{plan.price}</p>
-          <RomboList items={plan.features} class="mt-8 text-muted" />
+          <p class="mt-3">
+            <span class="text-4xl font-extrabold tracking-tight">{plan.price}</span>
+            <span class="ml-1 font-semibold text-muted">al mes</span>
+          </p>
+          <p class="mt-1 text-muted">{`o ${plan.annual}`}</p>
+          <p class="mt-6 rounded-control bg-inset px-4 py-3 font-semibold">{plan.limits}</p>
+          <ul class="mt-6 space-y-3">
+            {plan.features.map((feature) => (
+              <li class="flex items-start gap-3">
+                <Icon name="check" size={20} class="mt-0.5 shrink-0 text-accent" />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
         </Card>
       ))}
     </ul>
+
+    <div class="bento mt-4 rounded-panel p-2 sm:p-4">
+      <h3 class="px-4 pt-4 text-lg">{pos.plans.comparison.title}</h3>
+      <div class="mt-2 overflow-x-auto" tabindex="0" aria-label={pos.plans.comparison.title}>
+        <table class="w-full min-w-[40rem] border-collapse text-left">
+          <thead>
+            <tr class="border-b border-line">
+              <td class="p-4"></td>
+              {pos.plans.items.map((plan) => (
+                <th scope="col" class="p-4 font-bold">
+                  {plan.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {pos.plans.comparison.rows.map((row) => (
+              <tr class="border-b border-line last:border-b-0">
+                <th scope="row" class="max-w-[22rem] p-4 font-normal text-muted">
+                  {row.label}
+                </th>
+                {row.values.map((value) => (
+                  <td class="p-4 font-semibold">
+                    {value === 'sí' ? (
+                      <>
+                        <Icon name="check" size={20} class="text-accent" />
+                        <span class="sr-only">Incluido</span>
+                      </>
+                    ) : value === 'no' ? (
+                      <>
+                        <span aria-hidden="true" class="text-muted">
+                          —
+                        </span>
+                        <span class="sr-only">No incluido</span>
+                      </>
+                    ) : (
+                      value
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
     <p class="mt-4 text-muted">{pos.plans.note}</p>
     <div class="mt-6 grid gap-4 lg:grid-cols-[1fr_auto]">
       <Card class="flex items-start gap-5">

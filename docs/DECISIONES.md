@@ -331,6 +331,19 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Componentes:** `Card` (tonos default, feature y deep), `PageHeader` (tarjeta grande + slot `visual`), `ScreenCard` (reemplaza a `ScreenShowcase`), `Icon` (íconos de trazo), `Steps` y `Faq` en tarjetas. Se eliminaron `ScreenShowcase` y `Convergence`.
 - **Alternativa descartada:** dejar el oscuro por defecto aunque el sistema esté en claro. Se mantiene la preferencia del sistema y el selector de tema.
 
+### Planes por nivel de XASKA POS (2026-11-05)
+
+- **Decisión:** la página de XASKA POS muestra los planes nuevos del POS (decisión 288 de su repositorio, `docs/DECISIONES.md`): **Emprende** $34.900 al mes o $349.000 al año (1 sede, 1 caja, 2 usuarios), **Negocio** $69.900 o $699.000 (1 sede, 3 cajas, 6 usuarios; pedidos, cotizaciones, tallas y colores, báscula, compras y cuentas por pagar, impresión directa y cajón, y el módulo del sector) y **Empresa** $129.900 o $1.299.000 (5 sedes, cajas y usuarios sin límite; además auditoría, caja por zona y traslados). El año vale 10 meses. Sin mención de IVA. Básico y Pro dejan de aparecer: en el POS quedan como planes anteriores solo para los clientes de antes.
+- **Cómo se ve:** tres tarjetas (Negocio en índigo profundo, sin decir "el más vendido" porque no hay datos) y una tabla para comparar, con ✓ y — que los lectores de pantalla leen como "Incluido" y "No incluido".
+- **También se agregó:** el módulo de **Droguerías** (ficha del medicamento con el catálogo CUM, lotes y vencimientos, venta con fórmula, temperatura y humedad, eventos adversos e informe, roles de director técnico y auxiliar), compras y cuentas por pagar, traslados entre sedes, impresión directa y cajón, mapa de mesas y caja por zona. La pregunta de varias sucursales ahora dice que el plan Empresa permite hasta 5 sedes.
+- **Fuente:** el repositorio de XASKA POS (hoy privado; copia local en `Documentos\GitHub\Pos-Hibrid-Dan`, rama `docs-al-dia`, commit `ed3ce4c`): README y decisiones 279 a 288. La prueba gratis sigue en 14 días (`SUBSCRIPTION_TRIAL_DAYS`).
+- **Regla:** los precios y lo que incluye cada plan se copian del POS, no se inventan. Si cambian allá, se cambian en `src/content/pos/index.yaml` (`plans`).
+
+### Atajos de la página de Servicios (2026-11-05)
+
+- **Problema:** en las tarjetas pequeñas, con nombres de dos líneas ("Automatización de procesos", "Equipos y computadores"), la flecha se salía de la tarjeta.
+- **Arreglo:** cada atajo es una tarjeta vertical, como las del inicio: ícono y flecha arriba, nombre abajo.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
