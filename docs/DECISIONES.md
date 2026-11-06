@@ -344,6 +344,17 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Problema:** en las tarjetas pequeñas, con nombres de dos líneas ("Automatización de procesos", "Equipos y computadores"), la flecha se salía de la tarjeta.
 - **Arreglo:** cada atajo es una tarjeta vertical, como las del inicio: ícono y flecha arriba, nombre abajo.
 
+### Precio fundador y planes anteriores (2026-11-06)
+
+- **Decisión:** el sitio **no** menciona el "precio fundador" (30 % de descuento de por vida para los primeros 10 clientes). Daniel lo dio por cerrado y no se volverá a ofrecer; tampoco se publica cuántos cupos se usaron.
+- **Planes en el sitio:** solo Emprende, Negocio y Empresa. Los clientes con planes anteriores (Básico o Pro) o con precio fundador conservan sus condiciones dentro de XASKA POS, pero eso no se anuncia en el sitio.
+- **Alternativa descartada:** una franja o tarjeta con el precio fundador y los cupos restantes. Se descartó porque la promoción ya terminó y porque un contador de cupos habría que actualizarlo a mano.
+
+### Texto de traspaso desactualizado (2026-11-06)
+
+- **Qué pasó:** una conversación nueva arrancó con un texto de traspaso viejo (fases 2 a 4 sin hacer, planes Básico/Pro, IBM Plex Sans y DNS en Spaceship). Se revisó la carpeta, no se cambió nada y Daniel confirmó que mandan los documentos del proyecto.
+- **Regla:** el estado real es el de `docs/ROADMAP-Y-TRASPASO.md`; para seguir en otra conversación se usa el texto de su Parte 2.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
