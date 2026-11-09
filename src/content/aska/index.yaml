@@ -1,0 +1,77 @@
+# Textos de la página de ASKA, aprobados el 2026-11-09. Funciones tomadas de XASKA POS, decisiones 295 a 306. No se inventan cifras ni clientes.
+seo:
+  title: ASKA, la IA de XASKA POS
+  description: ASKA es la inteligencia artificial de XASKA POS. Pregúntale por tus ventas, recibe la mercancía con una foto de la factura, pasa el cuaderno a XASKA y recibe el resumen del día. $39.900 al mes, con 14 días de prueba gratis.
+
+hero:
+  eyebrow: XASKA IA · Nuevo en XASKA POS
+  title:
+    before: Pregúntale a
+    accent: ASKA.
+    after: Tu negocio te responde.
+  lead: ASKA es la inteligencia artificial de XASKA POS. Le hablas como a tu socio y te dice cómo van las ventas, qué pedirle al proveedor y qué se está quedando quieto. Con los números reales de tu negocio, sin inventar.
+
+chat:
+  label: Ejemplo de conversación
+  question: ¿Qué se me está acabando?
+  answer: El arroz de 500 g y el aceite de litro están por debajo del mínimo, y los dos se venden todos los días. ¿Te armo el pedido para el proveedor?
+  source: 'Consultó: productos bajo el mínimo'
+  followUps:
+    - ¿Qué me toca pedir?
+    - ¿Quién me debe?
+
+features:
+  title: Lo que ASKA hace por tu negocio
+  lead: Las tareas que más tiempo te quitan, resueltas con una pregunta o una foto.
+  items:
+    - icon: chat
+      kicker: Pregúntale a tu negocio
+      title: Pregúntale como le preguntarías a tu socio
+      text: Ventas por día, por vendedor o por medio de pago. Lo que más se vende y lo que no rota. Fiados, cuentas por pagar y caja. ASKA te responde con la cifra resaltada y te sugiere qué preguntar después.
+    - icon: camera
+      kicker: La factura del proveedor
+      title: Recibe la mercancía con una foto
+      text: ASKA lee productos, cantidades, costos y hasta las tallas. Lo que no tengas en el catálogo lo creas de una vez.
+    - icon: book
+      kicker: El cuaderno
+      title: Tómale foto al cuaderno y listo
+      text: ¿Tu inventario está en una libreta o un bloc? ASKA lo pasa a XASKA con cantidades, precios y costos.
+    - icon: cart
+      kicker: Qué comprar
+      title: El pedido al proveedor, ya hecho
+      text: XASKA calcula qué pedir según lo que vendes, ASKA lo revisa y te lo deja listo para mandar por WhatsApp o en PDF.
+    - icon: mail
+      kicker: Resumen del día
+      title: Cómo te fue, en tu correo
+      text: A la hora que elijas, ASKA te cuenta ventas, caja, inventario y plata por cobrar. Primero lo que pide atención.
+    - icon: box
+      kicker: La lista de precios
+      title: Carga el catálogo sin digitar
+      text: Sube la lista del proveedor en Excel, PDF o foto. ASKA crea los productos nuevos y actualiza los costos sin dañar tu margen.
+
+trust:
+  title: IA en la que puedes confiar
+  items:
+    - title: No inventa cifras.
+      text: Cada número sale de tus reportes en XASKA.
+    - title: Tú decides.
+      text: ASKA propone; nada se guarda sin que una persona lo confirme.
+    - title: Cada quien ve lo suyo.
+      text: Un cajero solo pregunta por lo que su rol le deja ver.
+    - title: Sin letra pequeña.
+      text: ASKA funciona con Claude, de Anthropic, y lo explicamos en la política de datos de XASKA POS.
+
+pricing:
+  title: Agrégala a cualquier plan
+  text: Funciona con Emprende, Negocio o Empresa. Pruébala gratis 14 días antes de pagar.
+  cta: Probar ASKA gratis
+
+soon:
+  badge: Próximamente
+  text: Mientras tú cuadras caja, ASKA te atiende el WhatsApp y le responde a tus clientes sobre lo que vendes. Solo temas de tu negocio.
+  linkLabel: Avísame cuando salga
+
+band:
+  title: Conoce a ASKA, la IA de XASKA POS
+  text: Pregúntale por tus ventas, recibe la mercancía con una foto de la factura y pasa el cuaderno a XASKA sin digitar. Tú revisas y confirmas.
+  linkLabel: Conocer ASKA

@@ -191,7 +191,7 @@ Cuando todo lleve un día funcionando bien:
 
    (Ojo con el antivirus: ver "Lighthouse en tu PC" en el README.)
 
-5. **Formulario en producción:** envía un mensaje desde https://xaska.co/contacto y revisa que llegue a `soporte@xaska.co`.
+5. **Formulario en producción** (✅ probado el 2026-11-06): envía un mensaje desde https://xaska.co/contacto y revisa que llegue a `soporte@xaska.co`.
 6. **Tarjetas:** ya se pueden repartir.
 7. **Apagar la dirección de prueba:** Workers & Pages → xaska-hub → Settings → Domains & Routes → `workers.dev` → **Disable** (y las Preview URLs, si aparecen).
 8. Avísame para cerrar la fase 4: actualizo el roadmap, las decisiones y los pendientes.

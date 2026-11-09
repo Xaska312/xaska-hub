@@ -1,0 +1,44 @@
+---
+/**
+ * Invitación a conocer ASKA (la IA de XASKA POS) desde otras páginas.
+ * Panel índigo profundo con el monograma oficial de XASKA IA, el precio y el enlace a /aska.
+ */
+import { getEntry } from 'astro:content';
+import Card from '@/components/Card.astro';
+import CTA from '@/components/CTA.astro';
+import { products } from '@/config/site';
+
+interface Props {
+  /** id del h2, único en la página. */
+  headingId?: string | undefined;
+}
+
+const { headingId = 'aska' } = Astro.props;
+const entry = await getEntry('aska', 'index');
+if (!entry) throw new Error('Falta src/content/aska/index.yaml');
+const band = entry.data.band;
+const { aska } = products;
+---
+
+<Card
+  tone="deep"
+  size="panel"
+  class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between"
+>
+  <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+    <img src={aska.logo} alt="" width="64" height="64" class="aska-halo size-16 shrink-0" />
+    <div>
+      <h2 id={headingId} class="text-2xl sm:text-3xl">
+        {band.title}
+      </h2>
+      <p class="mt-3 max-w-(--container-prose) text-lg text-muted">{band.text}</p>
+    </div>
+  </div>
+  <div class="flex shrink-0 flex-col items-start gap-3 lg:items-end">
+    <p>
+      <span class="text-3xl font-extrabold tracking-tight">{aska.price}</span>
+      <span class="ml-1 font-semibold text-muted">al mes</span>
+    </p>
+    <CTA href={aska.path}>{band.linkLabel}</CTA>
+  </div>
+</Card>

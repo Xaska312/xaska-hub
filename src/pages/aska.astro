@@ -1,0 +1,210 @@
+---
+/**
+ * ASKA, la IA de XASKA POS (boceto 1 "Pregúntale a ASKA", elegido el 2026-11-09).
+ * Va en /aska (dirección corta para la campaña) y no en /productos/aska, para que el menú
+ * marque solo "ASKA" como página actual.
+ */
+import { getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import Card from '@/components/Card.astro';
+import CTA from '@/components/CTA.astro';
+import Faq from '@/components/Faq.astro';
+import Icon from '@/components/Icon.astro';
+import { products, whatsappMessages, whatsappUrl } from '@/config/site';
+
+const entry = await getEntry('aska', 'index');
+const faqEntry = await getEntry('faq', 'aska');
+if (!entry || !faqEntry) throw new Error('Falta el contenido de ASKA o sus preguntas');
+const aska = entry.data;
+const faq = faqEntry.data;
+const { aska: product, pos } = products;
+const [mainFeature, ...otherFeatures] = aska.features.items;
+---
+
+<BaseLayout
+  title={aska.seo.title}
+  description={aska.seo.description}
+  whatsappMessage={whatsappMessages.aska}
+>
+  <section class="pt-4 pb-2 sm:pt-8">
+    <div class="mx-auto w-full max-w-(--container-page) px-4 sm:px-6 lg:px-8">
+      <div class="on-deep grid items-center gap-10 overflow-hidden rounded-panel p-6 sm:p-10 lg:grid-cols-12 lg:gap-12">
+        <div class="lg:col-span-7">
+          <nav aria-label="Ruta" class="text-sm text-muted">
+            <ol class="flex flex-wrap items-center gap-2">
+              <li class="flex items-center gap-2">
+                <a href="/productos" class="underline-offset-4 hover:underline">
+                  Productos
+                </a>
+                <span aria-hidden="true">/</span>
+              </li>
+              <li aria-current="page" class="font-semibold text-ink">
+                {product.name}
+              </li>
+            </ol>
+          </nav>
+
+          <div class="mt-8 flex items-center gap-4">
+            <img
+              src={product.logo}
+              alt=""
+              width="56"
+              height="56"
+              class="aska-halo size-14"
+              decoding="async"
+            />
+            <p class="text-sm font-bold tracking-wider text-muted uppercase">{aska.hero.eyebrow}</p>
+          </div>
+
+          <h1 class="mt-6 text-[2.5rem] leading-[1.04] sm:text-5xl lg:text-[3.6rem] lg:leading-[1.02]">
+            {aska.hero.title.before} <span class="aska-spark">{aska.hero.title.accent}</span>
+            <span class="block">{aska.hero.title.after}</span>
+          </h1>
+          <p class="mt-5 max-w-[52ch] text-lg font-medium text-muted">{aska.hero.lead}</p>
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <CTA href={pos.trialUrl} external>
+              {`Probar ASKA gratis ${product.trialDays} días`}
+            </CTA>
+            <CTA href="#funciones-aska" variant="secondary">
+              Ver lo que hace
+            </CTA>
+          </div>
+        </div>
+
+        {/* Conversación de ejemplo, como el panel de ASKA en el POS. Sin cifras inventadas. */}
+        <figure class="rounded-block border border-line bg-surface lg:col-span-5">
+          <figcaption class="flex items-center gap-3 border-b border-line px-5 py-4">
+            <img src={product.logo} alt="" width="36" height="36" class="size-9" />
+            <span>
+              <span class="block font-bold">{product.name}</span>
+              <span class="block text-sm text-muted">{aska.chat.label}</span>
+            </span>
+          </figcaption>
+          <div class="flex flex-col gap-4 p-5">
+            <p class="max-w-[85%] self-end rounded-3xl rounded-br-md bg-accent-soft px-4 py-3">
+              <span class="sr-only">Pregunta: </span>
+              {aska.chat.question}
+            </p>
+            <div class="max-w-[92%] self-start rounded-3xl rounded-bl-md bg-inset px-4 py-3">
+              <p>
+                <span class="sr-only">Respuesta de ASKA: </span>
+                {aska.chat.answer}
+              </p>
+              <p class="mt-3 flex items-center gap-2 text-sm text-muted">
+                <span class="aska-spark" aria-hidden="true">
+                  ✦
+                </span>
+                {aska.chat.source}
+              </p>
+            </div>
+            <ul class="flex flex-wrap gap-2" aria-label="Preguntas para seguir">
+              {aska.chat.followUps.map((item) => (
+                <li class="rounded-full border border-line-strong px-3 py-1.5 text-sm font-semibold">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <Section id="funciones-aska" labelledby="funciones" class="scroll-mt-20">
+    <h2 id="funciones" class="text-3xl sm:text-4xl">
+      {aska.features.title}
+    </h2>
+    <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{aska.features.lead}</p>
+    <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {mainFeature && (
+        <Card as="li" tone="feature" size="panel" class="sm:col-span-2 lg:col-span-3">
+          <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+            <span class="icon-tile">
+              <Icon name={mainFeature.icon} />
+            </span>
+            <div>
+              <p class="text-sm font-bold tracking-wider uppercase">{mainFeature.kicker}</p>
+              <h3 class="mt-2 text-2xl sm:text-3xl">{mainFeature.title}</h3>
+              <p class="mt-3 max-w-(--container-prose) text-lg">{mainFeature.text}</p>
+            </div>
+          </div>
+        </Card>
+      )}
+      {otherFeatures.map((item) => (
+        <Card as="li" class="flex flex-col gap-4">
+          <span class="icon-tile">
+            <Icon name={item.icon} />
+          </span>
+          <p class="text-sm font-bold tracking-wider text-accent uppercase">{item.kicker}</p>
+          <h3 class="text-xl">{item.title}</h3>
+          <p class="text-muted">{item.text}</p>
+        </Card>
+      ))}
+    </ul>
+  </Section>
+
+  <Section labelledby="confianza">
+    <div class="grid gap-4 lg:grid-cols-2">
+      <Card size="panel">
+        <h2 id="confianza" class="text-3xl sm:text-4xl">
+          {aska.trust.title}
+        </h2>
+        <ul class="mt-8 space-y-4">
+          {aska.trust.items.map((item) => (
+            <li class="flex items-start gap-3 text-lg">
+              <Icon name="check" size={22} class="mt-1 shrink-0 text-accent" />
+              <span>
+                <strong>{item.title}</strong> {item.text}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </Card>
+      <Card tone="deep" size="panel" class="flex flex-col justify-between gap-8">
+        <div>
+          <span class="chip">{product.addonName}</span>
+          <h2 class="mt-6 text-3xl sm:text-4xl">{aska.pricing.title}</h2>
+          <p class="mt-6">
+            <span class="text-5xl font-extrabold tracking-tight">{product.price}</span>
+            <span class="ml-1 text-lg font-semibold text-muted">al mes</span>
+          </p>
+          <p class="mt-4 text-lg text-muted">{aska.pricing.text}</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <CTA href={pos.trialUrl} external>
+            {aska.pricing.cta}
+          </CTA>
+          <CTA href={pos.pricingUrl} variant="secondary" external>
+            Ver todos los precios
+          </CTA>
+        </div>
+      </Card>
+    </div>
+  </Section>
+
+  <Section labelledby="proximamente">
+    <div class="flex flex-col gap-6 rounded-panel border-2 border-dashed border-line-strong p-6 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+      <div class="max-w-(--container-prose)">
+        <span class="chip">{aska.soon.badge}</span>
+        <h2 id="proximamente" class="mt-4 text-3xl">
+          {product.soonName}
+        </h2>
+        <p class="mt-3 text-lg text-muted">{aska.soon.text}</p>
+      </div>
+      <a
+        class="link shrink-0 text-lg font-semibold"
+        href={whatsappUrl(whatsappMessages.askaSoon)}
+        target="_blank"
+        rel="noopener"
+      >
+        {aska.soon.linkLabel}
+        <span class="sr-only"> por WhatsApp (se abre en una pestaña nueva)</span>
+      </a>
+    </div>
+  </Section>
+
+  <Section labelledby="preguntas-aska">
+    <Faq title={faq.title} items={faq.items} headingId="preguntas-aska" />
+  </Section>
+</BaseLayout>

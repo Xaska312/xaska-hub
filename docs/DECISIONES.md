@@ -344,6 +344,37 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Problema:** en las tarjetas pequeñas, con nombres de dos líneas ("Automatización de procesos", "Equipos y computadores"), la flecha se salía de la tarjeta.
 - **Arreglo:** cada atajo es una tarjeta vertical, como las del inicio: ícono y flecha arriba, nombre abajo.
 
+### Precio fundador y planes anteriores (2026-11-06)
+
+- **Decisión:** el sitio **no** menciona el "precio fundador" (30 % de descuento de por vida para los primeros 10 clientes). Daniel lo dio por cerrado y no se volverá a ofrecer; tampoco se publica cuántos cupos se usaron.
+- **Planes en el sitio:** solo Emprende, Negocio y Empresa. Los clientes con planes anteriores (Básico o Pro) o con precio fundador conservan sus condiciones dentro de XASKA POS, pero eso no se anuncia en el sitio.
+- **Alternativa descartada:** una franja o tarjeta con el precio fundador y los cupos restantes. Se descartó porque la promoción ya terminó y porque un contador de cupos habría que actualizarlo a mano.
+
+### Texto de traspaso desactualizado (2026-11-06)
+
+- **Qué pasó:** una conversación nueva arrancó con un texto de traspaso viejo (fases 2 a 4 sin hacer, planes Básico/Pro, IBM Plex Sans y DNS en Spaceship). Se revisó la carpeta, no se cambió nada y Daniel confirmó que mandan los documentos del proyecto.
+- **Regla:** el estado real es el de `docs/ROADMAP-Y-TRASPASO.md`; para seguir en otra conversación se usa el texto de su Parte 2.
+
+### ASKA, la IA de XASKA POS (2026-11-09)
+
+- **Qué es:** en XASKA POS se vende como el adicional **XASKA IA** ($39.900 al mes, con cualquier plan, 14 días de prueba gratis) y habla con el nombre **ASKA** (juego con _ask_, "preguntar", dentro de XASKA). En el sitio se escribe **ASKA**, en mayúsculas, por decisión de Daniel. Fuente: decisiones 295 a 306 del POS y la pantalla Planes y pagos.
+- **Diseño:** se hicieron 3 bocetos en un lienzo de diseño ("Pregúntale a ASKA", "Tómale foto" y "Un día con ASKA") y Daniel eligió el 1: portada en índigo profundo con una conversación de ejemplo, funciones en tarjetas bento, confianza y precio, "próximamente" y preguntas frecuentes.
+- **Dirección:** `/aska`, no `/productos/aska`. Es corta para la campaña y el menú marca solo "ASKA" como página actual (con `/productos/aska` se marcarían "Productos" y "ASKA" a la vez). La ruta muestra "Productos / ASKA".
+- **Menú:** "ASKA" va entre Productos y Servicios. El bloque `AskaBand` invita a conocerla desde Inicio, Productos y XASKA POS.
+- **Logo:** el monograma oficial de XASKA IA, copiado sin cambios de XASKA POS (`frontend/public/xaska-ia.svg`) a `public/brand/xaska-ia/xaska-ia.svg`.
+- **Color:** el ámbar de la chispa (`#FCD34D`) solo sobre el índigo profundo (clase `.on-deep .aska-spark`, de 6,9:1 a 11,2:1). Sobre fondo claro no cumple AA y no se usa.
+- **Contenido:** sin cifras inventadas. La conversación de ejemplo no tiene montos, y los topes de uso no se publican porque se cambian en la consola del POS. Se dice que ASKA funciona con Claude, de Anthropic, como en la política de datos 1.3 del POS.
+- **ASKA Te Atiende:** el vendedor por WhatsApp va como "próximamente", con un enlace de WhatsApp para pedir aviso. Nombre elegido por Daniel entre cuatro opciones.
+- **Formulario:** el campo "interés" suma "ASKA (XASKA IA)".
+- **Textos aprobados** por Daniel el 2026-11-09, incluidas la mención de Claude, de Anthropic, y la explicación de los cupos de uso sin números.
+- **Alternativas descartadas:** los bocetos 2 y 3; poner ASKA dentro de la página de XASKA POS (se perdía para la campaña); publicar los topes de uso.
+
+### Registro abierto: `POS_LAUNCHED` en `true` (2026-11-09)
+
+- **Decisión:** el POS ya deja registrarse sin código (decisión 303 del POS), así que el botón principal pasa a "Probar gratis 14 días" hacia `app.xaska.co/registro`. Se ajustaron los textos que hablaban del código por WhatsApp: entrada de XASKA POS en la portada, pasos de "Cómo empezar" y la primera pregunta frecuente (aprobados el 2026-11-09).
+- **Precios:** el botón "Ver todos los precios" de `/aska` lleva a `app.xaska.co/precios`, la página pública del POS.
+- **Cuándo se publica:** con la página de ASKA, cuando la actualización del POS y su política de datos 1.3 estén en producción.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

@@ -339,6 +339,23 @@
     transform: rotate(45deg);
     flex: none;
   }
+
+  /*
+   * Chispa de ASKA: el ámbar del monograma de XASKA IA (#FCD34D, el mismo del POS).
+   * Solo sobre el índigo profundo (.on-deep): de 11,2:1 (#1E1B4B) a 6,9:1 (#3730A3) en el degradado.
+   * Sobre fondo claro no cumple contraste: no usarlo ahí.
+   */
+  .on-deep .aska-spark {
+    color: #fcd34d;
+  }
+
+  /* Halo del monograma de ASKA en la portada de su página. */
+  .aska-halo {
+    border-radius: 1.6rem;
+    box-shadow:
+      0 0 0 1px rgb(165 180 252 / 0.45),
+      0 0 48px 6px rgb(129 140 248 / 0.4);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

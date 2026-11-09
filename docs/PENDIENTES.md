@@ -7,6 +7,12 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
 - [x] Node 24 en tu equipo (fase 0 probada en local).
 - [x] Repositorio en GitHub (`Xaska312/xaska-hub`) y conectado a Cloudflare (versión de prueba en `xaska-hub.daniimejia1558.workers.dev`).
 
+## ASKA (2026-11-09)
+
+- [x] Textos de ASKA y del registro abierto aprobados (2026-11-09).
+- [ ] Publicar la política de datos 1.3 en `app.xaska.co/privacidad` y la actualización del POS antes de pasar ASKA a `main`.
+- [ ] Opcional: imagen para redes propia de ASKA y capturas reales del panel de ASKA.
+
 ## Datos de la empresa (sección 10 del prompt)
 
 - [x] Horario de atención (lunes a sábado, 8:00 a. m. a 6:00 p. m.).
@@ -25,7 +31,9 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
 - [x] Formulario probado con Turnstile y Resend reales (2026-10-31).
 - [x] Mover el DNS a Cloudflare (2026-11-02).
 - [x] Publicado en `xaska.co` con Search Console (2026-11-02).
-- [ ] Confirmar DNSSEC con Cloudflare, `workers.dev` apagado y el formulario probado en `xaska.co` (`docs/GUIA-PUBLICACION.md`, D5 y F).
+- [x] Formulario probado en `xaska.co/contacto` (2026-11-06).
+- [ ] Activar DNSSEC con Cloudflare (`docs/GUIA-PUBLICACION.md`, D5).
+- [ ] Apagar la dirección `workers.dev` (`docs/GUIA-PUBLICACION.md`, F, paso 7).
 - [ ] Factura electrónica en XASKA POS: cuando salga, completar `eInvoicing` en `src/content/pos/index.yaml` y poner `E_INVOICING: true`.
 
 ## Marcadores en el código

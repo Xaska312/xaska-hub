@@ -159,13 +159,12 @@ test.describe('versión de prueba', () => {
 });
 
 test.describe('contenido de la fase 1', () => {
-  test('la portada lleva al botón principal en un clic (demo por WhatsApp)', async ({ page }) => {
+  test('la portada lleva al registro del POS en un clic (POS_LAUNCHED)', async ({ page }) => {
     await page.goto('/');
-    const cta = page.locator('main a', { hasText: 'Pedir una demo' }).first();
+    const cta = page.locator('main a', { hasText: 'Probar gratis 14 días' }).first();
     await expect(cta).toBeVisible();
-    const href = await cta.getAttribute('href');
-    expect(href).toMatch(/^https:\/\/wa\.me\/573167784193\?text=/);
-    expect(decodeURIComponent(href ?? '')).toContain('demo de XASKA POS');
+    await expect(cta).toHaveAttribute('href', 'https://app.xaska.co/registro');
+    await expect(cta).toHaveAttribute('rel', 'noopener');
   });
 
   test('nosotros muestra la misión y la visión elegidas', async ({ page }) => {
@@ -223,6 +222,35 @@ test.describe('contenido de la fase 1', () => {
     await first.locator('summary').focus();
     await page.keyboard.press('Enter');
     await expect(first).toHaveAttribute('open', '');
+  });
+
+  test('ASKA tiene su página con precio, prueba y lo que viene', async ({ page }) => {
+    await page.goto('/aska');
+    await expect(page.locator('h1')).toContainText('ASKA');
+    await expect(page.locator('main')).toContainText('$39.900');
+    await expect(page.locator('main a', { hasText: 'Probar ASKA gratis 14 días' })).toHaveAttribute(
+      'href',
+      'https://app.xaska.co/registro',
+    );
+    const soon = page.locator('#proximamente');
+    await expect(soon).toHaveText('ASKA Te Atiende');
+    const notify = page.locator('main a', { hasText: 'Avísame cuando salga' });
+    expect(decodeURIComponent((await notify.getAttribute('href')) ?? '')).toContain(
+      'ASKA Te Atiende',
+    );
+    const logo = page.locator('main img[src="/brand/xaska-ia/xaska-ia.svg"]').first();
+    await expect(logo).toHaveAttribute('width', '56');
+    expect(await page.locator('details.faq').count()).toBeGreaterThanOrEqual(4);
+  });
+
+  test('el menú marca ASKA y las demás páginas invitan a conocerla', async ({ page }) => {
+    await page.goto('/aska');
+    const current = page.locator('header a[aria-current="page"]');
+    await expect(current.first()).toHaveText('ASKA');
+    for (const path of ['/', '/productos', '/productos/xaska-pos']) {
+      await page.goto(path);
+      await expect(page.locator('main a[href="/aska"]', { hasText: 'Conocer ASKA' })).toBeVisible();
+    }
   });
 
   test('ningún texto público describe el producto como facturación', async ({ page }) => {
