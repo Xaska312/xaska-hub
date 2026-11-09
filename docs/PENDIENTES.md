@@ -9,7 +9,7 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
 
 ## ASKA (2026-11-09)
 
-- [ ] Aprobar los textos `[BORRADOR]` de ASKA y del registro abierto (`pnpm pendientes` los lista).
+- [x] Textos de ASKA y del registro abierto aprobados (2026-11-09).
 - [ ] Publicar la política de datos 1.3 en `app.xaska.co/privacidad` y la actualización del POS antes de pasar ASKA a `main`.
 - [ ] Opcional: imagen para redes propia de ASKA y capturas reales del panel de ASKA.
 

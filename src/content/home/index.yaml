@@ -24,7 +24,6 @@ pillars:
 
 pos:
   title: XASKA POS
-  # [BORRADOR] Registro abierto (2026-11-09).
   lead: El punto de venta en la web para comercios en Colombia. Funciona en el navegador, sin instalar nada. Regístrate y pruébalo gratis 14 días, sin tarjeta.
   highlights:
     - Ventas con lector de código de barras y pagos mixtos

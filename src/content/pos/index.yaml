@@ -170,7 +170,6 @@ plans:
     text: '¿Necesitas los equipos? Te armamos el punto de venta completo: computador, lector de código de barras, impresora térmica, cajón monedero y UPS, instalados y con garantía.'
     linkLabel: Ver equipos y computadores
 
-# [BORRADOR] Pasos con el registro abierto (2026-11-09): ya no se pide código por WhatsApp.
 start:
   title: Cómo empezar
   steps:

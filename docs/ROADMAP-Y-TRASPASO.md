@@ -22,7 +22,7 @@ Este documento sirve para seguir el proyecto desde otra conversación o cuenta d
 | 4 — Publicación                      | GitHub, Cloudflare, DNS a Cloudflare, dominio `xaska.co`, `www` → 301, Search Console                                        | ✅ Publicada el 2026-11-02 en https://xaska.co: DNS en Cloudflare, `www` → 301, cabeceras comprobadas, analítica, Search Console con sitemap y PageSpeed 100 en las cuatro categorías. Formulario probado en producción (2026-11-06). Quedan: DNSSEC con Cloudflare (D5) y apagar `workers.dev` |
 | Rediseño bento                       | Todo el sitio con el estilo de XASKA POS (boceto 1 de 6), tarjetas, encabezados nuevos, capturas sin cortes en celular       | ✅ Hecho el 2026-11-04 y publicado. Ver `docs/DECISIONES.md`                                                                                                                                                                                                                                    |
 | Planes por nivel                     | Emprende, Negocio y Empresa, tabla para comparar, módulo de droguerías y funciones nuevas del POS                            | ✅ Hecho el 2026-11-05 (por publicar). Ver `docs/DECISIONES.md`                                                                                                                                                                                                                                 |
-| ASKA (IA de XASKA POS)               | Página `/aska` (boceto 1), bloque en Inicio, Productos y XASKA POS, ASKA en el menú, registro abierto (`POS_LAUNCHED: true`) | 🔨 Construida el 2026-11-09 en `desarrollo`, textos en `[BORRADOR]`. Se publica cuando estén en producción la actualización del POS y su política de datos 1.3                                                                                                                                  |
+| ASKA (IA de XASKA POS)               | Página `/aska` (boceto 1), bloque en Inicio, Productos y XASKA POS, ASKA en el menú, registro abierto (`POS_LAUNCHED: true`) | 🔨 Construida y con textos aprobados el 2026-11-09 en `desarrollo`. Se publica cuando estén en producción la actualización del POS y su política de datos 1.3                                                                                                                                   |
 | Después                              | Blog, casos de éxito, estado del servicio, documentación, empleo, portal de clientes, inglés                                 | ⏳                                                                                                                                                                                                                                                                                              |
 
 ### Fase 2 — cerrada
@@ -68,7 +68,8 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
 - [ ] **Factura electrónica:** cuando salga en XASKA POS, completar `eInvoicing` en `src/content/pos/index.yaml` (documentos, proveedor, costo y cómo se activa) y poner `E_INVOICING: true`.
 - [ ] Nombre definitivo de la línea de hardware y si se incluye (hoy oculta).
 - [x] `POS_LAUNCHED: true` (registro abierto en el POS, decisión 303). Hecho el 2026-11-09 en `desarrollo`.
-- [ ] ASKA: aprobar los textos `[BORRADOR]` y publicar cuando el POS tenga la actualización y la política de datos 1.3.
+- [x] ASKA: textos aprobados (2026-11-09).
+- [ ] ASKA: publicar en `main` cuando el POS tenga la actualización y la política de datos 1.3.
 - [ ] ASKA: imagen para redes propia (hoy usa la general).
 
 ---
