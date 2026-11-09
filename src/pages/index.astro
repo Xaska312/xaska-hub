@@ -9,6 +9,7 @@ import Steps from '@/components/Steps.astro';
 import RomboList from '@/components/RomboList.astro';
 import WhatsAppButton from '@/components/WhatsAppButton.astro';
 import PageHeader from '@/components/PageHeader.astro';
+import AskaBand from '@/components/AskaBand.astro';
 import ScreenCard from '@/components/ScreenCard.astro';
 import reportsScreen from '@/assets/pos/header-reportes.png';
 import { serviceIcon } from '@/lib/service-icons';
@@ -147,6 +148,10 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
         </Card>
       </div>
     </div>
+  </Section>
+
+  <Section labelledby="aska-portada">
+    <AskaBand headingId="aska-portada" />
   </Section>
 
   <Section labelledby="servicios">

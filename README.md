@@ -89,7 +89,7 @@ El formulario de contacto necesita el Worker, así que solo funciona con `pnpm p
 
 | Bandera         | Valor   | Efecto                                                                                                                                                                          |
 | --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POS_LAUNCHED`  | `false` | Botón principal "Pedir una demo" por WhatsApp. En `true` pasa a "Probar gratis" hacia el registro de XASKA POS.                                                                 |
+| `POS_LAUNCHED`  | `true`  | Botón principal "Probar gratis 14 días" hacia el registro de XASKA POS (desde el 2026-11-09). En `false` vuelve a "Pedir una demo" por WhatsApp.                                |
 | `SHOW_HARDWARE` | `false` | Línea de hardware oculta: no hay `/hardware`, ni enlaces, ni opción en el formulario, ni entrada en el sitemap.                                                                 |
 | `ANALYTICS`     | `true`  | Cloudflare Web Analytics, sin cookies. Solo carga si además existe la variable de build `PUBLIC_CF_ANALYTICS_TOKEN` (está en Cloudflare; en tu PC y en la CI no).               |
 | `E_INVOICING`   | `false` | La página de XASKA POS dice que todavía no emite factura electrónica. En `true` muestra los textos de `eInvoicing` (`src/content/pos/index.yaml`), que hay que completar antes. |

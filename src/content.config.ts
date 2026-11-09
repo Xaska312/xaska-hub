@@ -181,6 +181,54 @@ const pos = defineCollection({
   }),
 });
 
+const aska = defineCollection({
+  loader: glob({ pattern: 'index.yaml', base: './src/content/aska' }),
+  schema: z.object({
+    seo: z.object({ title: text, description: text }),
+    /** Título en tres partes: la del medio ("ASKA") va resaltada. */
+    hero: z.object({
+      eyebrow: text,
+      title: z.object({ before: text, accent: text, after: text }),
+      lead: text,
+    }),
+    /** Conversación de ejemplo, sin cifras inventadas. */
+    chat: z.object({
+      label: text,
+      question: text,
+      answer: text,
+      source: text,
+      followUps: z.array(text).min(1).max(3),
+    }),
+    features: z.object({
+      title: text,
+      lead: text,
+      /** La primera sale a lo ancho, destacada. `icon`: un ícono de src/components/Icon.astro. */
+      items: z
+        .array(
+          z.object({
+            icon: z.enum(['chat', 'camera', 'book', 'cart', 'mail', 'box']),
+            kicker: text,
+            title: text,
+            text: text,
+          }),
+        )
+        .min(4)
+        .max(8),
+    }),
+    trust: z.object({
+      title: text,
+      items: z
+        .array(z.object({ title: text, text: text }))
+        .min(2)
+        .max(5),
+    }),
+    pricing: z.object({ title: text, text: text, cta: text }),
+    soon: z.object({ badge: text, text: text, linkLabel: text }),
+    /** Bloque corto que invita a conocer ASKA desde la portada, Productos y XASKA POS. */
+    band: z.object({ title: text, text: text, linkLabel: text }),
+  }),
+});
+
 const faq = defineCollection({
   loader: glob({ pattern: '*.yaml', base: './src/content/faq' }),
   schema: z.object({
@@ -226,6 +274,7 @@ export const collections = {
   servicesPage,
   products,
   pos,
+  aska,
   faq,
   hardwareLine,
 };

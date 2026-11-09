@@ -8,6 +8,7 @@ import CTA from '@/components/CTA.astro';
 import Icon from '@/components/Icon.astro';
 import RomboList from '@/components/RomboList.astro';
 import ScreenCard from '@/components/ScreenCard.astro';
+import AskaBand from '@/components/AskaBand.astro';
 import sellScreen from '@/assets/pos/header-vender.png';
 import { primaryCta, products, whatsappMessages } from '@/config/site';
 
@@ -98,5 +99,9 @@ const highlights = homeEntry.data.pos.highlights;
         class="lg:col-span-7"
       />
     </div>
+  </Section>
+
+  <Section labelledby="aska-productos">
+    <AskaBand headingId="aska-productos" />
   </Section>
 </BaseLayout>

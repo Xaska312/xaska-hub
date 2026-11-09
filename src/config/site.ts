@@ -10,9 +10,9 @@ export const flags = {
   /**
    * true: el botón principal lleva al registro de XASKA POS ("Probar gratis 14 días").
    * false: el botón principal es "Pedir una demo" por WhatsApp.
-   * Hoy en false: el registro exige un código de activación que se entrega en la demo.
+   * En true desde el 2026-11-09: el registro del POS ya no exige código (decisión 303 del POS).
    */
-  POS_LAUNCHED: false,
+  POS_LAUNCHED: true,
   /** Línea de hardware. En `false` no se genera `/hardware` ni aparece en ningún menú, formulario o sitemap. */
   SHOW_HARDWARE: false,
   /**
@@ -84,6 +84,23 @@ export const products = {
     trialLabel: 'Probar gratis 14 días',
     demoLabel: 'Pedir una demo',
     manualUrl: 'https://app.xaska.co/manual',
+    /** Precios públicos del POS (planes, XASKA IA y adicionales), sin iniciar sesión. */
+    pricingUrl: 'https://app.xaska.co/precios',
+  },
+  /**
+   * ASKA: la IA de XASKA POS. En el POS se vende como el adicional "XASKA IA".
+   * Precio tomado de Planes y pagos del POS (2026-11-09). Sin mención de IVA.
+   */
+  aska: {
+    name: 'ASKA',
+    addonName: 'XASKA IA',
+    path: '/aska',
+    price: '$39.900',
+    trialDays: 14,
+    /** Monograma oficial de XASKA IA, copiado sin cambios de XASKA POS (frontend/public/xaska-ia.svg). */
+    logo: '/brand/xaska-ia/xaska-ia.svg',
+    /** Vendedor por WhatsApp: todavía no existe; el sitio lo anuncia como "próximamente". */
+    soonName: 'ASKA Te Atiende',
   },
 } as const;
 
@@ -109,6 +126,8 @@ export const whatsappMessages = {
   about: 'Hola, quiero conocer más sobre XASKA',
   hardware: 'Hola, quiero información sobre ensamble de computadores',
   notFound: 'Hola, estaba en xaska.co y no encontré lo que buscaba',
+  aska: 'Hola, quiero saber más de ASKA, la IA de XASKA POS',
+  askaSoon: 'Hola, quiero que me avisen cuando salga ASKA Te Atiende',
 } as const;
 
 export interface NavItem {
@@ -119,18 +138,20 @@ export interface NavItem {
 const baseNav: NavItem[] = [
   { label: 'Inicio', href: '/' },
   { label: 'Productos', href: '/productos' },
+  { label: 'ASKA', href: '/aska' },
   { label: 'Servicios', href: '/servicios' },
   { label: 'Nosotros', href: '/nosotros' },
   { label: 'Contacto', href: '/contacto' },
 ];
 
 export const mainNav: NavItem[] = flags.SHOW_HARDWARE
-  ? [...baseNav.slice(0, 3), { label: hardware.name, href: hardware.path }, ...baseNav.slice(3)]
+  ? [...baseNav.slice(0, 4), { label: hardware.name, href: hardware.path }, ...baseNav.slice(4)]
   : baseNav;
 
 /** Opciones del campo "interés" del formulario de contacto (fase 2). */
 export const interestOptions: readonly string[] = [
   'XASKA POS',
+  'ASKA (XASKA IA)',
   'Desarrollo a medida',
   'Automatización',
   'Página web',

@@ -3,6 +3,7 @@ export const publishedPages = [
   '/',
   '/productos',
   '/productos/xaska-pos',
+  '/aska',
   '/servicios',
   '/nosotros',
   '/contacto',

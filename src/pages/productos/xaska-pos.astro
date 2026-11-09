@@ -14,6 +14,7 @@ import Faq from '@/components/Faq.astro';
 import Steps from '@/components/Steps.astro';
 import RomboList from '@/components/RomboList.astro';
 import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import AskaBand from '@/components/AskaBand.astro';
 import { flags, primaryCta, primaryCtaIsWhatsApp, products, whatsappMessages } from '@/config/site';
 import { posApplication } from '@/lib/structured-data';
 
@@ -196,6 +197,10 @@ const faqItems = faq.items.map((item) =>
         <span class="sr-only"> (se abre en una pestaña nueva)</span>
       </a>
     </p>
+  </Section>
+
+  <Section labelledby="aska-pos">
+    <AskaBand headingId="aska-pos" />
   </Section>
 
   <Section labelledby="empezar">

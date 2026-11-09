@@ -1,0 +1,15 @@
+# [BORRADOR] Preguntas frecuentes de ASKA, por aprobar.
+title: Preguntas sobre ASKA
+items:
+  - question: ¿Qué es ASKA?
+    answer: Es la inteligencia artificial de XASKA POS. En Planes y pagos aparece como el adicional XASKA IA, y ASKA es el nombre con el que te habla dentro del sistema.
+  - question: ¿Cuánto cuesta?
+    answer: $39.900 al mes, aparte del plan. Se agrega a Emprende, Negocio o Empresa, y la puedes probar gratis 14 días.
+  - question: ¿Puede equivocarse?
+    answer: Puede leer mal una factura borrosa o una letra difícil del cuaderno. Por eso todo lo que lee te lo muestra para que lo revises y corrijas antes de guardar, y nada entra a XASKA sin tu confirmación. Cuando responde preguntas, las cifras salen de tus reportes.
+  - question: ¿Tiene un límite de uso?
+    answer: Sí. Cada función tiene un número de usos al mes, suficiente para el día a día de un negocio. Si llegas al tope te avisamos y sigues trabajando a mano. En la prueba gratis los cupos son menores.
+  - question: ¿Qué pasa con mis datos?
+    answer: Para leer facturas, listas y cuadernos, y para responder tus preguntas, XASKA usa Claude, de Anthropic. Solo se envía lo necesario para cada tarea, y las preguntas y respuestas no se guardan. Todo está en la política de datos de XASKA POS.
+  - question: ¿Funciona desde el celular?
+    answer: Sí. Puedes tomarle foto a la factura o al cuaderno con la cámara del celular y preguntarle a ASKA desde cualquier pantalla.

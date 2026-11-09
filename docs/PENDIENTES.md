@@ -7,6 +7,12 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
 - [x] Node 24 en tu equipo (fase 0 probada en local).
 - [x] Repositorio en GitHub (`Xaska312/xaska-hub`) y conectado a Cloudflare (versión de prueba en `xaska-hub.daniimejia1558.workers.dev`).
 
+## ASKA (2026-11-09)
+
+- [ ] Aprobar los textos `[BORRADOR]` de ASKA y del registro abierto (`pnpm pendientes` los lista).
+- [ ] Publicar la política de datos 1.3 en `app.xaska.co/privacidad` y la actualización del POS antes de pasar ASKA a `main`.
+- [ ] Opcional: imagen para redes propia de ASKA y capturas reales del panel de ASKA.
+
 ## Datos de la empresa (sección 10 del prompt)
 
 - [x] Horario de atención (lunes a sábado, 8:00 a. m. a 6:00 p. m.).
