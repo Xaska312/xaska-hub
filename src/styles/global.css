@@ -314,6 +314,43 @@
     }
   }
 
+  /*
+   * Pantalla de XASKA POS dibujada en código (caja de la portada, pantallas de la página del
+   * POS): marco índigo profundo y adentro los colores claros del POS (decisión 341 del POS),
+   * iguales en los dos temas del sitio, como un equipo encendido.
+   */
+  .pos-frame {
+    --pos-ground: #f5f7f7;
+    --pos-surface: #ffffff;
+    --pos-inset: #eef2f2;
+    --pos-border: #dbe2e2;
+    --pos-ink: #111827;
+    --pos-muted: #4b5563;
+    --pos-brand: #4338ca;
+    --pos-brand-soft: #e0e7ff;
+    --pos-brand-900: #312e81;
+    --pos-brand-950: #1e1b4b;
+    --pos-light: #818cf8;
+    --pos-ok: #047857;
+    --pos-ok-soft: #d1fae5;
+    --pos-warn: #92400e;
+    --pos-warn-soft: #fef3c7;
+    border-radius: 2rem;
+    background-image: linear-gradient(165deg, #1e1b4b 0%, #2b2a78 100%);
+    padding: 0.625rem;
+  }
+  .pos-screen {
+    color-scheme: light;
+    border-radius: 1.5rem;
+    background-color: var(--pos-ground);
+    color: var(--pos-ink);
+  }
+  .pos-screen :focus-visible {
+    outline: 2px solid var(--pos-brand);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--pos-brand) 28%, transparent);
+  }
+
   /* Aparece con un pequeño rebote (líneas de la venta, total, resultado de una pestaña). */
   @media (prefers-reduced-motion: no-preference) {
     .pop {

@@ -387,6 +387,14 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Pendiente (segunda parte):** llevar el estilo a XASKA POS, Aska y las demás páginas, cambiar las capturas por pantallas dibujadas o capturas nuevas a 2x de un negocio de prueba, y nuevas imágenes para redes.
 - **Alternativas descartadas:** los bocetos A y C.
 
+### XASKA POS con pantallas vivas (2026-11-14)
+
+- **Entrada:** la captura de Vender se cambia por la **ventana de cobro** que se puede tocar (`LiveCheckout`): medio de pago (efectivo, transferencia o mixto) y, en efectivo, el billete; el cambio sale al instante. Son botones de opción nativos y lo que se muestra cambia solo con CSS (`:has`), así que funciona sin JavaScript; el cambio de cada billete va también en su nombre accesible.
+- **"Así se ve":** las seis capturas del 31 de octubre se cambian por siete **pantallas dibujadas en código** (`PosScreen`): inicio, tiquete con "Enviar ▾", cierre de caja con arqueo, fiado, venta sin internet, Finanzas y mesas con sus estados (decisión 284 del POS). Datos de ejemplo de un minimercado de prueba, con el aviso en la página. Cada pantalla es una imagen para lectores de pantalla (`role="img"`) con su descripción, que vive en `src/content/pos/index.yaml`.
+- **Productos:** la captura de Vender se cambia por la pantalla de inicio dibujada.
+- **Colores de pantalla:** `.pos-frame` y `.pos-screen` en `global.css`, con los tokens claros del POS, iguales en los dos temas del sitio.
+- Las capturas de `src/assets/pos/` ya no se usan en ninguna página; se pueden borrar más adelante.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

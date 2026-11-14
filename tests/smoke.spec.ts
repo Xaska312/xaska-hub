@@ -190,15 +190,32 @@ test.describe('contenido de la fase 1', () => {
     await expect(faq).toContainText('Todavía no.');
   });
 
-  test('XASKA POS muestra las capturas con texto alternativo', async ({ page }) => {
+  test('XASKA POS muestra sus pantallas con descripción', async ({ page }) => {
     await page.goto('/productos/xaska-pos');
-    const imgs = page.locator('#asi-se-ve ~ figure img, #asi-se-ve ~ ul img');
-    await expect(imgs).toHaveCount(6);
-    for (const alt of await imgs.evaluateAll((els) =>
-      els.map((e) => e.getAttribute('alt') ?? ''),
+    const screens = page.locator('#asi-se-ve ~ ul [role="img"]');
+    await expect(screens).toHaveCount(7);
+    for (const label of await screens.evaluateAll((els) =>
+      els.map((e) => e.getAttribute('aria-label') ?? ''),
     )) {
-      expect(alt.length).toBeGreaterThan(20);
+      expect(label.length).toBeGreaterThan(40);
     }
+  });
+
+  test('la ventana de cobro muestra el cambio según el billete, sin JavaScript', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('/productos/xaska-pos');
+    const checkout = page.locator('.checkout');
+    await expect(checkout.locator('.ck-amount:visible')).toHaveText('$0');
+    await checkout.locator('label', { hasText: '$50.000' }).click();
+    await expect(checkout.locator('.ck-amount:visible')).toHaveText('$22.400');
+    await checkout.locator('label', { hasText: 'Mixto' }).click();
+    await expect(
+      checkout.getByText('Parte en efectivo y parte por transferencia', { exact: false }),
+    ).toBeVisible();
+    await context.close();
   });
 
   test('servicios tiene los cinco servicios con ancla', async ({ page }) => {

@@ -154,8 +154,25 @@ const pos = defineCollection({
     screens: z.object({
       title: text,
       lead: text,
+      note: text,
       items: z
-        .array(z.object({ image: text, alt: text, caption: text }))
+        .array(
+          z.object({
+            // Pantalla dibujada en src/components/PosScreen.astro.
+            screen: z.enum([
+              'inicio',
+              'tiquete',
+              'cierre',
+              'fiado',
+              'sin-conexion',
+              'finanzas',
+              'mesas',
+            ]),
+            title: text,
+            caption: text,
+            description: text,
+          }),
+        )
         .min(1)
         .max(9),
     }),

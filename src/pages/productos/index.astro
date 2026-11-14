@@ -7,9 +7,8 @@ import Card from '@/components/Card.astro';
 import CTA from '@/components/CTA.astro';
 import Icon from '@/components/Icon.astro';
 import RomboList from '@/components/RomboList.astro';
-import ScreenCard from '@/components/ScreenCard.astro';
+import PosScreen from '@/components/PosScreen.astro';
 import AskaBand from '@/components/AskaBand.astro';
-import sellScreen from '@/assets/pos/header-vender.png';
 import { primaryCta, products, whatsappMessages } from '@/config/site';
 
 const entry = await getEntry('products', 'index');
@@ -91,11 +90,10 @@ const highlights = homeEntry.data.pos.highlights;
           </CTA>
         </div>
       </Card>
-      <ScreenCard
-        src={sellScreen}
-        alt="Pantalla de ventas de XASKA POS: buscador por código de barras, categorías, productos con precio y existencias, y el total a cobrar."
-        fit="zoom"
-        sizes="(min-width: 1280px) 1100px, (min-width: 1024px) 88vw, 175vw"
+      <PosScreen
+        screen="inicio"
+        title="Inicio"
+        description="Inicio de XASKA POS con datos de ejemplo: las ventas del día, la utilidad, el número de ventas, el ticket promedio, las ventas por hora y los productos más vendidos."
         class="lg:col-span-7"
       />
     </div>

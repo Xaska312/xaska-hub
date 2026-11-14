@@ -25,29 +25,41 @@ audience:
   title: Para quién es
   text: Para comercios de barrio y de centro comercial que quieren dejar el cuaderno o el programa viejo, para restaurantes que atienden a la mesa y para droguerías, con fórmulas, lotes y vencimientos. Funciona especialmente bien en tiendas de ropa y calzado, porque maneja tallas y colores, y también en minimercados, papelerías y otros negocios con mostrador.
 
-# Capturas de un negocio de prueba (sin datos de clientes reales). Archivos en src/assets/pos/.
+# Pantallas de XASKA POS dibujadas en código (src/components/PosScreen.astro), con datos de
+# ejemplo. Se ven nítidas en cualquier pantalla y no muestran datos de clientes reales.
 screens:
   title: Así se ve
-  lead: Capturas reales de XASKA POS en un minimercado de prueba. Toca una imagen para verla completa.
+  lead: Las pantallas de XASKA POS, con los mismos colores y la misma forma de la app.
+  note: Datos de ejemplo de un minimercado de prueba.
   items:
-    - image: reportes
-      alt: Inicio con las ventas del día, el número de ventas, el ticket promedio, la utilidad, las ventas por hora, los medios de pago y los productos más vendidos.
+    - screen: inicio
+      title: Inicio
       caption: Tus ventas del día, la utilidad y lo que más se vende.
-    - image: cobrar
-      alt: Ventana de cobro con el total, los medios de pago efectivo, tarjeta y transferencia, los billetes rápidos y el cambio a devolver.
-      caption: Cobras en efectivo, con tarjeta, por transferencia o con pago mixto, y ves el cambio.
-    - image: tiquete
-      alt: Venta registrada con el tiquete de 80 mm, el cambio y los botones para imprimir o enviar por WhatsApp.
-      caption: Tiquete de 58 u 80 mm, para imprimir o enviar por WhatsApp.
-    - image: cierre-caja
-      alt: Informe de caja con las ventas por medio de pago, la base de apertura, los egresos, los anticipos y el efectivo esperado, con botones para imprimir o enviar por WhatsApp.
-      caption: El informe de caja te dice cuánto efectivo debe haber al cerrar.
-    - image: productos
-      alt: Lista de productos con su código, nombre, categoría, unidad, impuesto, precio y estado.
-      caption: Tus productos con código, categoría, impuesto y precio.
-    - image: mesa
-      alt: Cuenta de la mesa 1 con los productos por enviar a cocina, los botones para mover o unir la cuenta y el total.
-      caption: Para restaurantes, cuentas por mesa que se envían a cocina.
+      description: Inicio de XASKA POS con las ventas del día, el número de ventas, el ticket promedio, la utilidad, las ventas por hora y los productos más vendidos.
+    - screen: tiquete
+      title: Tiquete
+      caption: Tiquete de 58 u 80 mm para imprimir, o como imagen para enviar por WhatsApp.
+      description: Tiquete de venta con el negocio, los productos, el total, el pago en efectivo, el cambio y el botón Enviar con las opciones WhatsApp e Imagen del tiquete.
+    - screen: cierre
+      title: Cierre de caja
+      caption: El cierre te dice cuánto efectivo debe haber, y lo comparas con lo que contaste.
+      description: Cierre de caja con las ventas por medio de pago, la base de apertura, los egresos, el efectivo esperado, el efectivo contado y la diferencia en cero.
+    - screen: fiado
+      title: Fiado
+      caption: Cada cliente con su cupo, lo que debe y sus abonos. El recordatorio sale por WhatsApp.
+      description: Estado de cuenta de un cliente de fiado con su cupo, lo que debe, lo que le queda disponible, sus últimos movimientos y el botón para enviar el recordatorio por WhatsApp.
+    - screen: sin-conexion
+      title: Sin internet
+      caption: Si se va el internet, sigues vendiendo. Las ventas se envían solas al volver la conexión.
+      description: Pantalla de ventas con el aviso Sin conexión, sigues vendiendo, y la lista de ventas guardadas en el equipo con número provisional, pendientes de enviar.
+    - screen: finanzas
+      title: Finanzas
+      caption: La plata que entra y sale en el mes, la ganancia y el punto de equilibrio.
+      description: Tablero de Finanzas con las ventas netas, la utilidad bruta y la operativa del mes, la plata que entró por medio de pago, los gastos y el avance hacia el punto de equilibrio.
+    - screen: mesas
+      title: Mesas
+      caption: Para restaurantes, las mesas por zona con su cuenta y un color para cada estado.
+      description: Mapa de mesas de un restaurante por zona, cada mesa con su color según el estado (libre, en cocina, comiendo o pidió la cuenta) y el valor de su cuenta abierta.
 
 capabilities:
   title: Qué puedes hacer

@@ -72,7 +72,8 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
 - [x] ASKA: textos aprobados (2026-11-09).
 - [ ] ASKA: publicar en `main` cuando el POS tenga la actualización y la política de datos 1.3.
 - [ ] ASKA: imagen para redes propia (hoy usa la general).
-- [ ] Portada viva, segunda parte: el mismo estilo en XASKA POS, Aska y las demás páginas; pantallas dibujadas o capturas nuevas a 2x de un negocio de prueba en lugar de las capturas del 31 de octubre.
+- [x] XASKA POS y Productos con pantallas dibujadas en lugar de capturas (2026-11-14).
+- [ ] Portada viva, lo que sigue: el estilo en Aska, Servicios, Nosotros y Contacto; imágenes para redes nuevas; borrar las capturas viejas de `src/assets/pos/`.
 
 ---
 
