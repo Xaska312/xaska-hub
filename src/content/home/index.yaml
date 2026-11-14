@@ -3,11 +3,77 @@ seo:
   description: Software para pymes colombianas. XASKA POS para vender y controlar tu inventario, y desarrollo a medida, automatización y páginas web. Desde Ibagué.
 
 hero:
-  title: Software para pymes, hecho por gente que conoce el mostrador
-  lead: En XASKA creamos XASKA POS, un sistema de punto de venta para comercios, y desarrollamos herramientas a la medida para pymes colombianas. Hablas directo con quien lo construye.
+  badge: Pruébalo aquí mismo
+  title: Toca un producto. Así de fácil se vende.
+  lead: Esta es la caja de XASKA POS. Funciona en el computador, la tablet o el celular, y sigue vendiendo aunque se vaya el internet.
 
+# Caja de prueba de la portada. Productos y precios de ejemplo, no de un negocio real.
+register:
+  caption: Productos de ejemplo. La caja real tiene lector de código, pagos mixtos y tiquete de 58 u 80 mm.
+  products:
+    - name: Arroz 1 kg
+      price: 4200
+    - name: Leche 1 L
+      price: 4600
+    - name: Pan tajado
+      price: 6500
+    - name: Huevos x 12
+      price: 13800
+    - name: Gaseosa 1,5 L
+      price: 5900
+    - name: Café 250 g
+      price: 11900
+
+# Pestañas bajo la caja: el lema de XASKA POS. Los renglones son datos de ejemplo.
+chapters:
+  title: Todo el día del negocio, en una sola app
+  note: Datos de ejemplo.
+  items:
+    - id: vende
+      title: Vende
+      text: Con lector de código, pagos mixtos y precio libre para lo que no tiene precio fijo. Pausa una venta y retómala después, y si se va el internet, sigues vendiendo.
+      rows:
+        - label: Efectivo
+          value: $20.000
+        - label: Transferencia
+          value: $7.600
+        - label: Cambio
+          value: $0
+    - id: fia
+      title: Fía
+      text: Cada cliente con su cupo, sus abonos y su estado de cuenta. El recordatorio sale por WhatsApp con tus palabras.
+      rows:
+        - label: Cupo de Doña Rosa
+          value: $150.000
+        - label: Debe
+          value: $42.300
+        - label: Último abono
+          value: Ayer
+    - id: cobra
+      title: Cobra
+      text: El recibo como imagen para enviar por WhatsApp, el tiquete impreso de 58 u 80 mm y el cierre de caja con arqueo.
+      rows:
+        - label: Ventas del día
+          value: '38'
+        - label: Esperado en caja
+          value: $412.000
+        - label: Contado
+          value: $412.000
+    - id: controla
+      title: Controla
+      text: Inventario por sucursal, gastos y gastos fijos, estado de resultados y qué comprarle a cada proveedor.
+      rows:
+        - label: Utilidad del mes
+          value: $1.840.000
+        - label: Productos por pedir
+          value: '12'
+        - label: Gastos fijos
+          value: $950.000
+
+# Quiénes somos, bajo la caja y las pestañas.
 pillars:
-  title: Lo que hacemos
+  title: Software para pymes, hecho por gente que conoce el mostrador
+  lead: En XASKA creamos XASKA POS y desarrollamos herramientas a la medida para pymes colombianas. Hablas directo con quien lo construye.
   items:
     - title: Un producto propio
       text: XASKA POS, para vender, controlar el inventario y cuadrar la caja desde el computador, la tablet o el celular.
@@ -27,14 +93,13 @@ pos:
   lead: El punto de venta en la web para comercios en Colombia. Funciona en el navegador, sin instalar nada. Regístrate y pruébalo gratis 14 días, sin tarjeta.
   highlights:
     - Ventas con lector de código de barras y pagos mixtos
+    - Sigue vendiendo aunque se vaya el internet
     - Inventario por sucursal, con tallas y colores
-    - Caja con arqueo al cierre
+    - Caja con arqueo y recibo por WhatsApp
+    - Fiado con cupo, pedidos con anticipo y cotizaciones
+    - Gastos, gastos fijos y estado de resultados
     - Módulos para restaurantes y droguerías
     - Varios negocios y sucursales, con roles y permisos
-    - Reportes de ventas y etiquetas de báscula
-    - Fiado con cupo por cliente
-    - Pedidos con anticipo y cotizaciones
-
 services:
   title: Servicios para tu empresa
   lead: Cuando necesitas algo que no viene en una caja, lo construimos contigo.

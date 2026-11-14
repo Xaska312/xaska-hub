@@ -375,6 +375,32 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Precios:** el botón "Ver todos los precios" de `/aska` lleva a `app.xaska.co/precios`, la página pública del POS.
 - **Cuándo se publica:** con la página de ASKA, cuando la actualización del POS y su política de datos 1.3 estén en producción.
 
+### Portada viva, "Mostrador vivo" (2026-11-14)
+
+- **Por qué:** XASKA POS avanzó mucho (venta sin internet, Finanzas, recibo como imagen, la dirección "Orgánica" de su decisión 341) y la portada se había quedado con capturas viejas, borrosas en el celular, y con una respuesta falsa sobre el internet.
+- **Diseño:** se hicieron 3 bocetos en un lienzo de diseño (A "Bento orgánico", B "Mostrador vivo" y C "Conversación") y Daniel eligió el B: la entrada es la caja de XASKA POS funcionando. Se tocan productos, sube el total y se cobra.
+- **Caja de prueba** (`LiveRegister`): dibujada en HTML y CSS con los colores claros del POS (siempre claros, dentro de un marco índigo profundo, también en tema oscuro), sin imágenes, nítida en cualquier pantalla. JavaScript propio sin dependencias, compatible con la CSP; no guarda nada ni llama a ningún servidor. Cada cambio se anuncia en una región `aria-live` y el foco pasa a "Nueva venta" al cobrar. Productos y precios de ejemplo en `src/content/home/index.yaml` (`register`), con el aviso "Productos de ejemplo".
+- **Pestañas Vende / Fía / Cobra / Controla** (`ChapterTabs`): el lema de las tarjetas, con renglones de ejemplo ("Datos de ejemplo."). Patrón de pestañas WAI-ARIA (flechas, Inicio y Fin). Sin JavaScript no salen las pestañas y se ven los cuatro paneles. No se usa el atributo `hidden` porque Tailwind lo oculta con `!important`.
+- **Movimiento orgánico** (como XASKA POS): botones que se hunden al presionar (escala 0,95) y rebotan al soltar (`--ease-bounce`, 220 ms), los rellenos con sombra de su color y 1 px hacia arriba al pasar el mouse (`.press`, `.press-solid`), tarjetas enlace que suben 3 px, y foco con borde de 2 px más un halo de 4 px. Con movimiento reducido no se mueve nada.
+- **Orden de la portada:** caja → pestañas → XASKA POS con "Lo que trae" → Aska → quiénes somos (los tres pilares, con el título que antes tenía la portada) → servicios → por qué → cómo trabajamos → cierre. Sale la captura del inicio del POS.
+- **Textos corregidos:** la pregunta "¿Necesito internet todo el tiempo?" ahora dice que se sigue vendiendo sin conexión en el equipo de la caja (decisiones 332 y 333 del POS) y lo que sí necesita conexión. Se agregaron la venta sin internet, el recibo como imagen y el grupo Finanzas (gastos, gastos fijos, retenciones, estado de resultados y tablero; decisiones 315, 320 a 324 y 326 del POS).
+- **Pendiente (segunda parte):** llevar el estilo a XASKA POS, Aska y las demás páginas, cambiar las capturas por pantallas dibujadas o capturas nuevas a 2x de un negocio de prueba, y nuevas imágenes para redes.
+- **Alternativas descartadas:** los bocetos A y C.
+
+### XASKA POS con pantallas vivas (2026-11-14)
+
+- **Entrada:** la captura de Vender se cambia por la **ventana de cobro** que se puede tocar (`LiveCheckout`): medio de pago (efectivo, transferencia o mixto) y, en efectivo, el billete; el cambio sale al instante. Son botones de opción nativos y lo que se muestra cambia solo con CSS (`:has`), así que funciona sin JavaScript; el cambio de cada billete va también en su nombre accesible.
+- **"Así se ve":** las seis capturas del 31 de octubre se cambian por siete **pantallas dibujadas en código** (`PosScreen`): inicio, tiquete con "Enviar ▾", cierre de caja con arqueo, fiado, venta sin internet, Finanzas y mesas con sus estados (decisión 284 del POS). Datos de ejemplo de un minimercado de prueba, con el aviso en la página. Cada pantalla es una imagen para lectores de pantalla (`role="img"`) con su descripción, que vive en `src/content/pos/index.yaml`.
+- **Productos:** la captura de Vender se cambia por la pantalla de inicio dibujada.
+- **Colores de pantalla:** `.pos-frame` y `.pos-screen` en `global.css`, con los tokens claros del POS, iguales en los dos temas del sitio.
+- Las capturas de `src/assets/pos/` ya no se usan en ninguna página; se pueden borrar más adelante.
+
+### ASKA que responde y campos rellenos (2026-11-14)
+
+- **ASKA:** las preguntas para seguir de la conversación de ejemplo son botones. Al tocar una, sale la pregunta, ASKA "escribe" (tres puntos) y responde con su fuente. Cada pregunta se usa una vez y el foco pasa a la siguiente. Respuestas sin montos ni cifras, en `src/content/aska/index.yaml` (`chat.followUps`); son textos nuevos, para que Daniel los revise. Sin JavaScript no salen los botones.
+- **Formulario de contacto:** campos rellenos como en XASKA POS (fondo hundido, esquinas de 12 px, borde de 1,5 px con contraste de control y fondo de tarjeta al enfocar, con el halo de foco).
+- Servicios, Nosotros y Contacto ya tenían el estilo bento y ganan el movimiento nuevo de botones y tarjetas sin más cambios.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

@@ -1,0 +1,228 @@
+---
+/**
+ * Ventana de cobro de XASKA POS que se puede tocar: se elige el medio de pago (efectivo,
+ * transferencia o mixto) y, en efectivo, el billete con que pagan; el cambio se ve al instante.
+ *
+ * Funciona sin JavaScript: son botones de opción nativos y lo que se muestra cambia solo con
+ * CSS (:has). El cambio de cada billete va también en su nombre accesible.
+ * Valores de ejemplo.
+ */
+import { formatPesos } from '@/lib/money';
+
+const total = 27600;
+const bills = [30000, 50000, 100000];
+const mixed = { cash: 20000, transfer: total - 20000 };
+---
+
+<div class="pos-frame checkout">
+  <div class="pos-screen flex flex-col gap-3 p-4 sm:p-5">
+    <div class="flex items-center justify-between gap-2">
+      <p class="text-[0.95rem] font-bold">Cobrar</p>
+      <p class="ck-pill">3 productos</p>
+    </div>
+
+    <div class="ck-total">
+      <span class="text-sm">Total a cobrar</span>
+      <span class="text-[2rem] leading-none font-extrabold">{formatPesos(total)}</span>
+    </div>
+
+    <fieldset class="flex flex-col gap-2">
+      <legend class="ck-label">Medio de pago</legend>
+      <div class="grid grid-cols-3 gap-2">
+        <label class="ck-option press">
+          <input type="radio" name="ck-method" value="efectivo" class="sr-only" checked />
+          Efectivo
+        </label>
+        <label class="ck-option press">
+          <input type="radio" name="ck-method" value="transferencia" class="sr-only" />
+          Transferencia
+        </label>
+        <label class="ck-option press">
+          <input type="radio" name="ck-method" value="mixto" class="sr-only" />
+          Mixto
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="ck-pane ck-pane-efectivo flex flex-col gap-3">
+      <fieldset class="flex flex-col gap-2">
+        <legend class="ck-label">Con cuánto pagan</legend>
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <label class="ck-option press">
+            <input type="radio" name="ck-bill" value="exacto" class="sr-only" checked />
+            Exacto<span class="sr-only">, cambio {formatPesos(0)}</span>
+          </label>
+          {bills.map((bill) => (
+            <label class="ck-option press">
+              <input type="radio" name="ck-bill" value={String(bill)} class="sr-only" />
+              {formatPesos(bill)}
+              <span class="sr-only">, cambio {formatPesos(bill - total)}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <div class="ck-change">
+        <span class="text-sm font-semibold">Cambio</span>
+        <span class="ck-amount ck-amount-exacto">{formatPesos(0)}</span>
+        {bills.map((bill) => (
+          <span class:list={['ck-amount', `ck-amount-${bill}`]}>{formatPesos(bill - total)}</span>
+        ))}
+      </div>
+    </div>
+
+    <div class="ck-pane ck-pane-transferencia ck-note">
+      Sin cambio. Anota la referencia de la transferencia y queda en el cierre de caja.
+    </div>
+
+    <div class="ck-pane ck-pane-mixto flex flex-col gap-2 text-sm">
+      <span class="ck-line">
+        <span>Efectivo</span>
+        <strong>{formatPesos(mixed.cash)}</strong>
+      </span>
+      <span class="ck-line">
+        <span>Transferencia</span>
+        <strong>{formatPesos(mixed.transfer)}</strong>
+      </span>
+      <span class="ck-muted text-xs">
+        Parte en efectivo y parte por transferencia, en una sola venta.
+      </span>
+    </div>
+
+    <span class="ck-pay" aria-hidden="true">
+      Cobrar {formatPesos(total)}
+    </span>
+  </div>
+  <p class="ck-caption">Valores de ejemplo. Toca el medio de pago y el billete.</p>
+</div>
+
+<style>
+  .ck-pill {
+    border-radius: 9999px;
+    background-color: var(--pos-brand-soft);
+    padding: 0.2rem 0.65rem;
+    color: #3730a3;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .ck-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-radius: 1rem;
+    background-color: var(--pos-brand-900);
+    padding: 0.9rem 1rem;
+    color: #ffffff;
+  }
+
+  .ck-label {
+    margin-bottom: 0.5rem;
+    color: var(--pos-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .ck-option {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--pos-border);
+    border-radius: 0.875rem;
+    background-color: var(--pos-surface);
+    padding-inline: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+  }
+  .ck-option:hover {
+    border-color: var(--pos-light);
+  }
+  .ck-option:has(input:checked) {
+    border-color: var(--pos-brand);
+    background-color: var(--pos-brand-soft);
+    color: var(--pos-brand-950);
+    box-shadow: 0 8px 18px -12px rgb(67 56 202 / 0.9);
+  }
+  .ck-option:has(input:focus-visible) {
+    outline: 2px solid var(--pos-brand);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--pos-brand) 28%, transparent);
+  }
+
+  .ck-change {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 1rem;
+    background-color: var(--pos-ok-soft);
+    padding: 0.8rem 1rem;
+    color: var(--pos-ok);
+  }
+  .ck-amount {
+    display: none;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .ck-note {
+    border-radius: 1rem;
+    background-color: var(--pos-surface);
+    padding: 0.9rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .ck-line {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 0.875rem;
+    background-color: var(--pos-surface);
+    padding: 0.7rem 0.9rem;
+  }
+  .ck-muted {
+    color: var(--pos-muted);
+  }
+
+  .ck-pay {
+    display: flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.875rem;
+    background-color: var(--pos-brand);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 10px 22px -12px rgb(67 56 202 / 0.95);
+  }
+
+  .ck-caption {
+    margin: 0.7rem 0.5rem 0.2rem;
+    color: #c7d2fe;
+    font-size: 0.8125rem;
+  }
+
+  /* Qué se ve según lo elegido (sin JavaScript). */
+  .ck-pane {
+    display: none;
+  }
+  .checkout:has(input[name='ck-method'][value='efectivo']:checked) .ck-pane-efectivo,
+  .checkout:has(input[name='ck-method'][value='transferencia']:checked) .ck-pane-transferencia,
+  .checkout:has(input[name='ck-method'][value='mixto']:checked) .ck-pane-mixto {
+    display: flex;
+  }
+  .checkout:has(input[name='ck-bill'][value='exacto']:checked) .ck-amount-exacto,
+  .checkout:has(input[name='ck-bill'][value='30000']:checked) .ck-amount-30000,
+  .checkout:has(input[name='ck-bill'][value='50000']:checked) .ck-amount-50000,
+  .checkout:has(input[name='ck-bill'][value='100000']:checked) .ck-amount-100000 {
+    display: inline-block;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ck-pane,
+    .ck-amount {
+      animation: pop 360ms var(--ease-bounce);
+    }
+  }
+</style>

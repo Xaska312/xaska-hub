@@ -16,9 +16,17 @@ chat:
   question: ¿Qué se me está acabando?
   answer: El arroz de 500 g y el aceite de litro están por debajo del mínimo, y los dos se venden todos los días. ¿Te armo el pedido para el proveedor?
   source: 'Consultó: productos bajo el mínimo'
+  # Se tocan y ASKA responde. Ejemplos sin montos ni cifras.
   followUps:
-    - ¿Qué me toca pedir?
-    - ¿Quién me debe?
+    - question: ¿Qué me toca pedir?
+      answer: Según lo que vendes, al proveedor de granos le toca arroz, aceite y panela. Te dejé el pedido listo para mandarlo por WhatsApp o en PDF.
+      source: 'Consultó: qué comprar por proveedor'
+    - question: ¿Quién me debe?
+      answer: Doña Rosa y don Pedro tienen fiado pendiente, y don Pedro ya pasó su cupo. ¿Te muestro el estado de cuenta de cada uno?
+      source: 'Consultó: fiados pendientes'
+    - question: ¿Cómo me fue hoy?
+      answer: Vendiste más que el sábado pasado y lo que más salió fue huevos y gaseosa. La caja va cuadrada.
+      source: 'Consultó: ventas del día y caja'
 
 features:
   title: Lo que ASKA hace por tu negocio

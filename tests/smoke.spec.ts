@@ -190,15 +190,32 @@ test.describe('contenido de la fase 1', () => {
     await expect(faq).toContainText('Todavía no.');
   });
 
-  test('XASKA POS muestra las capturas con texto alternativo', async ({ page }) => {
+  test('XASKA POS muestra sus pantallas con descripción', async ({ page }) => {
     await page.goto('/productos/xaska-pos');
-    const imgs = page.locator('#asi-se-ve ~ figure img, #asi-se-ve ~ ul img');
-    await expect(imgs).toHaveCount(6);
-    for (const alt of await imgs.evaluateAll((els) =>
-      els.map((e) => e.getAttribute('alt') ?? ''),
+    const screens = page.locator('#asi-se-ve ~ ul [role="img"]');
+    await expect(screens).toHaveCount(7);
+    for (const label of await screens.evaluateAll((els) =>
+      els.map((e) => e.getAttribute('aria-label') ?? ''),
     )) {
-      expect(alt.length).toBeGreaterThan(20);
+      expect(label.length).toBeGreaterThan(40);
     }
+  });
+
+  test('la ventana de cobro muestra el cambio según el billete, sin JavaScript', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('/productos/xaska-pos');
+    const checkout = page.locator('.checkout');
+    await expect(checkout.locator('.ck-amount:visible')).toHaveText('$0');
+    await checkout.locator('label', { hasText: '$50.000' }).click();
+    await expect(checkout.locator('.ck-amount:visible')).toHaveText('$22.400');
+    await checkout.locator('label', { hasText: 'Mixto' }).click();
+    await expect(
+      checkout.getByText('Parte en efectivo y parte por transferencia', { exact: false }),
+    ).toBeVisible();
+    await context.close();
   });
 
   test('servicios tiene los cinco servicios con ancla', async ({ page }) => {
@@ -260,5 +277,78 @@ test.describe('contenido de la fase 1', () => {
       expect(text, path).not.toContain('facturación');
       expect(text, path).not.toMatch(/s\.a\.s|\bnit\b/);
     }
+  });
+});
+
+test.describe('portada viva', () => {
+  test('la caja de prueba suma productos, cobra y empieza otra venta', async ({ page }) => {
+    await page.goto('/');
+    const register = page.locator('[data-register]');
+    await expect(register.getByText('Toca un producto para empezar la venta.')).toBeVisible();
+    await register.getByRole('button', { name: /Arroz 1 kg/ }).click();
+    await register.getByRole('button', { name: /Arroz 1 kg/ }).click();
+    await register.getByRole('button', { name: /Leche 1 L/ }).click();
+    await expect(register.getByText('2 × Arroz 1 kg')).toBeVisible();
+    await expect(register.locator('[data-total]')).toHaveText('$13.000');
+    await expect(register.locator('[data-announce]')).toHaveText(
+      'Leche 1 L agregado. Total $13.000.',
+    );
+    await register.getByRole('button', { name: 'Cobrar' }).click();
+    await expect(register.getByText('Venta registrada', { exact: true })).toBeVisible();
+    await expect(register.locator('[data-paid]')).toHaveText('$13.000');
+    const again = register.getByRole('button', { name: 'Nueva venta' });
+    await expect(again).toBeFocused();
+    await again.click();
+    await expect(register.getByText('Toca un producto para empezar la venta.')).toBeVisible();
+  });
+
+  test('las pestañas Vende, Fía, Cobra y Controla se manejan con teclado', async ({ page }) => {
+    await page.goto('/');
+    const tablist = page.getByRole('tablist', { name: 'Lo que hace XASKA POS' });
+    const vende = tablist.getByRole('tab', { name: 'Vende' });
+    await expect(vende).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: 'Vende' })).toBeVisible();
+    await vende.focus();
+    await page.keyboard.press('ArrowRight');
+    const fia = tablist.getByRole('tab', { name: 'Fía' });
+    await expect(fia).toBeFocused();
+    await expect(fia).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: 'Fía' })).toBeVisible();
+    await expect(page.getByRole('tabpanel', { name: 'Vende' })).toBeHidden();
+    await page.keyboard.press('End');
+    await expect(page.getByRole('tabpanel', { name: 'Controla' })).toBeVisible();
+    await page.keyboard.press('ArrowRight');
+    await expect(vende).toBeFocused();
+  });
+
+  test('sin JavaScript se ven los cuatro paneles y no las pestañas', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('/');
+    await expect(page.locator('[role="tablist"]')).toBeHidden();
+    for (const name of ['Vende', 'Fía', 'Cobra', 'Controla']) {
+      await expect(
+        page.locator(`#panel-${name === 'Fía' ? 'fia' : name.toLowerCase()}`),
+      ).toBeVisible();
+    }
+    await context.close();
+  });
+
+  test('la pregunta del internet dice que se puede vender sin conexión', async ({ page }) => {
+    await page.goto('/productos/xaska-pos');
+    await expect(page.getByText('sigues vendiendo en ese equipo', { exact: false })).toBeAttached();
+  });
+});
+
+test.describe('ASKA viva', () => {
+  test('las preguntas de ejemplo responden en la conversación', async ({ page }) => {
+    await page.goto('/aska');
+    const log = page.getByRole('log');
+    await page.getByRole('button', { name: '¿Quién me debe?' }).click();
+    await expect(
+      log.getByText('Doña Rosa y don Pedro tienen fiado pendiente', { exact: false }),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: '¿Quién me debe?' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: '¿Cómo me fue hoy?' })).toBeFocused();
   });
 });

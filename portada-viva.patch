@@ -1,0 +1,1372 @@
+From 290085b6f835193c4113ddad1bf57aff5237979d Mon Sep 17 00:00:00 2001
+From: Xaska <94057683+Xaska312@users.noreply.github.com>
+Date: Sat, 14 Nov 2026 14:54:26 -0500
+Subject: [PATCH] =?UTF-8?q?Portada=20viva:=20caja=20de=20prueba,=20pesta?=
+ =?UTF-8?q?=C3=B1as=20y=20movimiento=20org=C3=A1nico?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- La entrada es la caja de XASKA POS funcionando (LiveRegister): se tocan
+  productos de ejemplo, sube el total y se cobra. HTML y CSS con los colores
+  del POS, JavaScript propio compatible con la CSP y anuncios aria-live.
+- Pestañas Vende / Fía / Cobra / Controla (ChapterTabs), patrón WAI-ARIA;
+  sin JavaScript se ven los cuatro paneles.
+- Movimiento como XASKA POS: botones que se hunden y rebotan, sombra del
+  color del botón, tarjetas que suben y foco con halo. Respeta el
+  movimiento reducido.
+- Corrige la respuesta del internet (se vende sin conexión) y agrega
+  Finanzas y el recibo como imagen por WhatsApp.
+- Pruebas de la caja, las pestañas y el modo sin JavaScript.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019CUdjctz8ikuvwZpJDJsxo
+---
+ docs/DECISIONES.md                  |  12 +
+ docs/ROADMAP-Y-TRASPASO.md          |   2 +
+ src/components/CTA.astro            |   4 +-
+ src/components/ChapterTabs.astro    | 173 +++++++++++
+ src/components/ContactForm.astro    |   2 +-
+ src/components/LiveRegister.astro   | 438 ++++++++++++++++++++++++++++
+ src/components/WhatsAppButton.astro |   4 +-
+ src/content.config.ts               |  29 +-
+ src/content/faq/xaska-pos.yaml      |   2 +-
+ src/content/home/index.yaml         |  81 ++++-
+ src/content/pos/index.yaml          |   9 +
+ src/lib/money.ts                    |   7 +
+ src/pages/index.astro               | 176 ++++++-----
+ src/styles/global.css               |  72 ++++-
+ tests/smoke.spec.ts                 |  60 ++++
+ 15 files changed, 976 insertions(+), 95 deletions(-)
+ create mode 100644 src/components/ChapterTabs.astro
+ create mode 100644 src/components/LiveRegister.astro
+ create mode 100644 src/lib/money.ts
+
+diff --git a/docs/DECISIONES.md b/docs/DECISIONES.md
+index 7f6d5a4..e63d997 100644
+--- a/docs/DECISIONES.md
++++ b/docs/DECISIONES.md
+@@ -375,6 +375,18 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa
+ - **Precios:** el botón "Ver todos los precios" de `/aska` lleva a `app.xaska.co/precios`, la página pública del POS.
+ - **Cuándo se publica:** con la página de ASKA, cuando la actualización del POS y su política de datos 1.3 estén en producción.
+ 
++### Portada viva, "Mostrador vivo" (2026-11-14)
++
++- **Por qué:** XASKA POS avanzó mucho (venta sin internet, Finanzas, recibo como imagen, la dirección "Orgánica" de su decisión 341) y la portada se había quedado con capturas viejas, borrosas en el celular, y con una respuesta falsa sobre el internet.
++- **Diseño:** se hicieron 3 bocetos en un lienzo de diseño (A "Bento orgánico", B "Mostrador vivo" y C "Conversación") y Daniel eligió el B: la entrada es la caja de XASKA POS funcionando. Se tocan productos, sube el total y se cobra.
++- **Caja de prueba** (`LiveRegister`): dibujada en HTML y CSS con los colores claros del POS (siempre claros, dentro de un marco índigo profundo, también en tema oscuro), sin imágenes, nítida en cualquier pantalla. JavaScript propio sin dependencias, compatible con la CSP; no guarda nada ni llama a ningún servidor. Cada cambio se anuncia en una región `aria-live` y el foco pasa a "Nueva venta" al cobrar. Productos y precios de ejemplo en `src/content/home/index.yaml` (`register`), con el aviso "Productos de ejemplo".
++- **Pestañas Vende / Fía / Cobra / Controla** (`ChapterTabs`): el lema de las tarjetas, con renglones de ejemplo ("Datos de ejemplo."). Patrón de pestañas WAI-ARIA (flechas, Inicio y Fin). Sin JavaScript no salen las pestañas y se ven los cuatro paneles. No se usa el atributo `hidden` porque Tailwind lo oculta con `!important`.
++- **Movimiento orgánico** (como XASKA POS): botones que se hunden al presionar (escala 0,95) y rebotan al soltar (`--ease-bounce`, 220 ms), los rellenos con sombra de su color y 1 px hacia arriba al pasar el mouse (`.press`, `.press-solid`), tarjetas enlace que suben 3 px, y foco con borde de 2 px más un halo de 4 px. Con movimiento reducido no se mueve nada.
++- **Orden de la portada:** caja → pestañas → XASKA POS con "Lo que trae" → Aska → quiénes somos (los tres pilares, con el título que antes tenía la portada) → servicios → por qué → cómo trabajamos → cierre. Sale la captura del inicio del POS.
++- **Textos corregidos:** la pregunta "¿Necesito internet todo el tiempo?" ahora dice que se sigue vendiendo sin conexión en el equipo de la caja (decisiones 332 y 333 del POS) y lo que sí necesita conexión. Se agregaron la venta sin internet, el recibo como imagen y el grupo Finanzas (gastos, gastos fijos, retenciones, estado de resultados y tablero; decisiones 315, 320 a 324 y 326 del POS).
++- **Pendiente (segunda parte):** llevar el estilo a XASKA POS, Aska y las demás páginas, cambiar las capturas por pantallas dibujadas o capturas nuevas a 2x de un negocio de prueba, y nuevas imágenes para redes.
++- **Alternativas descartadas:** los bocetos A y C.
++
+ ## Tabla de contrastes (WCAG 2.2 AA)
+ 
+ Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
+diff --git a/docs/ROADMAP-Y-TRASPASO.md b/docs/ROADMAP-Y-TRASPASO.md
+index e8fd9bf..02a4892 100644
+--- a/docs/ROADMAP-Y-TRASPASO.md
++++ b/docs/ROADMAP-Y-TRASPASO.md
+@@ -57,6 +57,7 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
+ 
+ - **Rediseño bento (2026-11-04):** se hicieron 6 bocetos del inicio (en un lienzo de diseño en Claude) y Daniel eligió el 1, "Bento". Se aplicó a todas las páginas. Componentes nuevos: `Card`, `PageHeader`, `ScreenCard`, `Icon`; se eliminaron `ScreenShowcase` y `Convergence`. Pruebas: 149 en verde; Lighthouse 100 en casi todo (Contacto 96 en buenas prácticas, por Turnstile).
+ - **Planes por nivel (2026-11-05):** tomados del repositorio del POS (decisión 288). Ver `docs/DECISIONES.md`.
++- **Portada viva (2026-11-14):** bocetos A, B y C; Daniel eligió el B, "Mostrador vivo": caja de XASKA POS que funciona en la portada, pestañas Vende / Fía / Cobra / Controla y movimiento orgánico como el POS. Se corrigió la respuesta del internet y se agregaron Finanzas y el recibo por WhatsApp. Ver `docs/DECISIONES.md`.
+ - **Cómo se publica un cambio:** README, sección "Cómo se publica un cambio".
+ 
+ ### Lo que falta
+@@ -71,6 +72,7 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
+ - [x] ASKA: textos aprobados (2026-11-09).
+ - [ ] ASKA: publicar en `main` cuando el POS tenga la actualización y la política de datos 1.3.
+ - [ ] ASKA: imagen para redes propia (hoy usa la general).
++- [ ] Portada viva, segunda parte: el mismo estilo en XASKA POS, Aska y las demás páginas; pantallas dibujadas o capturas nuevas a 2x de un negocio de prueba en lugar de las capturas del 31 de octubre.
+ 
+ ---
+ 
+diff --git a/src/components/CTA.astro b/src/components/CTA.astro
+index 33d4231..fa71c88 100644
+--- a/src/components/CTA.astro
++++ b/src/components/CTA.astro
+@@ -19,9 +19,9 @@ const { href, variant = 'primary', external = false, class: className } = Astro.
+   href={href}
+   {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+   class:list={[
+-    'inline-flex min-h-12 items-center justify-center gap-2 rounded-control px-6 font-semibold transition-colors',
++    'inline-flex min-h-12 items-center justify-center gap-2 rounded-control px-6 font-semibold press',
+     variant === 'primary'
+-      ? 'bg-accent text-on-accent hover:bg-accent-strong'
++      ? 'press-solid bg-accent text-on-accent hover:bg-accent-strong'
+       : 'border-[1.5px] border-line-strong text-ink hover:border-ink',
+     className,
+   ]}
+diff --git a/src/components/ChapterTabs.astro b/src/components/ChapterTabs.astro
+new file mode 100644
+index 0000000..63238fb
+--- /dev/null
++++ b/src/components/ChapterTabs.astro
+@@ -0,0 +1,173 @@
++---
++/**
++ * Pestañas con el lema de XASKA POS (Vende, Fía, Cobra, Controla): a la izquierda qué hace,
++ * a la derecha renglones de ejemplo como se ven en la app.
++ *
++ * Patrón de pestañas de la WAI-ARIA: flechas izquierda y derecha, Inicio y Fin; solo la
++ * pestaña elegida entra en el orden del tabulador.
++ * Sin JavaScript (no hay data-theme en <html>) no se ven las pestañas y salen los cuatro
++ * paneles uno debajo del otro, con su título.
++ */
++interface Chapter {
++  id: string;
++  title: string;
++  text: string;
++  rows: readonly { label: string; value: string }[];
++}
++
++interface Props {
++  chapters: readonly Chapter[];
++  note: string;
++  label: string;
++}
++
++const { chapters, note, label } = Astro.props;
++---
++
++<div class="chapters flex flex-col gap-6" data-chapters>
++  <div role="tablist" aria-label={label} class="chapters-list">
++    {chapters.map((chapter, index) => (
++      <button
++        type="button"
++        role="tab"
++        id={`tab-${chapter.id}`}
++        aria-controls={`panel-${chapter.id}`}
++        aria-selected={index === 0 ? 'true' : 'false'}
++        tabindex={index === 0 ? 0 : -1}
++        class="chapters-tab press"
++      >
++        {chapter.title}
++      </button>
++    ))}
++  </div>
++
++  {chapters.map((chapter, index) => (
++    <div
++      role="tabpanel"
++      id={`panel-${chapter.id}`}
++      aria-labelledby={`tab-${chapter.id}`}
++      tabindex="0"
++      class="chapters-panel grid gap-4 lg:grid-cols-2"
++      data-inactive={index !== 0 ? '' : undefined}
++    >
++      <div class="on-deep flex flex-col gap-4 rounded-panel p-7 sm:p-10">
++        <h3 class="text-3xl">{chapter.title}</h3>
++        <p class="text-lg text-muted">{chapter.text}</p>
++      </div>
++      <div class="chapters-rows flex flex-col gap-2.5 rounded-panel p-5 sm:p-7">
++        <dl class="flex flex-col gap-2.5">
++          {chapter.rows.map((row) => (
++            <div class="chapters-row">
++              <dt>{row.label}</dt>
++              <dd class="font-bold">{row.value}</dd>
++            </div>
++          ))}
++        </dl>
++        <p class="mt-1 text-sm text-muted">{note}</p>
++      </div>
++    </div>
++  ))}
++</div>
++
++<style>
++  .chapters-list {
++    display: flex;
++    flex-wrap: wrap;
++    align-self: flex-start;
++    gap: 0.375rem;
++    border: 1px solid var(--c-line);
++    border-radius: 1.125rem;
++    background-color: var(--c-surface);
++    padding: 0.375rem;
++  }
++
++  .chapters-tab {
++    min-height: 2.75rem;
++    border-radius: 0.875rem;
++    padding-inline: 1.25rem;
++    color: var(--c-text);
++    font-weight: 700;
++    cursor: pointer;
++  }
++
++  .chapters-tab:hover {
++    background-color: var(--c-inset);
++  }
++
++  .chapters-tab[aria-selected='true'] {
++    background-color: var(--c-accent);
++    color: var(--c-on-accent);
++    box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--c-accent) 90%, transparent);
++  }
++
++  /* Renglones como en la app: superficie clara con tarjetas blancas (o la superficie en oscuro). */
++  .chapters-rows {
++    border: 1px solid var(--c-line);
++    background-color: var(--c-inset);
++  }
++
++  .chapters-row {
++    display: flex;
++    justify-content: space-between;
++    gap: 0.75rem;
++    border-radius: 1rem;
++    background-color: var(--c-surface);
++    padding: 0.875rem 1rem;
++  }
++
++  /*
++   * Los paneles no elegidos se ocultan solo con JavaScript (data-theme en <html>). Sin él no
++   * hay pestañas y se ven los cuatro paneles. No se usa el atributo hidden porque Tailwind lo
++   * oculta con !important.
++   */
++  :root[data-theme] .chapters-panel[data-inactive] {
++    display: none;
++  }
++  :root:not([data-theme]) .chapters-list {
++    display: none;
++  }
++</style>
++
++<script>
++  document.querySelectorAll<HTMLElement>('[data-chapters]').forEach((root) => {
++    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
++    const panels = tabs.map((tab) =>
++      document.getElementById(tab.getAttribute('aria-controls') ?? ''),
++    );
++
++    function select(index: number, focus: boolean) {
++      tabs.forEach((tab, i) => {
++        const on = i === index;
++        tab.setAttribute('aria-selected', on ? 'true' : 'false');
++        tab.tabIndex = on ? 0 : -1;
++        const panel = panels[i];
++        if (panel) {
++          panel.toggleAttribute('data-inactive', !on);
++          if (on) {
++            panel.classList.remove('pop');
++            void panel.offsetWidth;
++            panel.classList.add('pop');
++          }
++        }
++      });
++      if (focus) tabs[index]?.focus();
++    }
++
++    tabs.forEach((tab, index) => {
++      tab.addEventListener('click', () => select(index, false));
++      tab.addEventListener('keydown', (event) => {
++        const last = tabs.length - 1;
++        const next: Record<string, number> = {
++          ArrowRight: index === last ? 0 : index + 1,
++          ArrowLeft: index === 0 ? last : index - 1,
++          Home: 0,
++          End: last,
++        };
++        const target = next[event.key];
++        if (target === undefined) return;
++        event.preventDefault();
++        select(target, true);
++      });
++    });
++  });
++</script>
+diff --git a/src/components/ContactForm.astro b/src/components/ContactForm.astro
+index c9c13b7..32b9d41 100644
+--- a/src/components/ContactForm.astro
++++ b/src/components/ContactForm.astro
+@@ -114,7 +114,7 @@ const siteKey = turnstileSiteKey();
+   <div class="flex flex-wrap items-center gap-4">
+     <button
+       type="submit"
+-      class="inline-flex min-h-12 items-center justify-center rounded-control bg-accent px-6 font-semibold text-on-accent transition-colors hover:bg-accent-strong disabled:cursor-wait disabled:opacity-70"
++      class="inline-flex min-h-12 items-center justify-center rounded-control bg-accent px-6 font-semibold text-on-accent press press-solid hover:bg-accent-strong disabled:cursor-wait disabled:opacity-70"
+       data-submit
+     >
+       Enviar mensaje
+diff --git a/src/components/LiveRegister.astro b/src/components/LiveRegister.astro
+new file mode 100644
+index 0000000..00f6954
+--- /dev/null
++++ b/src/components/LiveRegister.astro
+@@ -0,0 +1,438 @@
++---
++/**
++ * Caja de prueba de la portada: la pantalla de Vender de XASKA POS dibujada en código.
++ *
++ * Se tocan los productos, sube el total y se cobra. No guarda nada ni habla con ningún
++ * servidor: es una muestra con productos de ejemplo (src/content/home/index.yaml).
++ *
++ * - La pantalla va siempre en los colores claros de XASKA POS (como un equipo encendido),
++ *   dentro de un marco índigo profundo, en los dos temas del sitio.
++ * - Sin JavaScript se ve la caja con su mensaje inicial; los botones no hacen nada.
++ * - Cada cambio se anuncia en una región aria-live para lectores de pantalla.
++ * - El movimiento (hundirse al tocar, rebotar al aparecer) se apaga con movimiento reducido.
++ */
++import { formatPesos } from '@/lib/money';
++
++interface Props {
++  products: readonly { name: string; price: number }[];
++  caption: string;
++}
++
++const { products, caption } = Astro.props;
++---
++
++<div class="register-frame" data-register>
++  <div class="register-screen grid gap-3 sm:grid-cols-[1.45fr_1fr] sm:gap-4">
++    <div class="flex min-w-0 flex-col gap-3">
++      <div class="flex items-center justify-between gap-3">
++        <p class="text-[0.95rem] font-bold">Vender</p>
++        <p class="register-status">Caja abierta</p>
++      </div>
++      <ul class="grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Productos de ejemplo">
++        {products.map((product) => (
++          <li class="flex">
++            <button
++              type="button"
++              class="register-tile"
++              data-name={product.name}
++              data-price={product.price}
++            >
++              <span class="register-letter" aria-hidden="true">
++                {product.name.charAt(0)}
++              </span>
++              <span class="text-sm leading-tight font-semibold text-balance">{product.name}</span>
++              <span class="mt-auto text-[0.95rem] font-extrabold">
++                {formatPesos(product.price)}
++              </span>
++              <span class="sr-only">, agregar a la venta</span>
++            </button>
++          </li>
++        ))}
++      </ul>
++    </div>
++
++    <section class="register-cart" aria-label="Venta">
++      <div class="register-empty" data-state="empty">
++        <svg
++          aria-hidden="true"
++          width="40"
++          height="40"
++          viewBox="0 0 24 24"
++          fill="none"
++          stroke="currentColor"
++          stroke-width="1.6"
++          stroke-linecap="round"
++          stroke-linejoin="round"
++        >
++          <path d="M3 6h18l-2 9H6L3 6Zm4 13a1.5 1.5 0 1 0 0 .01M17 19a1.5 1.5 0 1 0 0 .01"></path>
++        </svg>
++        <p>Toca un producto para empezar la venta.</p>
++      </div>
++
++      <div class="register-open" data-state="cart" hidden>
++        <div class="flex items-center justify-between gap-2">
++          <p class="text-sm font-bold">Venta actual</p>
++          <button type="button" class="register-clear press" data-action="clear">
++            Vaciar
++          </button>
++        </div>
++        <ul class="flex flex-col gap-2 text-sm" data-lines></ul>
++        <div class="register-total">
++          <p class="flex items-baseline justify-between gap-2">
++            <span class="text-sm">Total</span>
++            <span class="text-[1.75rem] leading-none font-extrabold" data-total>
++              $0
++            </span>
++          </p>
++          <button type="button" class="register-pay press" data-action="pay">
++            Cobrar
++          </button>
++        </div>
++      </div>
++
++      <div class="register-done" data-state="paid" hidden>
++        <span class="register-check" aria-hidden="true">
++          <svg
++            width="28"
++            height="28"
++            viewBox="0 0 24 24"
++            fill="none"
++            stroke="currentColor"
++            stroke-width="2.2"
++            stroke-linecap="round"
++            stroke-linejoin="round"
++          >
++            <path d="m5 12.5 4.5 4.5L19 7.5"></path>
++          </svg>
++        </span>
++        <p class="text-lg font-bold">Venta registrada</p>
++        <p class="register-muted text-sm">
++          <span data-paid>$0</span> en efectivo
++        </p>
++        <p class="register-note">El recibo sale impreso o por WhatsApp</p>
++        <button type="button" class="register-again press" data-action="reset">
++          Nueva venta
++        </button>
++      </div>
++    </section>
++  </div>
++  <p class="register-caption">{caption}</p>
++  <p class="sr-only" aria-live="polite" data-announce></p>
++</div>
++
++<style>
++  /* Colores fijos de la pantalla de XASKA POS en tema claro (decisión 341 del POS). */
++  .register-frame {
++    --pos-ground: #f5f7f7;
++    --pos-surface: #ffffff;
++    --pos-ink: #111827;
++    --pos-muted: #4b5563;
++    --pos-brand: #4338ca;
++    --pos-brand-soft: #e0e7ff;
++    --pos-brand-900: #312e81;
++    --pos-brand-950: #1e1b4b;
++    --pos-light: #818cf8;
++
++    border-radius: 2.25rem;
++    background-image: linear-gradient(165deg, #1e1b4b 0%, #2b2a78 100%);
++    padding: 0.75rem;
++    box-shadow: 0 40px 80px -48px rgb(30 27 75 / 0.75);
++  }
++
++  @media (min-width: 640px) {
++    .register-frame {
++      padding: 1.125rem;
++    }
++  }
++
++  .register-screen {
++    color-scheme: light;
++    border-radius: 1.625rem;
++    background-color: var(--pos-ground);
++    padding: 0.75rem;
++    color: var(--pos-ink);
++  }
++
++  @media (min-width: 640px) {
++    .register-screen {
++      padding: 1.125rem;
++    }
++  }
++
++  .register-screen :focus-visible {
++    outline: 2px solid var(--pos-brand);
++    outline-offset: 2px;
++    box-shadow: 0 0 0 6px color-mix(in srgb, var(--pos-brand) 28%, transparent);
++  }
++
++  .register-status {
++    border-radius: 9999px;
++    background-color: #d1fae5;
++    padding: 0.2rem 0.65rem;
++    color: #047857;
++    font-size: 0.75rem;
++    font-weight: 600;
++  }
++
++  .register-tile {
++    display: flex;
++    width: 100%;
++    min-height: 6.25rem;
++    flex-direction: column;
++    gap: 0.35rem;
++    border-radius: 1rem;
++    background-color: var(--pos-surface);
++    padding: 0.8rem;
++    color: var(--pos-ink);
++    text-align: left;
++    cursor: pointer;
++    transition:
++      transform 220ms var(--ease-bounce),
++      box-shadow 200ms;
++  }
++
++  .register-letter {
++    display: inline-flex;
++    width: 1.75rem;
++    height: 1.75rem;
++    align-items: center;
++    justify-content: center;
++    border-radius: 0.55rem;
++    background-color: var(--pos-brand-soft);
++    color: #3730a3;
++    font-size: 0.75rem;
++    font-weight: 700;
++  }
++
++  .register-cart {
++    display: flex;
++    min-height: 15rem;
++    flex-direction: column;
++    border-radius: 1.25rem;
++    background-color: var(--pos-surface);
++    padding: 1rem;
++  }
++
++  @media (min-width: 640px) {
++    .register-cart {
++      min-height: 21rem;
++    }
++  }
++
++  .register-empty,
++  .register-done {
++    display: flex;
++    flex: 1;
++    flex-direction: column;
++    align-items: center;
++    justify-content: center;
++    gap: 0.6rem;
++    text-align: center;
++  }
++
++  .register-empty {
++    color: var(--pos-muted);
++    font-size: 0.875rem;
++  }
++
++  .register-empty svg {
++    color: var(--pos-brand);
++  }
++
++  .register-open {
++    display: flex;
++    flex: 1;
++    flex-direction: column;
++    gap: 0.75rem;
++  }
++
++  .register-open[hidden],
++  .register-done[hidden],
++  .register-empty[hidden] {
++    display: none;
++  }
++
++  .register-clear {
++    border-radius: 0.75rem;
++    padding: 0.35rem 0.6rem;
++    color: var(--pos-brand);
++    font-size: 0.8125rem;
++    font-weight: 600;
++    cursor: pointer;
++  }
++
++  .register-clear:hover {
++    background-color: var(--pos-brand-soft);
++  }
++
++  .register-total {
++    display: flex;
++    flex-direction: column;
++    gap: 0.65rem;
++    margin-top: auto;
++    border-radius: 1rem;
++    background-color: var(--pos-brand-900);
++    padding: 0.875rem;
++    color: #ffffff;
++  }
++
++  .register-pay {
++    min-height: 3rem;
++    border-radius: 0.875rem;
++    background-color: var(--pos-light);
++    color: var(--pos-brand-950);
++    font-weight: 700;
++    cursor: pointer;
++    box-shadow: 0 8px 18px -8px rgb(129 140 248 / 0.9);
++  }
++
++  .register-pay:focus-visible {
++    outline-color: #ffffff;
++  }
++
++  .register-check {
++    display: inline-flex;
++    width: 3.5rem;
++    height: 3.5rem;
++    align-items: center;
++    justify-content: center;
++    border-radius: 9999px;
++    background-color: #d1fae5;
++    color: #047857;
++  }
++
++  .register-muted {
++    color: var(--pos-muted);
++  }
++
++  .register-note {
++    border-radius: 9999px;
++    background-color: #eef2ff;
++    padding: 0.4rem 0.75rem;
++    color: #3730a3;
++    font-size: 0.8125rem;
++    font-weight: 600;
++  }
++
++  .register-again {
++    min-height: 2.75rem;
++    border-radius: 0.875rem;
++    background-color: var(--pos-ink);
++    padding-inline: 1.1rem;
++    color: #ffffff;
++    font-weight: 600;
++    cursor: pointer;
++  }
++
++  .register-caption {
++    margin: 0.75rem 0.5rem 0.25rem;
++    color: #c7d2fe;
++    font-size: 0.8125rem;
++  }
++
++  @media (prefers-reduced-motion: no-preference) {
++    .register-tile:hover {
++      box-shadow: 0 10px 24px -14px rgb(67 56 202 / 0.6);
++    }
++    .register-tile:active {
++      transform: scale(0.94);
++    }
++  }
++</style>
++
++<script>
++  import { formatPesos } from '@/lib/money';
++
++  document.querySelectorAll<HTMLElement>('[data-register]').forEach((root) => {
++    const cart = new Map<string, { price: number; qty: number }>();
++    const views = {
++      empty: root.querySelector<HTMLElement>('[data-state="empty"]'),
++      cart: root.querySelector<HTMLElement>('[data-state="cart"]'),
++      paid: root.querySelector<HTMLElement>('[data-state="paid"]'),
++    };
++    const lines = root.querySelector<HTMLUListElement>('[data-lines]');
++    const total = root.querySelector<HTMLElement>('[data-total]');
++    const paid = root.querySelector<HTMLElement>('[data-paid]');
++    const announce = root.querySelector<HTMLElement>('[data-announce]');
++    const tiles = [...root.querySelectorAll<HTMLButtonElement>('button[data-name]')];
++    if (!views.empty || !views.cart || !views.paid || !lines || !total || !paid || !announce) {
++      return;
++    }
++
++    const sum = () => [...cart.values()].reduce((acc, line) => acc + line.price * line.qty, 0);
++
++    function show(view: keyof typeof views) {
++      for (const [name, element] of Object.entries(views)) {
++        if (element) element.hidden = name !== view;
++      }
++    }
++
++    /** La animación vuelve a correr aunque el elemento ya la tuviera. */
++    function pop(element: Element) {
++      element.classList.remove('pop');
++      void (element as HTMLElement).offsetWidth;
++      element.classList.add('pop');
++    }
++
++    function render(changed?: string) {
++      if (cart.size === 0) {
++        show('empty');
++        return;
++      }
++      show('cart');
++      lines?.replaceChildren(
++        ...[...cart.entries()].map(([name, line]) => {
++          const item = document.createElement('li');
++          item.className = 'flex justify-between gap-2';
++          if (name === changed) item.classList.add('pop');
++          const label = document.createElement('span');
++          label.textContent = `${line.qty} × ${name}`;
++          const value = document.createElement('strong');
++          value.textContent = formatPesos(line.price * line.qty);
++          item.append(label, value);
++          return item;
++        }),
++      );
++      if (total) {
++        total.textContent = formatPesos(sum());
++        pop(total);
++      }
++    }
++
++    tiles.forEach((tile) => {
++      tile.addEventListener('click', () => {
++        const name = tile.dataset.name ?? '';
++        const price = Number(tile.dataset.price);
++        if (!name || !Number.isFinite(price)) return;
++        const line = cart.get(name) ?? { price, qty: 0 };
++        line.qty += 1;
++        cart.set(name, line);
++        render(name);
++        announce.textContent = `${name} agregado. Total ${formatPesos(sum())}.`;
++      });
++    });
++
++    root.querySelector('[data-action="pay"]')?.addEventListener('click', () => {
++      const amount = sum();
++      cart.clear();
++      paid.textContent = formatPesos(amount);
++      show('paid');
++      pop(views.paid as HTMLElement);
++      announce.textContent = `Venta registrada: ${formatPesos(amount)} en efectivo.`;
++      root.querySelector<HTMLButtonElement>('[data-action="reset"]')?.focus();
++    });
++
++    root.querySelector('[data-action="clear"]')?.addEventListener('click', () => {
++      cart.clear();
++      render();
++      announce.textContent = 'Venta vacía.';
++      tiles[0]?.focus();
++    });
++
++    root.querySelector('[data-action="reset"]')?.addEventListener('click', () => {
++      render();
++      announce.textContent = 'Nueva venta. Toca un producto para empezar.';
++      tiles[0]?.focus();
++    });
++  });
++</script>
+diff --git a/src/components/WhatsAppButton.astro b/src/components/WhatsAppButton.astro
+index 9e5ddce..a040724 100644
+--- a/src/components/WhatsAppButton.astro
++++ b/src/components/WhatsAppButton.astro
+@@ -55,9 +55,9 @@ const href = whatsappUrl(message);
+     target="_blank"
+     rel="noopener"
+     class:list={[
+-      'inline-flex min-h-12 items-center gap-2 rounded-control px-6 font-semibold transition-colors',
++      'inline-flex min-h-12 items-center gap-2 rounded-control px-6 font-semibold press',
+       variant === 'solid'
+-        ? 'bg-accent text-on-accent hover:bg-accent-strong'
++        ? 'press-solid bg-accent text-on-accent hover:bg-accent-strong'
+         : 'border-[1.5px] border-line-strong text-ink hover:border-ink',
+       className,
+     ]}
+diff --git a/src/content.config.ts b/src/content.config.ts
+index bd5fa41..0a8b2f5 100644
+--- a/src/content.config.ts
++++ b/src/content.config.ts
+@@ -12,9 +12,36 @@ const home = defineCollection({
+   loader: glob({ pattern: 'index.yaml', base: './src/content/home' }),
+   schema: z.object({
+     seo: z.object({ title: text, description: text }),
+-    hero: z.object({ title: text, lead: text }),
++    hero: z.object({ title: text, lead: text, badge: text }),
++    // Caja de prueba de la portada: productos de ejemplo (precio en pesos, sin decimales).
++    register: z.object({
++      caption: text,
++      products: z
++        .array(z.object({ name: text, price: z.number().int().positive() }))
++        .min(3)
++        .max(6),
++    }),
++    // Pestañas Vende / Fía / Cobra / Controla, con renglones de ejemplo.
++    chapters: z.object({
++      title: text,
++      note: text,
++      items: z
++        .array(
++          z.object({
++            id: z.string().regex(/^[a-z]+$/),
++            title: text,
++            text: text,
++            rows: z
++              .array(z.object({ label: text, value: text }))
++              .min(2)
++              .max(4),
++          }),
++        )
++        .length(4),
++    }),
+     pillars: z.object({
+       title: text,
++      lead: text,
+       items: z
+         .array(
+           z.object({
+diff --git a/src/content/faq/xaska-pos.yaml b/src/content/faq/xaska-pos.yaml
+index 2cfb2dd..f526afc 100644
+--- a/src/content/faq/xaska-pos.yaml
++++ b/src/content/faq/xaska-pos.yaml
+@@ -5,7 +5,7 @@ items:
+   - question: ¿Funciona en el celular?
+     answer: Sí. La pantalla de ventas se adapta al celular, y el resto del sistema también se puede usar desde la tablet o el computador.
+   - question: ¿Necesito internet todo el tiempo?
+-    answer: Sí. XASKA POS funciona en línea, así que necesitas conexión para registrar ventas.
++    answer: No. Si se va el internet con la caja abierta, sigues vendiendo en ese equipo con los productos y precios que quedaron guardados, y las ventas se envían solas cuando vuelve la conexión. La app abre sin internet hasta 24 horas en el equipo donde abriste la caja. Necesitas conexión para registrarte, abrir la caja, fiar, venderle a un cliente con nombre, cobrar una mesa y cerrar la caja.
+   - question: ¿Qué pasa cuando termina la prueba gratis?
+     answer: No te pedimos tarjeta. Al terminar los 14 días tu información queda guardada y la puedes consultar, pero para seguir vendiendo eliges un plan y lo pagas. Te avisamos por correo antes de que termine.
+   - question: ¿Cómo es el soporte?
+diff --git a/src/content/home/index.yaml b/src/content/home/index.yaml
+index 1e1f879..267f2ef 100644
+--- a/src/content/home/index.yaml
++++ b/src/content/home/index.yaml
+@@ -3,11 +3,77 @@ seo:
+   description: Software para pymes colombianas. XASKA POS para vender y controlar tu inventario, y desarrollo a medida, automatización y páginas web. Desde Ibagué.
+ 
+ hero:
+-  title: Software para pymes, hecho por gente que conoce el mostrador
+-  lead: En XASKA creamos XASKA POS, un sistema de punto de venta para comercios, y desarrollamos herramientas a la medida para pymes colombianas. Hablas directo con quien lo construye.
++  badge: Pruébalo aquí mismo
++  title: Toca un producto. Así de fácil se vende.
++  lead: Esta es la caja de XASKA POS. Funciona en el computador, la tablet o el celular, y sigue vendiendo aunque se vaya el internet.
++
++# Caja de prueba de la portada. Productos y precios de ejemplo, no de un negocio real.
++register:
++  caption: Productos de ejemplo. La caja real tiene lector de código, pagos mixtos y tiquete de 58 u 80 mm.
++  products:
++    - name: Arroz 1 kg
++      price: 4200
++    - name: Leche 1 L
++      price: 4600
++    - name: Pan tajado
++      price: 6500
++    - name: Huevos x 12
++      price: 13800
++    - name: Gaseosa 1,5 L
++      price: 5900
++    - name: Café 250 g
++      price: 11900
++
++# Pestañas bajo la caja: el lema de XASKA POS. Los renglones son datos de ejemplo.
++chapters:
++  title: Todo el día del negocio, en una sola app
++  note: Datos de ejemplo.
++  items:
++    - id: vende
++      title: Vende
++      text: Con lector de código, pagos mixtos y precio libre para lo que no tiene precio fijo. Pausa una venta y retómala después, y si se va el internet, sigues vendiendo.
++      rows:
++        - label: Efectivo
++          value: $20.000
++        - label: Transferencia
++          value: $7.600
++        - label: Cambio
++          value: $0
++    - id: fia
++      title: Fía
++      text: Cada cliente con su cupo, sus abonos y su estado de cuenta. El recordatorio sale por WhatsApp con tus palabras.
++      rows:
++        - label: Cupo de Doña Rosa
++          value: $150.000
++        - label: Debe
++          value: $42.300
++        - label: Último abono
++          value: Ayer
++    - id: cobra
++      title: Cobra
++      text: El recibo como imagen para enviar por WhatsApp, el tiquete impreso de 58 u 80 mm y el cierre de caja con arqueo.
++      rows:
++        - label: Ventas del día
++          value: '38'
++        - label: Esperado en caja
++          value: $412.000
++        - label: Contado
++          value: $412.000
++    - id: controla
++      title: Controla
++      text: Inventario por sucursal, gastos y gastos fijos, estado de resultados y qué comprarle a cada proveedor.
++      rows:
++        - label: Utilidad del mes
++          value: $1.840.000
++        - label: Productos por pedir
++          value: '12'
++        - label: Gastos fijos
++          value: $950.000
+ 
++# Quiénes somos, bajo la caja y las pestañas.
+ pillars:
+-  title: Lo que hacemos
++  title: Software para pymes, hecho por gente que conoce el mostrador
++  lead: En XASKA creamos XASKA POS y desarrollamos herramientas a la medida para pymes colombianas. Hablas directo con quien lo construye.
+   items:
+     - title: Un producto propio
+       text: XASKA POS, para vender, controlar el inventario y cuadrar la caja desde el computador, la tablet o el celular.
+@@ -27,14 +93,13 @@ pos:
+   lead: El punto de venta en la web para comercios en Colombia. Funciona en el navegador, sin instalar nada. Regístrate y pruébalo gratis 14 días, sin tarjeta.
+   highlights:
+     - Ventas con lector de código de barras y pagos mixtos
++    - Sigue vendiendo aunque se vaya el internet
+     - Inventario por sucursal, con tallas y colores
+-    - Caja con arqueo al cierre
++    - Caja con arqueo y recibo por WhatsApp
++    - Fiado con cupo, pedidos con anticipo y cotizaciones
++    - Gastos, gastos fijos y estado de resultados
+     - Módulos para restaurantes y droguerías
+     - Varios negocios y sucursales, con roles y permisos
+-    - Reportes de ventas y etiquetas de báscula
+-    - Fiado con cupo por cliente
+-    - Pedidos con anticipo y cotizaciones
+-
+ services:
+   title: Servicios para tu empresa
+   lead: Cuando necesitas algo que no viene en una caja, lo construimos contigo.
+diff --git a/src/content/pos/index.yaml b/src/content/pos/index.yaml
+index fc8d038..c625bfe 100644
+--- a/src/content/pos/index.yaml
++++ b/src/content/pos/index.yaml
+@@ -61,6 +61,7 @@ capabilities:
+         - Tiquete imprimible de 58 u 80 mm
+         - Impresión directa en la térmica y apertura del cajón monedero
+         - Pantalla de ventas que funciona en el celular
++        - Venta sin internet en el equipo de la caja; las ventas se envían al volver la conexión
+     - title: Clientes
+       items:
+         - Fiado con cupo por cliente, abonos y estado de cuenta
+@@ -81,6 +82,14 @@ capabilities:
+         - Apertura y cierre de caja con arqueo
+         - Caja compartida entre varios vendedores
+         - Cierre de caja para imprimir o enviar por WhatsApp
++        - Recibo como imagen del tiquete para enviar por WhatsApp
++    - title: Finanzas
++      items:
++        - Gastos con categorías, desde la caja o fuera de ella
++        - Gastos fijos de cada mes o cada quincena, con aviso cuando toca pagarlos
++        - Retenciones que te hacen los clientes al pagar
++        - Estado de resultados en PDF o para Excel
++        - Tablero con la plata que entra y sale, y el punto de equilibrio
+     - title: Tu negocio y tu equipo
+       items:
+         - Varios negocios y varias sucursales en una sola cuenta
+diff --git a/src/lib/money.ts b/src/lib/money.ts
+new file mode 100644
+index 0000000..a14fd29
+--- /dev/null
++++ b/src/lib/money.ts
+@@ -0,0 +1,7 @@
++/** Pesos colombianos sin decimales y con punto de miles: 13800 → "$13.800". */
++export function formatPesos(value: number): string {
++  const digits = Math.round(Math.abs(value))
++    .toString()
++    .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
++  return `${value < 0 ? '-' : ''}$${digits}`;
++}
+diff --git a/src/pages/index.astro b/src/pages/index.astro
+index 855955a..e1b2a37 100644
+--- a/src/pages/index.astro
++++ b/src/pages/index.astro
+@@ -8,10 +8,9 @@ import Icon from '@/components/Icon.astro';
+ import Steps from '@/components/Steps.astro';
+ import RomboList from '@/components/RomboList.astro';
+ import WhatsAppButton from '@/components/WhatsAppButton.astro';
+-import PageHeader from '@/components/PageHeader.astro';
+ import AskaBand from '@/components/AskaBand.astro';
+-import ScreenCard from '@/components/ScreenCard.astro';
+-import reportsScreen from '@/assets/pos/header-reportes.png';
++import LiveRegister from '@/components/LiveRegister.astro';
++import ChapterTabs from '@/components/ChapterTabs.astro';
+ import { serviceIcon } from '@/lib/service-icons';
+ import {
+   contact,
+@@ -36,26 +35,108 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
+   description={home.seo.description}
+   whatsappMessage={whatsappMessages.general}
+ >
+-  {/* Entrada bento, como el inicio de XASKA POS: la tarjeta destacada con el título y, al lado,
+-      lo que hacemos (producto propio, proyectos a la medida y trato directo). */}
+-  <PageHeader title={home.hero.title} lead={home.hero.lead} badge="Hecho en Ibagué">
+-    <CTA href={primaryCta.href} external>
+-      {primaryCta.longLabel}
+-    </CTA>
+-    {primaryCtaIsWhatsApp ? (
+-      <CTA href={products.pos.path} variant="secondary">
+-        Conocer XASKA POS
+-      </CTA>
+-    ) : (
+-      <WhatsAppButton message={whatsappMessages.general} />
+-    )}
++  {/* Entrada: la caja de XASKA POS funcionando. A la izquierda el título, a la derecha la caja. */}
++  <section class="pt-6 pb-4 sm:pt-10" aria-labelledby="portada">
++    <div class="mx-auto grid w-full max-w-(--container-page) items-center gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
++      <div class="flex flex-col gap-6 lg:col-span-5">
++        <div class="flex flex-wrap gap-2">
++          <span class="chip">{home.hero.badge}</span>
++          <span class="chip">Hecho en Ibagué</span>
++        </div>
++        <h1
++          id="portada"
++          class="text-[2.6rem] leading-[1.03] sm:text-5xl lg:text-[3.4rem] lg:leading-[1.02]"
++        >
++          {home.hero.title}
++        </h1>
++        <p class="max-w-[42ch] text-lg font-medium text-muted">{home.hero.lead}</p>
++        <div class="flex flex-wrap items-center gap-3">
++          <CTA href={primaryCta.href} external>
++            {primaryCta.longLabel}
++          </CTA>
++          {primaryCtaIsWhatsApp ? (
++            <CTA href={products.pos.path} variant="secondary">
++              Conocer XASKA POS
++            </CTA>
++          ) : (
++            <WhatsAppButton message={whatsappMessages.general} />
++          )}
++        </div>
++        <p class="font-bold text-accent">{slogan}</p>
++      </div>
++      <div class="min-w-0 lg:col-span-7">
++        <LiveRegister products={home.register.products} caption={home.register.caption} />
++      </div>
++    </div>
++  </section>
++
++  <Section labelledby="capitulos">
++    <h2 id="capitulos" class="text-3xl sm:text-4xl">
++      {home.chapters.title}
++    </h2>
++    <div class="mt-8">
++      <ChapterTabs
++        chapters={home.chapters.items}
++        note={home.chapters.note}
++        label="Lo que hace XASKA POS"
++      />
++    </div>
++  </Section>
++
++  <Section labelledby="xaska-pos">
++    <div class="grid gap-4 lg:grid-cols-12">
++      <Card
++        tone="deep"
++        size="panel"
++        class="relative flex flex-col justify-between gap-10 overflow-hidden lg:col-span-5"
++      >
++        <div>
++          <span class="chip">POS</span>
++          <h2 id="xaska-pos" class="mt-6 text-3xl sm:text-4xl">
++            {home.pos.title}
++          </h2>
++          <p class="mt-4 text-lg text-muted">{home.pos.lead}</p>
++          <div class="mt-8 flex flex-wrap items-center gap-3">
++            <CTA href={primaryCta.href} external>
++              {primaryCta.longLabel}
++            </CTA>
++            <CTA href={products.pos.path} variant="secondary">
++              Ver lo que hace
++            </CTA>
++          </div>
++        </div>
++        {/* Como el panel de ingreso al POS: "POS" en letra gigante, cortado por el borde. */}
++        <p
++          aria-hidden="true"
++          class="giant-word -mx-2 -mb-6 h-[0.62em] overflow-hidden text-[8rem] sm:-mb-10 sm:text-[12rem]"
++        >
++          POS
++        </p>
++      </Card>
++      <Card class="lg:col-span-7">
++        <h3 class="text-lg">Lo que trae</h3>
++        <RomboList items={home.pos.highlights} layout="columns" class="mt-5" />
++      </Card>
++    </div>
++  </Section>
++
++  <Section labelledby="aska-portada">
++    <AskaBand headingId="aska-portada" />
++  </Section>
+ 
+-    <Fragment slot="visual">
+-      <h2 class="sr-only">{home.pillars.title}</h2>
++  {/* Quiénes somos: producto propio, proyectos a la medida y trato directo. */}
++  <Section labelledby="lo-que-hacemos">
++    <div class="grid gap-4 lg:grid-cols-12">
++      <div class="flex flex-col justify-end gap-4 py-2 lg:col-span-4">
++        <h2 id="lo-que-hacemos" class="text-3xl">
++          {home.pillars.title}
++        </h2>
++        <p class="text-lg text-muted">{home.pillars.lead}</p>
++      </div>
+       {productPillar && (
+         <a
+           href={productPillar.link?.href ?? products.pos.path}
+-          class="bento bento-link flex flex-1 flex-col justify-between gap-8 rounded-panel p-6 sm:p-8"
++          class="bento bento-link flex flex-col justify-between gap-8 rounded-panel p-6 sm:p-8 lg:col-span-4"
+         >
+           <span class="flex items-center justify-between gap-4">
+             <span class="chip">{productPillar.title}</span>
+@@ -63,16 +144,15 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
+           </span>
+           <span>
+             <span class="block text-3xl font-extrabold tracking-tight">{products.pos.name}</span>
+-            <span class="mt-1 block font-bold text-accent">{slogan}</span>
+             <span class="mt-3 block text-muted">{productPillar.text}</span>
+           </span>
+         </a>
+       )}
+-      <div class="grid gap-4 sm:grid-cols-2">
++      <div class="grid gap-4 sm:grid-cols-2 lg:col-span-4 lg:grid-cols-1">
+         {projectsPillar && (
+           <a
+             href={projectsPillar.link?.href ?? '/servicios'}
+-            class="bento bento-link flex flex-col justify-between gap-8 rounded-block p-6"
++            class="bento bento-link flex flex-col gap-4 rounded-block p-6"
+           >
+             <span class="icon-tile">
+               <Icon name="code" />
+@@ -88,7 +168,7 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
+             href={whatsappUrl(whatsappMessages.general)}
+             target="_blank"
+             rel="noopener"
+-            class="on-deep bento-link flex flex-col justify-between gap-8 rounded-block p-6"
++            class="on-deep bento-link flex flex-col gap-4 rounded-block p-6"
+           >
+             <span class="icon-tile">
+               <Icon name="chat" />
+@@ -101,59 +181,9 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
+           </a>
+         )}
+       </div>
+-    </Fragment>
+-  </PageHeader>
+-
+-  <Section labelledby="xaska-pos">
+-    <div class="grid gap-4 lg:grid-cols-12">
+-      <Card
+-        tone="deep"
+-        size="panel"
+-        class="relative flex flex-col justify-between gap-10 overflow-hidden lg:col-span-5"
+-      >
+-        <div>
+-          <span class="chip">POS</span>
+-          <h2 id="xaska-pos" class="mt-6 text-3xl sm:text-4xl">
+-            {home.pos.title}
+-          </h2>
+-          <p class="mt-4 text-lg text-muted">{home.pos.lead}</p>
+-          <div class="mt-8 flex flex-wrap items-center gap-3">
+-            <CTA href={primaryCta.href} external>
+-              {primaryCta.longLabel}
+-            </CTA>
+-            <CTA href={products.pos.path} variant="secondary">
+-              Ver lo que hace
+-            </CTA>
+-          </div>
+-        </div>
+-        {/* Como el panel de ingreso al POS: "POS" en letra gigante, cortado por el borde. */}
+-        <p
+-          aria-hidden="true"
+-          class="giant-word -mx-2 -mb-6 h-[0.62em] overflow-hidden text-[8rem] sm:-mb-10 sm:text-[12rem]"
+-        >
+-          POS
+-        </p>
+-      </Card>
+-      <div class="flex min-w-0 flex-col gap-4 lg:col-span-7">
+-        <ScreenCard
+-          src={reportsScreen}
+-          alt="Inicio de XASKA POS con las ventas del día, la utilidad, las ventas por hora, los medios de pago y los productos más vendidos."
+-          sizes="(min-width: 1280px) 730px, (min-width: 1024px) 58vw, calc(100vw - 2rem)"
+-        >
+-          El inicio de XASKA POS: ventas del día, medios de pago y lo que más se vende.
+-        </ScreenCard>
+-        <Card class="flex-1">
+-          <h3 class="text-lg">Lo que trae</h3>
+-          <RomboList items={home.pos.highlights} layout="columns" class="mt-5" />
+-        </Card>
+-      </div>
+     </div>
+   </Section>
+ 
+-  <Section labelledby="aska-portada">
+-    <AskaBand headingId="aska-portada" />
+-  </Section>
+-
+   <Section labelledby="servicios">
+     <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+       <li class="bento flex flex-col justify-between gap-8 rounded-block p-6 sm:p-8">
+diff --git a/src/styles/global.css b/src/styles/global.css
+index 924359e..3627fe7 100644
+--- a/src/styles/global.css
++++ b/src/styles/global.css
+@@ -193,9 +193,15 @@
+   --radius-block: 1.5rem;
+   --radius-panel: 1.75rem;
+ 
+-  /* Sombras: solo para elementos flotantes (menú móvil). */
++  /* Sombras: elementos flotantes (menú móvil) y la caja de la portada. */
+   --shadow-float: 0 16px 40px -12px rgb(11 18 21 / 0.35);
+ 
++  /*
++   * Movimiento "orgánico", el mismo de XASKA POS: al presionar se hunde (escala 0,95) y al
++   * soltar rebota con esta curva en 220 ms. Con movimiento reducido no se mueve.
++   */
++  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
++
+   /* Medida máxima de lectura */
+   --container-prose: 68ch;
+   --container-page: 80rem;
+@@ -238,10 +244,11 @@
+     color: inherit;
+   }
+ 
++  /* Foco como en XASKA POS: borde de 2 px y un halo suave de 4 px alrededor. */
+   :focus-visible {
+-    outline: 3px solid var(--c-focus);
+-    outline-offset: 3px;
+-    border-radius: 4px;
++    outline: 2px solid var(--c-focus);
++    outline-offset: 2px;
++    box-shadow: 0 0 0 6px color-mix(in srgb, var(--c-focus) 28%, transparent);
+   }
+ 
+   ::selection {
+@@ -258,11 +265,12 @@
+     background-color: var(--c-surface);
+   }
+ 
+-  /* Tarjeta que es un enlace completo: el borde se ilumina al pasar o enfocar. */
++  /* Tarjeta que es un enlace completo: el borde se ilumina, sube un poco y se hunde al tocarla. */
+   .bento-link {
+     transition:
+       border-color 150ms,
+-      transform 150ms,
++      transform 220ms var(--ease-bounce),
++      box-shadow 200ms,
+       background-color 150ms;
+   }
+   .bento-link:hover {
+@@ -270,7 +278,46 @@
+   }
+   @media (prefers-reduced-motion: no-preference) {
+     .bento-link:hover {
+-      transform: translateY(-2px);
++      transform: translateY(-3px);
++      box-shadow: 0 18px 36px -24px color-mix(in srgb, var(--c-accent) 70%, transparent);
++    }
++    .bento-link:active {
++      transform: scale(0.98);
++    }
++  }
++
++  /*
++   * Botones con el movimiento de XASKA POS: se hunden al presionar y rebotan al soltar.
++   * .press-solid agrega la sombra del color del botón y sube 1 px al pasar el mouse.
++   */
++  .press {
++    transition:
++      transform 220ms var(--ease-bounce),
++      box-shadow 200ms,
++      background-color 150ms,
++      border-color 150ms,
++      color 150ms;
++  }
++  .press-solid {
++    box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--c-accent) 90%, transparent);
++  }
++  @media (prefers-reduced-motion: no-preference) {
++    .press:active {
++      transform: scale(0.95);
++    }
++    .press-solid:hover {
++      transform: translateY(-1px);
++      box-shadow: 0 14px 28px -12px color-mix(in srgb, var(--c-accent) 95%, transparent);
++    }
++    .press-solid:active {
++      transform: scale(0.95);
++    }
++  }
++
++  /* Aparece con un pequeño rebote (líneas de la venta, total, resultado de una pestaña). */
++  @media (prefers-reduced-motion: no-preference) {
++    .pop {
++      animation: pop 360ms var(--ease-bounce);
+     }
+   }
+ 
+@@ -358,6 +405,17 @@
+   }
+ }
+ 
++@keyframes pop {
++  from {
++    transform: scale(0.9);
++    opacity: 0.4;
++  }
++  to {
++    transform: scale(1);
++    opacity: 1;
++  }
++}
++
+ @media (prefers-reduced-motion: reduce) {
+   *,
+   *::before,
+diff --git a/tests/smoke.spec.ts b/tests/smoke.spec.ts
+index 3f73758..da2ff86 100644
+--- a/tests/smoke.spec.ts
++++ b/tests/smoke.spec.ts
+@@ -262,3 +262,63 @@ test.describe('contenido de la fase 1', () => {
+     }
+   });
+ });
++
++test.describe('portada viva', () => {
++  test('la caja de prueba suma productos, cobra y empieza otra venta', async ({ page }) => {
++    await page.goto('/');
++    const register = page.locator('[data-register]');
++    await expect(register.getByText('Toca un producto para empezar la venta.')).toBeVisible();
++    await register.getByRole('button', { name: /Arroz 1 kg/ }).click();
++    await register.getByRole('button', { name: /Arroz 1 kg/ }).click();
++    await register.getByRole('button', { name: /Leche 1 L/ }).click();
++    await expect(register.getByText('2 × Arroz 1 kg')).toBeVisible();
++    await expect(register.locator('[data-total]')).toHaveText('$13.000');
++    await expect(register.locator('[data-announce]')).toHaveText(
++      'Leche 1 L agregado. Total $13.000.',
++    );
++    await register.getByRole('button', { name: 'Cobrar' }).click();
++    await expect(register.getByText('Venta registrada', { exact: true })).toBeVisible();
++    await expect(register.locator('[data-paid]')).toHaveText('$13.000');
++    const again = register.getByRole('button', { name: 'Nueva venta' });
++    await expect(again).toBeFocused();
++    await again.click();
++    await expect(register.getByText('Toca un producto para empezar la venta.')).toBeVisible();
++  });
++
++  test('las pestañas Vende, Fía, Cobra y Controla se manejan con teclado', async ({ page }) => {
++    await page.goto('/');
++    const tablist = page.getByRole('tablist', { name: 'Lo que hace XASKA POS' });
++    const vende = tablist.getByRole('tab', { name: 'Vende' });
++    await expect(vende).toHaveAttribute('aria-selected', 'true');
++    await expect(page.getByRole('tabpanel', { name: 'Vende' })).toBeVisible();
++    await vende.focus();
++    await page.keyboard.press('ArrowRight');
++    const fia = tablist.getByRole('tab', { name: 'Fía' });
++    await expect(fia).toBeFocused();
++    await expect(fia).toHaveAttribute('aria-selected', 'true');
++    await expect(page.getByRole('tabpanel', { name: 'Fía' })).toBeVisible();
++    await expect(page.getByRole('tabpanel', { name: 'Vende' })).toBeHidden();
++    await page.keyboard.press('End');
++    await expect(page.getByRole('tabpanel', { name: 'Controla' })).toBeVisible();
++    await page.keyboard.press('ArrowRight');
++    await expect(vende).toBeFocused();
++  });
++
++  test('sin JavaScript se ven los cuatro paneles y no las pestañas', async ({ browser }) => {
++    const context = await browser.newContext({ javaScriptEnabled: false });
++    const page = await context.newPage();
++    await page.goto('/');
++    await expect(page.locator('[role="tablist"]')).toBeHidden();
++    for (const name of ['Vende', 'Fía', 'Cobra', 'Controla']) {
++      await expect(
++        page.locator(`#panel-${name === 'Fía' ? 'fia' : name.toLowerCase()}`),
++      ).toBeVisible();
++    }
++    await context.close();
++  });
++
++  test('la pregunta del internet dice que se puede vender sin conexión', async ({ page }) => {
++    await page.goto('/productos/xaska-pos');
++    await expect(page.getByText('sigues vendiendo en ese equipo', { exact: false })).toBeAttached();
++  });
++});
+-- 
+2.43.0
+

@@ -1,0 +1,536 @@
+---
+/**
+ * Una pantalla de XASKA POS dibujada en código, con datos de ejemplo de un minimercado de
+ * prueba (y un restaurante en "mesas"). Reemplaza las capturas: se ve nítida en cualquier
+ * pantalla y no muestra datos de clientes reales.
+ *
+ * La pantalla entera es una imagen para los lectores de pantalla (role="img") con la
+ * descripción del contenido; lo de adentro es decorativo.
+ * Los datos son ilustrativos: no son cifras de ningún negocio.
+ */
+import { formatPesos } from '@/lib/money';
+
+type Screen = 'inicio' | 'tiquete' | 'cierre' | 'fiado' | 'sin-conexion' | 'finanzas' | 'mesas';
+
+interface Props {
+  screen: Screen;
+  title: string;
+  description: string;
+  class?: string | undefined;
+}
+
+const { screen, title, description, class: className } = Astro.props;
+
+const hours = [
+  { h: '8', v: 30 },
+  { h: '9', v: 46 },
+  { h: '10', v: 58 },
+  { h: '11', v: 72 },
+  { h: '12', v: 95 },
+  { h: '1', v: 64 },
+  { h: '2', v: 50 },
+  { h: '3', v: 61 },
+  { h: '4', v: 78 },
+  { h: '5', v: 88 },
+];
+
+const ticketLines = [
+  { qty: 2, name: 'Arroz 1 kg', value: 8400 },
+  { qty: 1, name: 'Leche 1 L', value: 4600 },
+  { qty: 1, name: 'Huevos x 12', value: 13800 },
+];
+const ticketTotal = ticketLines.reduce((acc, line) => acc + line.value, 0);
+
+const tables = [
+  { name: 'Mesa 1', state: 'libre', label: 'Libre', amount: null },
+  { name: 'Mesa 2', state: 'cocina', label: 'En cocina', amount: 48500 },
+  { name: 'Mesa 3', state: 'comiendo', label: 'Comiendo', amount: 72000 },
+  { name: 'Mesa 4', state: 'cuenta', label: 'Pidió la cuenta', amount: 35900 },
+  { name: 'Mesa 5', state: 'libre', label: 'Libre', amount: null },
+  { name: 'Mesa 6', state: 'comiendo', label: 'Comiendo', amount: 118400 },
+] as const;
+---
+
+<div class:list={['pos-frame', className]}>
+  <div class="pos-screen ps flex h-full flex-col gap-3 p-4" role="img" aria-label={description}>
+    <div class="flex items-center justify-between gap-2">
+      <span class="text-[0.9rem] font-bold">{title}</span>
+      {screen === 'sin-conexion' ? (
+        <span class="ps-pill ps-warn">Sin conexión</span>
+      ) : screen === 'mesas' ? (
+        <span class="ps-pill ps-soft">Primer piso</span>
+      ) : (
+        <span class="ps-pill ps-ok">Caja abierta</span>
+      )}
+    </div>
+
+    {screen === 'inicio' && (
+      <>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="ps-tile ps-feature">
+            <span class="text-xs">Ventas de hoy</span>
+            <span class="text-lg font-extrabold">{formatPesos(1286400)}</span>
+          </div>
+          <div class="ps-tile">
+            <span class="ps-muted text-xs">Utilidad</span>
+            <span class="text-lg font-extrabold">{formatPesos(318900)}</span>
+          </div>
+          <div class="ps-tile">
+            <span class="ps-muted text-xs">Ventas</span>
+            <span class="text-lg font-extrabold">64</span>
+          </div>
+          <div class="ps-tile">
+            <span class="ps-muted text-xs">Ticket promedio</span>
+            <span class="text-lg font-extrabold">{formatPesos(20100)}</span>
+          </div>
+        </div>
+        <div class="ps-tile">
+          <span class="ps-muted text-xs">Ventas por hora</span>
+          <div class="mt-2 flex h-20 items-end gap-1.5">
+            {hours.map((bar) => (
+              <span class="flex flex-1 flex-col items-center justify-end gap-1">
+                <span class="ps-bar w-full" data-h={bar.v} />
+                <span class="ps-muted text-[0.625rem]">{bar.h}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div class="ps-tile gap-1.5 text-sm">
+          <span class="ps-muted text-xs">Lo más vendido</span>
+          <span class="flex justify-between">
+            <span>Huevos x 12</span>
+            <strong>38</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Arroz 1 kg</span>
+            <strong>31</strong>
+          </span>
+        </div>
+      </>
+    )}
+
+    {screen === 'tiquete' && (
+      <div class="flex flex-1 flex-col items-center gap-3">
+        <div class="ps-ticket w-full max-w-[15rem]">
+          <p class="text-center font-bold">Minimercado La Esquina</p>
+          <p class="text-center">Venta 0001-000482 · Caja 1</p>
+          <p class="ps-rule" />
+          {ticketLines.map((line) => (
+            <p class="flex justify-between gap-2">
+              <span>
+                {line.qty} × {line.name}
+              </span>
+              <span>{formatPesos(line.value)}</span>
+            </p>
+          ))}
+          <p class="ps-rule" />
+          <p class="flex justify-between text-[0.95rem] font-bold">
+            <span>TOTAL</span>
+            <span>{formatPesos(ticketTotal)}</span>
+          </p>
+          <p class="flex justify-between">
+            <span>Efectivo</span>
+            <span>{formatPesos(30000)}</span>
+          </p>
+          <p class="flex justify-between">
+            <span>Cambio</span>
+            <span>{formatPesos(30000 - ticketTotal)}</span>
+          </p>
+          <p class="ps-rule" />
+          <p class="text-center">Comprobante interno de venta</p>
+        </div>
+        <div class="flex w-full max-w-[15rem] gap-2">
+          <span class="ps-btn ps-btn-light flex-1">Reimprimir</span>
+          <span class="ps-btn ps-btn-brand flex-1">Enviar ▾</span>
+        </div>
+        <div class="ps-menu w-full max-w-[15rem] text-sm">
+          <span>WhatsApp (texto)</span>
+          <span class="font-semibold">Imagen del tiquete</span>
+        </div>
+      </div>
+    )}
+
+    {screen === 'cierre' && (
+      <div class="flex flex-col gap-2 text-sm">
+        <div class="ps-tile gap-1.5">
+          <span class="ps-muted text-xs">Ventas por medio de pago</span>
+          <span class="flex justify-between">
+            <span>Efectivo</span>
+            <strong>{formatPesos(684000)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Transferencia</span>
+            <strong>{formatPesos(412300)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Tarjeta</span>
+            <strong>{formatPesos(190100)}</strong>
+          </span>
+        </div>
+        <div class="ps-tile gap-1.5">
+          <span class="flex justify-between">
+            <span>Base de apertura</span>
+            <strong>{formatPesos(100000)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Egresos</span>
+            <strong>{formatPesos(-45000)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Efectivo esperado</span>
+            <strong>{formatPesos(739000)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Efectivo contado</span>
+            <strong>{formatPesos(739000)}</strong>
+          </span>
+        </div>
+        <div class="ps-tile ps-good flex-row items-center justify-between">
+          <span class="font-semibold">Diferencia</span>
+          <span class="text-lg font-extrabold">{formatPesos(0)}</span>
+        </div>
+        <div class="flex gap-2">
+          <span class="ps-btn ps-btn-light flex-1">Imprimir</span>
+          <span class="ps-btn ps-btn-brand flex-1">Enviar por WhatsApp</span>
+        </div>
+      </div>
+    )}
+
+    {screen === 'fiado' && (
+      <div class="flex flex-col gap-2 text-sm">
+        <div class="ps-tile gap-2">
+          <span class="flex items-center gap-2">
+            <span class="ps-avatar">DR</span>
+            <span class="font-bold">Doña Rosa</span>
+          </span>
+          <span class="flex justify-between">
+            <span class="ps-muted">Debe</span>
+            <strong class="text-lg">{formatPesos(42300)}</strong>
+          </span>
+          <span class="ps-track">
+            <span class="ps-fill" data-w="28" />
+          </span>
+          <span class="ps-muted flex justify-between text-xs">
+            <span>Cupo {formatPesos(150000)}</span>
+            <span>Disponible {formatPesos(107700)}</span>
+          </span>
+        </div>
+        <div class="ps-tile gap-1.5">
+          <span class="ps-muted text-xs">Movimientos</span>
+          <span class="flex justify-between">
+            <span>Abono · ayer</span>
+            <strong class="ps-ok-text">{formatPesos(-20000)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Venta 0001-000471</span>
+            <strong>{formatPesos(27600)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Venta 0001-000455</span>
+            <strong>{formatPesos(34700)}</strong>
+          </span>
+        </div>
+        <div class="flex gap-2">
+          <span class="ps-btn ps-btn-light flex-1">Abonar</span>
+          <span class="ps-btn ps-btn-brand flex-1">Recordatorio</span>
+        </div>
+      </div>
+    )}
+
+    {screen === 'sin-conexion' && (
+      <div class="flex flex-col gap-2 text-sm">
+        <div class="ps-banner">Sin conexión. Sigues vendiendo; las ventas se envían al volver.</div>
+        <div class="ps-tile gap-1.5">
+          <span class="ps-muted text-xs">Guardadas en este equipo</span>
+          {[
+            ['CAJA-1-SC0007', 18400],
+            ['CAJA-1-SC0008', 6500],
+            ['CAJA-1-SC0009', 27600],
+          ].map(([number, value]) => (
+            <span class="flex items-center justify-between gap-2">
+              <span>
+                <span class="block font-semibold">{number}</span>
+                <span class="ps-muted text-xs">Pendiente de enviar</span>
+              </span>
+              <strong>{formatPesos(Number(value))}</strong>
+            </span>
+          ))}
+        </div>
+        <div class="ps-ticket ps-ticket-small">
+          <p class="text-center font-bold">*** SIN CONEXIÓN ***</p>
+          <p class="text-center">Pendiente de enviar</p>
+        </div>
+      </div>
+    )}
+
+    {screen === 'finanzas' && (
+      <div class="flex flex-col gap-2 text-sm">
+        <div class="grid grid-cols-2 gap-2">
+          <div class="ps-tile">
+            <span class="ps-muted text-xs">Ventas netas</span>
+            <span class="text-base font-extrabold">{formatPesos(24860000)}</span>
+          </div>
+          <div class="ps-tile ps-feature">
+            <span class="text-xs">Utilidad operativa</span>
+            <span class="text-base font-extrabold">{formatPesos(1840000)}</span>
+          </div>
+        </div>
+        <div class="ps-tile gap-1.5">
+          <span class="ps-muted text-xs">Plata que entró</span>
+          <span class="flex justify-between">
+            <span>Efectivo</span>
+            <strong>{formatPesos(13120000)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Transferencia</span>
+            <strong>{formatPesos(8950000)}</strong>
+          </span>
+          <span class="flex justify-between">
+            <span>Abonos de fiado</span>
+            <strong>{formatPesos(1260000)}</strong>
+          </span>
+        </div>
+        <div class="ps-tile gap-2">
+          <span class="flex justify-between">
+            <span class="ps-muted text-xs">Punto de equilibrio</span>
+            <span class="text-xs font-bold">82 %</span>
+          </span>
+          <span class="ps-track">
+            <span class="ps-fill" data-w="82" />
+          </span>
+          <span class="ps-muted text-xs">Gastos del mes: {formatPesos(3420000)}</span>
+        </div>
+      </div>
+    )}
+
+    {screen === 'mesas' && (
+      <div class="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
+        {tables.map((table) => (
+          <span class:list={['ps-table', `ps-table-${table.state}`]}>
+            <span class="font-bold">{table.name}</span>
+            <span class="text-xs font-semibold">{table.label}</span>
+            <span class="mt-auto font-extrabold">
+              {table.amount === null ? '—' : formatPesos(table.amount)}
+            </span>
+          </span>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
+
+<style>
+  .ps-muted {
+    color: var(--pos-muted);
+  }
+
+  .ps-pill {
+    border-radius: 9999px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .ps-ok {
+    background-color: var(--pos-ok-soft);
+    color: var(--pos-ok);
+  }
+  .ps-warn {
+    background-color: var(--pos-warn-soft);
+    color: var(--pos-warn);
+  }
+  .ps-soft {
+    background-color: var(--pos-brand-soft);
+    color: #3730a3;
+  }
+  .ps-ok-text {
+    color: var(--pos-ok);
+  }
+
+  .ps-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    border-radius: 0.875rem;
+    background-color: var(--pos-surface);
+    padding: 0.7rem 0.8rem;
+  }
+  .ps-feature {
+    background-color: var(--pos-brand-900);
+    color: #ffffff;
+  }
+  .ps-good {
+    background-color: var(--pos-ok-soft);
+    color: var(--pos-ok);
+  }
+
+  .ps-bar {
+    display: block;
+    border-radius: 0.3rem 0.3rem 0.15rem 0.15rem;
+    background-color: var(--pos-light);
+  }
+  .ps-bar[data-h='30'] {
+    height: calc(3.75rem * 0.3);
+  }
+  .ps-bar[data-h='46'] {
+    height: calc(3.75rem * 0.46);
+  }
+  .ps-bar[data-h='50'] {
+    height: calc(3.75rem * 0.5);
+  }
+  .ps-bar[data-h='58'] {
+    height: calc(3.75rem * 0.58);
+  }
+  .ps-bar[data-h='61'] {
+    height: calc(3.75rem * 0.61);
+  }
+  .ps-bar[data-h='64'] {
+    height: calc(3.75rem * 0.64);
+  }
+  .ps-bar[data-h='72'] {
+    height: calc(3.75rem * 0.72);
+  }
+  .ps-bar[data-h='78'] {
+    height: calc(3.75rem * 0.78);
+  }
+  .ps-bar[data-h='88'] {
+    height: calc(3.75rem * 0.88);
+  }
+  .ps-bar[data-h='95'] {
+    height: calc(3.75rem * 0.95);
+    background-color: var(--pos-brand);
+  }
+
+  .ps-track {
+    display: block;
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background-color: var(--pos-inset);
+  }
+  .ps-fill {
+    display: block;
+    height: 100%;
+    border-radius: 9999px;
+    background-color: var(--pos-brand);
+  }
+  .ps-fill[data-w='28'] {
+    width: 28%;
+  }
+  .ps-fill[data-w='82'] {
+    width: 82%;
+  }
+
+  /* Tiquete: blanco siempre, letra monoespaciada como la térmica. */
+  .ps-ticket {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    padding: 0.9rem 0.85rem;
+    box-shadow: 0 10px 24px -16px rgb(17 24 39 / 0.45);
+    font-family: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    line-height: 1.45;
+  }
+  .ps-ticket-small {
+    align-self: center;
+    width: 100%;
+    max-width: 13rem;
+  }
+  .ps-rule {
+    margin-block: 0.25rem;
+    border-top: 1px dashed #9ca3af;
+  }
+
+  .ps-btn {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    padding-inline: 0.6rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  .ps-btn-light {
+    border: 1.5px solid var(--pos-border);
+    background-color: var(--pos-surface);
+  }
+  .ps-btn-brand {
+    background-color: var(--pos-brand);
+    color: #ffffff;
+    box-shadow: 0 8px 16px -10px rgb(67 56 202 / 0.9);
+  }
+
+  .ps-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    border: 1px solid var(--pos-border);
+    border-radius: 0.875rem;
+    background-color: var(--pos-surface);
+    padding: 0.35rem;
+  }
+  .ps-menu span {
+    border-radius: 0.6rem;
+    padding: 0.4rem 0.6rem;
+  }
+  .ps-menu span:last-child {
+    background-color: var(--pos-brand-soft);
+    color: #3730a3;
+  }
+
+  .ps-avatar {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: var(--pos-brand-soft);
+    color: #3730a3;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .ps-banner {
+    border-radius: 0.875rem;
+    background-color: var(--pos-warn-soft);
+    padding: 0.6rem 0.8rem;
+    color: var(--pos-warn);
+    font-weight: 600;
+  }
+
+  /* Mesas: color por estado, como en XASKA POS, y siempre con el nombre del estado. */
+  .ps-table {
+    display: flex;
+    min-height: 5.5rem;
+    flex-direction: column;
+    gap: 0.1rem;
+    border: 1.5px solid transparent;
+    border-radius: 0.875rem;
+    padding: 0.65rem 0.75rem;
+  }
+  .ps-table-libre {
+    border-color: #a7f3d0;
+    background-color: #ecfdf5;
+    color: #065f46;
+  }
+  .ps-table-cocina {
+    border-color: #fde68a;
+    background-color: #fffbeb;
+    color: #92400e;
+  }
+  .ps-table-comiendo {
+    border-color: #ddd6fe;
+    background-color: #f5f3ff;
+    color: #5b21b6;
+  }
+  .ps-table-cuenta {
+    border-color: #fecaca;
+    background-color: #fef2f2;
+    color: #b91c1c;
+  }
+</style>

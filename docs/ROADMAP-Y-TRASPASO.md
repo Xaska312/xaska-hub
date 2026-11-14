@@ -57,6 +57,7 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
 
 - **Rediseño bento (2026-11-04):** se hicieron 6 bocetos del inicio (en un lienzo de diseño en Claude) y Daniel eligió el 1, "Bento". Se aplicó a todas las páginas. Componentes nuevos: `Card`, `PageHeader`, `ScreenCard`, `Icon`; se eliminaron `ScreenShowcase` y `Convergence`. Pruebas: 149 en verde; Lighthouse 100 en casi todo (Contacto 96 en buenas prácticas, por Turnstile).
 - **Planes por nivel (2026-11-05):** tomados del repositorio del POS (decisión 288). Ver `docs/DECISIONES.md`.
+- **Portada viva (2026-11-14):** bocetos A, B y C; Daniel eligió el B, "Mostrador vivo": caja de XASKA POS que funciona en la portada, pestañas Vende / Fía / Cobra / Controla y movimiento orgánico como el POS. Se corrigió la respuesta del internet y se agregaron Finanzas y el recibo por WhatsApp. Ver `docs/DECISIONES.md`.
 - **Cómo se publica un cambio:** README, sección "Cómo se publica un cambio".
 
 ### Lo que falta
@@ -71,6 +72,8 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
 - [x] ASKA: textos aprobados (2026-11-09).
 - [ ] ASKA: publicar en `main` cuando el POS tenga la actualización y la política de datos 1.3.
 - [ ] ASKA: imagen para redes propia (hoy usa la general).
+- [x] XASKA POS y Productos con pantallas dibujadas en lugar de capturas (2026-11-14).
+- [ ] Portada viva, lo que sigue: el estilo en Aska, Servicios, Nosotros y Contacto; imágenes para redes nuevas; borrar las capturas viejas de `src/assets/pos/`.
 
 ---
 

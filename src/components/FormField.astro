@@ -34,8 +34,10 @@ const {
 const hintId = hint ? `${id}-ayuda` : undefined;
 const errorId = `${id}-error`;
 const describedBy = [hintId, errorId].filter(Boolean).join(' ');
+// Campo relleno como en XASKA POS: fondo hundido, esquinas de 12 px, borde con contraste 3:1
+// (para que se vea dónde escribir) y, al enfocar, fondo de tarjeta con el halo de foco.
 const control =
-  'mt-2 block w-full rounded-control border border-line-strong bg-bg px-4 py-3 text-ink placeholder:text-muted aria-[invalid=true]:border-[var(--c-error)]';
+  'field-control mt-2 block w-full rounded-[0.75rem] border-[1.5px] border-line-strong bg-inset px-4 py-3 text-ink placeholder:text-muted focus:bg-surface aria-[invalid=true]:border-[var(--c-error)]';
 ---
 
 <div class="field">
