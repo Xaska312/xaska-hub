@@ -395,6 +395,12 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Colores de pantalla:** `.pos-frame` y `.pos-screen` en `global.css`, con los tokens claros del POS, iguales en los dos temas del sitio.
 - Las capturas de `src/assets/pos/` ya no se usan en ninguna página; se pueden borrar más adelante.
 
+### ASKA que responde y campos rellenos (2026-11-14)
+
+- **ASKA:** las preguntas para seguir de la conversación de ejemplo son botones. Al tocar una, sale la pregunta, ASKA "escribe" (tres puntos) y responde con su fuente. Cada pregunta se usa una vez y el foco pasa a la siguiente. Respuestas sin montos ni cifras, en `src/content/aska/index.yaml` (`chat.followUps`); son textos nuevos, para que Daniel los revise. Sin JavaScript no salen los botones.
+- **Formulario de contacto:** campos rellenos como en XASKA POS (fondo hundido, esquinas de 12 px, borde de 1,5 px con contraste de control y fondo de tarjeta al enfocar, con el halo de foco).
+- Servicios, Nosotros y Contacto ya tenían el estilo bento y ganan el movimiento nuevo de botones y tarjetas sin más cambios.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

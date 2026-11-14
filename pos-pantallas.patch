@@ -1,0 +1,1205 @@
+From 3eab420b1c4aad2740bead3bf50aa0ebd6235d60 Mon Sep 17 00:00:00 2001
+From: Xaska <94057683+Xaska312@users.noreply.github.com>
+Date: Sat, 14 Nov 2026 15:18:15 -0500
+Subject: [PATCH] XASKA POS: ventana de cobro interactiva y pantallas dibujadas
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- La entrada de XASKA POS trae la ventana de cobro que se puede tocar
+  (LiveCheckout): efectivo, transferencia o mixto, y el cambio según el
+  billete. Funciona sin JavaScript (botones de opción y CSS :has).
+- "Así se ve" cambia las capturas viejas por siete pantallas dibujadas en
+  código (PosScreen): inicio, tiquete, cierre de caja, fiado, sin internet,
+  Finanzas y mesas, con datos de ejemplo y descripción accesible.
+- Productos usa la pantalla de inicio dibujada en lugar de la captura.
+- Pruebas de las pantallas y de la ventana de cobro sin JavaScript.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019CUdjctz8ikuvwZpJDJsxo
+---
+ docs/DECISIONES.md                  |   8 +
+ docs/ROADMAP-Y-TRASPASO.md          |   3 +-
+ src/components/LiveCheckout.astro   | 228 ++++++++++++
+ src/components/PosScreen.astro      | 536 ++++++++++++++++++++++++++++
+ src/content.config.ts               |  19 +-
+ src/content/pos/index.yaml          |  50 ++-
+ src/pages/productos/index.astro     |  12 +-
+ src/pages/productos/xaska-pos.astro | 107 ++----
+ src/styles/global.css               |  37 ++
+ tests/smoke.spec.ts                 |  29 +-
+ 10 files changed, 926 insertions(+), 103 deletions(-)
+ create mode 100644 src/components/LiveCheckout.astro
+ create mode 100644 src/components/PosScreen.astro
+
+diff --git a/docs/DECISIONES.md b/docs/DECISIONES.md
+index e63d997..a8175cd 100644
+--- a/docs/DECISIONES.md
++++ b/docs/DECISIONES.md
+@@ -387,6 +387,14 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa
+ - **Pendiente (segunda parte):** llevar el estilo a XASKA POS, Aska y las demás páginas, cambiar las capturas por pantallas dibujadas o capturas nuevas a 2x de un negocio de prueba, y nuevas imágenes para redes.
+ - **Alternativas descartadas:** los bocetos A y C.
+ 
++### XASKA POS con pantallas vivas (2026-11-14)
++
++- **Entrada:** la captura de Vender se cambia por la **ventana de cobro** que se puede tocar (`LiveCheckout`): medio de pago (efectivo, transferencia o mixto) y, en efectivo, el billete; el cambio sale al instante. Son botones de opción nativos y lo que se muestra cambia solo con CSS (`:has`), así que funciona sin JavaScript; el cambio de cada billete va también en su nombre accesible.
++- **"Así se ve":** las seis capturas del 31 de octubre se cambian por siete **pantallas dibujadas en código** (`PosScreen`): inicio, tiquete con "Enviar ▾", cierre de caja con arqueo, fiado, venta sin internet, Finanzas y mesas con sus estados (decisión 284 del POS). Datos de ejemplo de un minimercado de prueba, con el aviso en la página. Cada pantalla es una imagen para lectores de pantalla (`role="img"`) con su descripción, que vive en `src/content/pos/index.yaml`.
++- **Productos:** la captura de Vender se cambia por la pantalla de inicio dibujada.
++- **Colores de pantalla:** `.pos-frame` y `.pos-screen` en `global.css`, con los tokens claros del POS, iguales en los dos temas del sitio.
++- Las capturas de `src/assets/pos/` ya no se usan en ninguna página; se pueden borrar más adelante.
++
+ ## Tabla de contrastes (WCAG 2.2 AA)
+ 
+ Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
+diff --git a/docs/ROADMAP-Y-TRASPASO.md b/docs/ROADMAP-Y-TRASPASO.md
+index 02a4892..2183dc9 100644
+--- a/docs/ROADMAP-Y-TRASPASO.md
++++ b/docs/ROADMAP-Y-TRASPASO.md
+@@ -72,7 +72,8 @@ Pasos completos en `docs/GUIA-PUBLICACION.md`. Cómo quedó:
+ - [x] ASKA: textos aprobados (2026-11-09).
+ - [ ] ASKA: publicar en `main` cuando el POS tenga la actualización y la política de datos 1.3.
+ - [ ] ASKA: imagen para redes propia (hoy usa la general).
+-- [ ] Portada viva, segunda parte: el mismo estilo en XASKA POS, Aska y las demás páginas; pantallas dibujadas o capturas nuevas a 2x de un negocio de prueba en lugar de las capturas del 31 de octubre.
++- [x] XASKA POS y Productos con pantallas dibujadas en lugar de capturas (2026-11-14).
++- [ ] Portada viva, lo que sigue: el estilo en Aska, Servicios, Nosotros y Contacto; imágenes para redes nuevas; borrar las capturas viejas de `src/assets/pos/`.
+ 
+ ---
+ 
+diff --git a/src/components/LiveCheckout.astro b/src/components/LiveCheckout.astro
+new file mode 100644
+index 0000000..6ff6fcb
+--- /dev/null
++++ b/src/components/LiveCheckout.astro
+@@ -0,0 +1,228 @@
++---
++/**
++ * Ventana de cobro de XASKA POS que se puede tocar: se elige el medio de pago (efectivo,
++ * transferencia o mixto) y, en efectivo, el billete con que pagan; el cambio se ve al instante.
++ *
++ * Funciona sin JavaScript: son botones de opción nativos y lo que se muestra cambia solo con
++ * CSS (:has). El cambio de cada billete va también en su nombre accesible.
++ * Valores de ejemplo.
++ */
++import { formatPesos } from '@/lib/money';
++
++const total = 27600;
++const bills = [30000, 50000, 100000];
++const mixed = { cash: 20000, transfer: total - 20000 };
++---
++
++<div class="pos-frame checkout">
++  <div class="pos-screen flex flex-col gap-3 p-4 sm:p-5">
++    <div class="flex items-center justify-between gap-2">
++      <p class="text-[0.95rem] font-bold">Cobrar</p>
++      <p class="ck-pill">3 productos</p>
++    </div>
++
++    <div class="ck-total">
++      <span class="text-sm">Total a cobrar</span>
++      <span class="text-[2rem] leading-none font-extrabold">{formatPesos(total)}</span>
++    </div>
++
++    <fieldset class="flex flex-col gap-2">
++      <legend class="ck-label">Medio de pago</legend>
++      <div class="grid grid-cols-3 gap-2">
++        <label class="ck-option press">
++          <input type="radio" name="ck-method" value="efectivo" class="sr-only" checked />
++          Efectivo
++        </label>
++        <label class="ck-option press">
++          <input type="radio" name="ck-method" value="transferencia" class="sr-only" />
++          Transferencia
++        </label>
++        <label class="ck-option press">
++          <input type="radio" name="ck-method" value="mixto" class="sr-only" />
++          Mixto
++        </label>
++      </div>
++    </fieldset>
++
++    <div class="ck-pane ck-pane-efectivo flex flex-col gap-3">
++      <fieldset class="flex flex-col gap-2">
++        <legend class="ck-label">Con cuánto pagan</legend>
++        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
++          <label class="ck-option press">
++            <input type="radio" name="ck-bill" value="exacto" class="sr-only" checked />
++            Exacto<span class="sr-only">, cambio {formatPesos(0)}</span>
++          </label>
++          {bills.map((bill) => (
++            <label class="ck-option press">
++              <input type="radio" name="ck-bill" value={String(bill)} class="sr-only" />
++              {formatPesos(bill)}
++              <span class="sr-only">, cambio {formatPesos(bill - total)}</span>
++            </label>
++          ))}
++        </div>
++      </fieldset>
++      <div class="ck-change">
++        <span class="text-sm font-semibold">Cambio</span>
++        <span class="ck-amount ck-amount-exacto">{formatPesos(0)}</span>
++        {bills.map((bill) => (
++          <span class:list={['ck-amount', `ck-amount-${bill}`]}>{formatPesos(bill - total)}</span>
++        ))}
++      </div>
++    </div>
++
++    <div class="ck-pane ck-pane-transferencia ck-note">
++      Sin cambio. Anota la referencia de la transferencia y queda en el cierre de caja.
++    </div>
++
++    <div class="ck-pane ck-pane-mixto flex flex-col gap-2 text-sm">
++      <span class="ck-line">
++        <span>Efectivo</span>
++        <strong>{formatPesos(mixed.cash)}</strong>
++      </span>
++      <span class="ck-line">
++        <span>Transferencia</span>
++        <strong>{formatPesos(mixed.transfer)}</strong>
++      </span>
++      <span class="ck-muted text-xs">
++        Parte en efectivo y parte por transferencia, en una sola venta.
++      </span>
++    </div>
++
++    <span class="ck-pay" aria-hidden="true">
++      Cobrar {formatPesos(total)}
++    </span>
++  </div>
++  <p class="ck-caption">Valores de ejemplo. Toca el medio de pago y el billete.</p>
++</div>
++
++<style>
++  .ck-pill {
++    border-radius: 9999px;
++    background-color: var(--pos-brand-soft);
++    padding: 0.2rem 0.65rem;
++    color: #3730a3;
++    font-size: 0.75rem;
++    font-weight: 600;
++  }
++
++  .ck-total {
++    display: flex;
++    align-items: baseline;
++    justify-content: space-between;
++    gap: 0.75rem;
++    border-radius: 1rem;
++    background-color: var(--pos-brand-900);
++    padding: 0.9rem 1rem;
++    color: #ffffff;
++  }
++
++  .ck-label {
++    margin-bottom: 0.5rem;
++    color: var(--pos-muted);
++    font-size: 0.8125rem;
++    font-weight: 600;
++  }
++
++  .ck-option {
++    display: flex;
++    min-height: 2.75rem;
++    align-items: center;
++    justify-content: center;
++    border: 1.5px solid var(--pos-border);
++    border-radius: 0.875rem;
++    background-color: var(--pos-surface);
++    padding-inline: 0.5rem;
++    font-size: 0.875rem;
++    font-weight: 600;
++    text-align: center;
++    cursor: pointer;
++  }
++  .ck-option:hover {
++    border-color: var(--pos-light);
++  }
++  .ck-option:has(input:checked) {
++    border-color: var(--pos-brand);
++    background-color: var(--pos-brand-soft);
++    color: var(--pos-brand-950);
++    box-shadow: 0 8px 18px -12px rgb(67 56 202 / 0.9);
++  }
++  .ck-option:has(input:focus-visible) {
++    outline: 2px solid var(--pos-brand);
++    outline-offset: 2px;
++    box-shadow: 0 0 0 6px color-mix(in srgb, var(--pos-brand) 28%, transparent);
++  }
++
++  .ck-change {
++    display: flex;
++    align-items: center;
++    justify-content: space-between;
++    border-radius: 1rem;
++    background-color: var(--pos-ok-soft);
++    padding: 0.8rem 1rem;
++    color: var(--pos-ok);
++  }
++  .ck-amount {
++    display: none;
++    font-size: 1.5rem;
++    font-weight: 800;
++  }
++
++  .ck-note {
++    border-radius: 1rem;
++    background-color: var(--pos-surface);
++    padding: 0.9rem 1rem;
++    font-size: 0.875rem;
++  }
++
++  .ck-line {
++    display: flex;
++    justify-content: space-between;
++    border-radius: 0.875rem;
++    background-color: var(--pos-surface);
++    padding: 0.7rem 0.9rem;
++  }
++  .ck-muted {
++    color: var(--pos-muted);
++  }
++
++  .ck-pay {
++    display: flex;
++    min-height: 3rem;
++    align-items: center;
++    justify-content: center;
++    border-radius: 0.875rem;
++    background-color: var(--pos-brand);
++    color: #ffffff;
++    font-weight: 700;
++    box-shadow: 0 10px 22px -12px rgb(67 56 202 / 0.95);
++  }
++
++  .ck-caption {
++    margin: 0.7rem 0.5rem 0.2rem;
++    color: #c7d2fe;
++    font-size: 0.8125rem;
++  }
++
++  /* Qué se ve según lo elegido (sin JavaScript). */
++  .ck-pane {
++    display: none;
++  }
++  .checkout:has(input[name='ck-method'][value='efectivo']:checked) .ck-pane-efectivo,
++  .checkout:has(input[name='ck-method'][value='transferencia']:checked) .ck-pane-transferencia,
++  .checkout:has(input[name='ck-method'][value='mixto']:checked) .ck-pane-mixto {
++    display: flex;
++  }
++  .checkout:has(input[name='ck-bill'][value='exacto']:checked) .ck-amount-exacto,
++  .checkout:has(input[name='ck-bill'][value='30000']:checked) .ck-amount-30000,
++  .checkout:has(input[name='ck-bill'][value='50000']:checked) .ck-amount-50000,
++  .checkout:has(input[name='ck-bill'][value='100000']:checked) .ck-amount-100000 {
++    display: inline-block;
++  }
++
++  @media (prefers-reduced-motion: no-preference) {
++    .ck-pane,
++    .ck-amount {
++      animation: pop 360ms var(--ease-bounce);
++    }
++  }
++</style>
+diff --git a/src/components/PosScreen.astro b/src/components/PosScreen.astro
+new file mode 100644
+index 0000000..f444cc5
+--- /dev/null
++++ b/src/components/PosScreen.astro
+@@ -0,0 +1,536 @@
++---
++/**
++ * Una pantalla de XASKA POS dibujada en código, con datos de ejemplo de un minimercado de
++ * prueba (y un restaurante en "mesas"). Reemplaza las capturas: se ve nítida en cualquier
++ * pantalla y no muestra datos de clientes reales.
++ *
++ * La pantalla entera es una imagen para los lectores de pantalla (role="img") con la
++ * descripción del contenido; lo de adentro es decorativo.
++ * Los datos son ilustrativos: no son cifras de ningún negocio.
++ */
++import { formatPesos } from '@/lib/money';
++
++type Screen = 'inicio' | 'tiquete' | 'cierre' | 'fiado' | 'sin-conexion' | 'finanzas' | 'mesas';
++
++interface Props {
++  screen: Screen;
++  title: string;
++  description: string;
++  class?: string | undefined;
++}
++
++const { screen, title, description, class: className } = Astro.props;
++
++const hours = [
++  { h: '8', v: 30 },
++  { h: '9', v: 46 },
++  { h: '10', v: 58 },
++  { h: '11', v: 72 },
++  { h: '12', v: 95 },
++  { h: '1', v: 64 },
++  { h: '2', v: 50 },
++  { h: '3', v: 61 },
++  { h: '4', v: 78 },
++  { h: '5', v: 88 },
++];
++
++const ticketLines = [
++  { qty: 2, name: 'Arroz 1 kg', value: 8400 },
++  { qty: 1, name: 'Leche 1 L', value: 4600 },
++  { qty: 1, name: 'Huevos x 12', value: 13800 },
++];
++const ticketTotal = ticketLines.reduce((acc, line) => acc + line.value, 0);
++
++const tables = [
++  { name: 'Mesa 1', state: 'libre', label: 'Libre', amount: null },
++  { name: 'Mesa 2', state: 'cocina', label: 'En cocina', amount: 48500 },
++  { name: 'Mesa 3', state: 'comiendo', label: 'Comiendo', amount: 72000 },
++  { name: 'Mesa 4', state: 'cuenta', label: 'Pidió la cuenta', amount: 35900 },
++  { name: 'Mesa 5', state: 'libre', label: 'Libre', amount: null },
++  { name: 'Mesa 6', state: 'comiendo', label: 'Comiendo', amount: 118400 },
++] as const;
++---
++
++<div class:list={['pos-frame', className]}>
++  <div class="pos-screen ps flex h-full flex-col gap-3 p-4" role="img" aria-label={description}>
++    <div class="flex items-center justify-between gap-2">
++      <span class="text-[0.9rem] font-bold">{title}</span>
++      {screen === 'sin-conexion' ? (
++        <span class="ps-pill ps-warn">Sin conexión</span>
++      ) : screen === 'mesas' ? (
++        <span class="ps-pill ps-soft">Primer piso</span>
++      ) : (
++        <span class="ps-pill ps-ok">Caja abierta</span>
++      )}
++    </div>
++
++    {screen === 'inicio' && (
++      <>
++        <div class="grid grid-cols-2 gap-2">
++          <div class="ps-tile ps-feature">
++            <span class="text-xs">Ventas de hoy</span>
++            <span class="text-lg font-extrabold">{formatPesos(1286400)}</span>
++          </div>
++          <div class="ps-tile">
++            <span class="ps-muted text-xs">Utilidad</span>
++            <span class="text-lg font-extrabold">{formatPesos(318900)}</span>
++          </div>
++          <div class="ps-tile">
++            <span class="ps-muted text-xs">Ventas</span>
++            <span class="text-lg font-extrabold">64</span>
++          </div>
++          <div class="ps-tile">
++            <span class="ps-muted text-xs">Ticket promedio</span>
++            <span class="text-lg font-extrabold">{formatPesos(20100)}</span>
++          </div>
++        </div>
++        <div class="ps-tile">
++          <span class="ps-muted text-xs">Ventas por hora</span>
++          <div class="mt-2 flex h-20 items-end gap-1.5">
++            {hours.map((bar) => (
++              <span class="flex flex-1 flex-col items-center justify-end gap-1">
++                <span class="ps-bar w-full" data-h={bar.v} />
++                <span class="ps-muted text-[0.625rem]">{bar.h}</span>
++              </span>
++            ))}
++          </div>
++        </div>
++        <div class="ps-tile gap-1.5 text-sm">
++          <span class="ps-muted text-xs">Lo más vendido</span>
++          <span class="flex justify-between">
++            <span>Huevos x 12</span>
++            <strong>38</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Arroz 1 kg</span>
++            <strong>31</strong>
++          </span>
++        </div>
++      </>
++    )}
++
++    {screen === 'tiquete' && (
++      <div class="flex flex-1 flex-col items-center gap-3">
++        <div class="ps-ticket w-full max-w-[15rem]">
++          <p class="text-center font-bold">Minimercado La Esquina</p>
++          <p class="text-center">Venta 0001-000482 · Caja 1</p>
++          <p class="ps-rule" />
++          {ticketLines.map((line) => (
++            <p class="flex justify-between gap-2">
++              <span>
++                {line.qty} × {line.name}
++              </span>
++              <span>{formatPesos(line.value)}</span>
++            </p>
++          ))}
++          <p class="ps-rule" />
++          <p class="flex justify-between text-[0.95rem] font-bold">
++            <span>TOTAL</span>
++            <span>{formatPesos(ticketTotal)}</span>
++          </p>
++          <p class="flex justify-between">
++            <span>Efectivo</span>
++            <span>{formatPesos(30000)}</span>
++          </p>
++          <p class="flex justify-between">
++            <span>Cambio</span>
++            <span>{formatPesos(30000 - ticketTotal)}</span>
++          </p>
++          <p class="ps-rule" />
++          <p class="text-center">Comprobante interno de venta</p>
++        </div>
++        <div class="flex w-full max-w-[15rem] gap-2">
++          <span class="ps-btn ps-btn-light flex-1">Reimprimir</span>
++          <span class="ps-btn ps-btn-brand flex-1">Enviar ▾</span>
++        </div>
++        <div class="ps-menu w-full max-w-[15rem] text-sm">
++          <span>WhatsApp (texto)</span>
++          <span class="font-semibold">Imagen del tiquete</span>
++        </div>
++      </div>
++    )}
++
++    {screen === 'cierre' && (
++      <div class="flex flex-col gap-2 text-sm">
++        <div class="ps-tile gap-1.5">
++          <span class="ps-muted text-xs">Ventas por medio de pago</span>
++          <span class="flex justify-between">
++            <span>Efectivo</span>
++            <strong>{formatPesos(684000)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Transferencia</span>
++            <strong>{formatPesos(412300)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Tarjeta</span>
++            <strong>{formatPesos(190100)}</strong>
++          </span>
++        </div>
++        <div class="ps-tile gap-1.5">
++          <span class="flex justify-between">
++            <span>Base de apertura</span>
++            <strong>{formatPesos(100000)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Egresos</span>
++            <strong>{formatPesos(-45000)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Efectivo esperado</span>
++            <strong>{formatPesos(739000)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Efectivo contado</span>
++            <strong>{formatPesos(739000)}</strong>
++          </span>
++        </div>
++        <div class="ps-tile ps-good flex-row items-center justify-between">
++          <span class="font-semibold">Diferencia</span>
++          <span class="text-lg font-extrabold">{formatPesos(0)}</span>
++        </div>
++        <div class="flex gap-2">
++          <span class="ps-btn ps-btn-light flex-1">Imprimir</span>
++          <span class="ps-btn ps-btn-brand flex-1">Enviar por WhatsApp</span>
++        </div>
++      </div>
++    )}
++
++    {screen === 'fiado' && (
++      <div class="flex flex-col gap-2 text-sm">
++        <div class="ps-tile gap-2">
++          <span class="flex items-center gap-2">
++            <span class="ps-avatar">DR</span>
++            <span class="font-bold">Doña Rosa</span>
++          </span>
++          <span class="flex justify-between">
++            <span class="ps-muted">Debe</span>
++            <strong class="text-lg">{formatPesos(42300)}</strong>
++          </span>
++          <span class="ps-track">
++            <span class="ps-fill" data-w="28" />
++          </span>
++          <span class="ps-muted flex justify-between text-xs">
++            <span>Cupo {formatPesos(150000)}</span>
++            <span>Disponible {formatPesos(107700)}</span>
++          </span>
++        </div>
++        <div class="ps-tile gap-1.5">
++          <span class="ps-muted text-xs">Movimientos</span>
++          <span class="flex justify-between">
++            <span>Abono · ayer</span>
++            <strong class="ps-ok-text">{formatPesos(-20000)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Venta 0001-000471</span>
++            <strong>{formatPesos(27600)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Venta 0001-000455</span>
++            <strong>{formatPesos(34700)}</strong>
++          </span>
++        </div>
++        <div class="flex gap-2">
++          <span class="ps-btn ps-btn-light flex-1">Abonar</span>
++          <span class="ps-btn ps-btn-brand flex-1">Recordatorio</span>
++        </div>
++      </div>
++    )}
++
++    {screen === 'sin-conexion' && (
++      <div class="flex flex-col gap-2 text-sm">
++        <div class="ps-banner">Sin conexión. Sigues vendiendo; las ventas se envían al volver.</div>
++        <div class="ps-tile gap-1.5">
++          <span class="ps-muted text-xs">Guardadas en este equipo</span>
++          {[
++            ['CAJA-1-SC0007', 18400],
++            ['CAJA-1-SC0008', 6500],
++            ['CAJA-1-SC0009', 27600],
++          ].map(([number, value]) => (
++            <span class="flex items-center justify-between gap-2">
++              <span>
++                <span class="block font-semibold">{number}</span>
++                <span class="ps-muted text-xs">Pendiente de enviar</span>
++              </span>
++              <strong>{formatPesos(Number(value))}</strong>
++            </span>
++          ))}
++        </div>
++        <div class="ps-ticket ps-ticket-small">
++          <p class="text-center font-bold">*** SIN CONEXIÓN ***</p>
++          <p class="text-center">Pendiente de enviar</p>
++        </div>
++      </div>
++    )}
++
++    {screen === 'finanzas' && (
++      <div class="flex flex-col gap-2 text-sm">
++        <div class="grid grid-cols-2 gap-2">
++          <div class="ps-tile">
++            <span class="ps-muted text-xs">Ventas netas</span>
++            <span class="text-base font-extrabold">{formatPesos(24860000)}</span>
++          </div>
++          <div class="ps-tile ps-feature">
++            <span class="text-xs">Utilidad operativa</span>
++            <span class="text-base font-extrabold">{formatPesos(1840000)}</span>
++          </div>
++        </div>
++        <div class="ps-tile gap-1.5">
++          <span class="ps-muted text-xs">Plata que entró</span>
++          <span class="flex justify-between">
++            <span>Efectivo</span>
++            <strong>{formatPesos(13120000)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Transferencia</span>
++            <strong>{formatPesos(8950000)}</strong>
++          </span>
++          <span class="flex justify-between">
++            <span>Abonos de fiado</span>
++            <strong>{formatPesos(1260000)}</strong>
++          </span>
++        </div>
++        <div class="ps-tile gap-2">
++          <span class="flex justify-between">
++            <span class="ps-muted text-xs">Punto de equilibrio</span>
++            <span class="text-xs font-bold">82 %</span>
++          </span>
++          <span class="ps-track">
++            <span class="ps-fill" data-w="82" />
++          </span>
++          <span class="ps-muted text-xs">Gastos del mes: {formatPesos(3420000)}</span>
++        </div>
++      </div>
++    )}
++
++    {screen === 'mesas' && (
++      <div class="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
++        {tables.map((table) => (
++          <span class:list={['ps-table', `ps-table-${table.state}`]}>
++            <span class="font-bold">{table.name}</span>
++            <span class="text-xs font-semibold">{table.label}</span>
++            <span class="mt-auto font-extrabold">
++              {table.amount === null ? '—' : formatPesos(table.amount)}
++            </span>
++          </span>
++        ))}
++      </div>
++    )}
++  </div>
++</div>
++
++<style>
++  .ps-muted {
++    color: var(--pos-muted);
++  }
++
++  .ps-pill {
++    border-radius: 9999px;
++    padding: 0.2rem 0.65rem;
++    font-size: 0.75rem;
++    font-weight: 600;
++  }
++  .ps-ok {
++    background-color: var(--pos-ok-soft);
++    color: var(--pos-ok);
++  }
++  .ps-warn {
++    background-color: var(--pos-warn-soft);
++    color: var(--pos-warn);
++  }
++  .ps-soft {
++    background-color: var(--pos-brand-soft);
++    color: #3730a3;
++  }
++  .ps-ok-text {
++    color: var(--pos-ok);
++  }
++
++  .ps-tile {
++    display: flex;
++    flex-direction: column;
++    gap: 0.15rem;
++    border-radius: 0.875rem;
++    background-color: var(--pos-surface);
++    padding: 0.7rem 0.8rem;
++  }
++  .ps-feature {
++    background-color: var(--pos-brand-900);
++    color: #ffffff;
++  }
++  .ps-good {
++    background-color: var(--pos-ok-soft);
++    color: var(--pos-ok);
++  }
++
++  .ps-bar {
++    display: block;
++    border-radius: 0.3rem 0.3rem 0.15rem 0.15rem;
++    background-color: var(--pos-light);
++  }
++  .ps-bar[data-h='30'] {
++    height: calc(3.75rem * 0.3);
++  }
++  .ps-bar[data-h='46'] {
++    height: calc(3.75rem * 0.46);
++  }
++  .ps-bar[data-h='50'] {
++    height: calc(3.75rem * 0.5);
++  }
++  .ps-bar[data-h='58'] {
++    height: calc(3.75rem * 0.58);
++  }
++  .ps-bar[data-h='61'] {
++    height: calc(3.75rem * 0.61);
++  }
++  .ps-bar[data-h='64'] {
++    height: calc(3.75rem * 0.64);
++  }
++  .ps-bar[data-h='72'] {
++    height: calc(3.75rem * 0.72);
++  }
++  .ps-bar[data-h='78'] {
++    height: calc(3.75rem * 0.78);
++  }
++  .ps-bar[data-h='88'] {
++    height: calc(3.75rem * 0.88);
++  }
++  .ps-bar[data-h='95'] {
++    height: calc(3.75rem * 0.95);
++    background-color: var(--pos-brand);
++  }
++
++  .ps-track {
++    display: block;
++    height: 0.5rem;
++    overflow: hidden;
++    border-radius: 9999px;
++    background-color: var(--pos-inset);
++  }
++  .ps-fill {
++    display: block;
++    height: 100%;
++    border-radius: 9999px;
++    background-color: var(--pos-brand);
++  }
++  .ps-fill[data-w='28'] {
++    width: 28%;
++  }
++  .ps-fill[data-w='82'] {
++    width: 82%;
++  }
++
++  /* Tiquete: blanco siempre, letra monoespaciada como la térmica. */
++  .ps-ticket {
++    display: flex;
++    flex-direction: column;
++    gap: 0.2rem;
++    border-radius: 0.5rem;
++    background-color: #ffffff;
++    padding: 0.9rem 0.85rem;
++    box-shadow: 0 10px 24px -16px rgb(17 24 39 / 0.45);
++    font-family: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, Consolas, monospace;
++    font-size: 0.72rem;
++    line-height: 1.45;
++  }
++  .ps-ticket-small {
++    align-self: center;
++    width: 100%;
++    max-width: 13rem;
++  }
++  .ps-rule {
++    margin-block: 0.25rem;
++    border-top: 1px dashed #9ca3af;
++  }
++
++  .ps-btn {
++    display: inline-flex;
++    min-height: 2.25rem;
++    align-items: center;
++    justify-content: center;
++    border-radius: 0.75rem;
++    padding-inline: 0.6rem;
++    font-size: 0.8125rem;
++    font-weight: 600;
++    text-align: center;
++  }
++  .ps-btn-light {
++    border: 1.5px solid var(--pos-border);
++    background-color: var(--pos-surface);
++  }
++  .ps-btn-brand {
++    background-color: var(--pos-brand);
++    color: #ffffff;
++    box-shadow: 0 8px 16px -10px rgb(67 56 202 / 0.9);
++  }
++
++  .ps-menu {
++    display: flex;
++    flex-direction: column;
++    gap: 0.1rem;
++    border: 1px solid var(--pos-border);
++    border-radius: 0.875rem;
++    background-color: var(--pos-surface);
++    padding: 0.35rem;
++  }
++  .ps-menu span {
++    border-radius: 0.6rem;
++    padding: 0.4rem 0.6rem;
++  }
++  .ps-menu span:last-child {
++    background-color: var(--pos-brand-soft);
++    color: #3730a3;
++  }
++
++  .ps-avatar {
++    display: inline-flex;
++    width: 2rem;
++    height: 2rem;
++    align-items: center;
++    justify-content: center;
++    border-radius: 9999px;
++    background-color: var(--pos-brand-soft);
++    color: #3730a3;
++    font-size: 0.75rem;
++    font-weight: 700;
++  }
++
++  .ps-banner {
++    border-radius: 0.875rem;
++    background-color: var(--pos-warn-soft);
++    padding: 0.6rem 0.8rem;
++    color: var(--pos-warn);
++    font-weight: 600;
++  }
++
++  /* Mesas: color por estado, como en XASKA POS, y siempre con el nombre del estado. */
++  .ps-table {
++    display: flex;
++    min-height: 5.5rem;
++    flex-direction: column;
++    gap: 0.1rem;
++    border: 1.5px solid transparent;
++    border-radius: 0.875rem;
++    padding: 0.65rem 0.75rem;
++  }
++  .ps-table-libre {
++    border-color: #a7f3d0;
++    background-color: #ecfdf5;
++    color: #065f46;
++  }
++  .ps-table-cocina {
++    border-color: #fde68a;
++    background-color: #fffbeb;
++    color: #92400e;
++  }
++  .ps-table-comiendo {
++    border-color: #ddd6fe;
++    background-color: #f5f3ff;
++    color: #5b21b6;
++  }
++  .ps-table-cuenta {
++    border-color: #fecaca;
++    background-color: #fef2f2;
++    color: #b91c1c;
++  }
++</style>
+diff --git a/src/content.config.ts b/src/content.config.ts
+index 0a8b2f5..99a32c0 100644
+--- a/src/content.config.ts
++++ b/src/content.config.ts
+@@ -154,8 +154,25 @@ const pos = defineCollection({
+     screens: z.object({
+       title: text,
+       lead: text,
++      note: text,
+       items: z
+-        .array(z.object({ image: text, alt: text, caption: text }))
++        .array(
++          z.object({
++            // Pantalla dibujada en src/components/PosScreen.astro.
++            screen: z.enum([
++              'inicio',
++              'tiquete',
++              'cierre',
++              'fiado',
++              'sin-conexion',
++              'finanzas',
++              'mesas',
++            ]),
++            title: text,
++            caption: text,
++            description: text,
++          }),
++        )
+         .min(1)
+         .max(9),
+     }),
+diff --git a/src/content/pos/index.yaml b/src/content/pos/index.yaml
+index c625bfe..cc591e6 100644
+--- a/src/content/pos/index.yaml
++++ b/src/content/pos/index.yaml
+@@ -25,29 +25,41 @@ audience:
+   title: Para quién es
+   text: Para comercios de barrio y de centro comercial que quieren dejar el cuaderno o el programa viejo, para restaurantes que atienden a la mesa y para droguerías, con fórmulas, lotes y vencimientos. Funciona especialmente bien en tiendas de ropa y calzado, porque maneja tallas y colores, y también en minimercados, papelerías y otros negocios con mostrador.
+ 
+-# Capturas de un negocio de prueba (sin datos de clientes reales). Archivos en src/assets/pos/.
++# Pantallas de XASKA POS dibujadas en código (src/components/PosScreen.astro), con datos de
++# ejemplo. Se ven nítidas en cualquier pantalla y no muestran datos de clientes reales.
+ screens:
+   title: Así se ve
+-  lead: Capturas reales de XASKA POS en un minimercado de prueba. Toca una imagen para verla completa.
++  lead: Las pantallas de XASKA POS, con los mismos colores y la misma forma de la app.
++  note: Datos de ejemplo de un minimercado de prueba.
+   items:
+-    - image: reportes
+-      alt: Inicio con las ventas del día, el número de ventas, el ticket promedio, la utilidad, las ventas por hora, los medios de pago y los productos más vendidos.
++    - screen: inicio
++      title: Inicio
+       caption: Tus ventas del día, la utilidad y lo que más se vende.
+-    - image: cobrar
+-      alt: Ventana de cobro con el total, los medios de pago efectivo, tarjeta y transferencia, los billetes rápidos y el cambio a devolver.
+-      caption: Cobras en efectivo, con tarjeta, por transferencia o con pago mixto, y ves el cambio.
+-    - image: tiquete
+-      alt: Venta registrada con el tiquete de 80 mm, el cambio y los botones para imprimir o enviar por WhatsApp.
+-      caption: Tiquete de 58 u 80 mm, para imprimir o enviar por WhatsApp.
+-    - image: cierre-caja
+-      alt: Informe de caja con las ventas por medio de pago, la base de apertura, los egresos, los anticipos y el efectivo esperado, con botones para imprimir o enviar por WhatsApp.
+-      caption: El informe de caja te dice cuánto efectivo debe haber al cerrar.
+-    - image: productos
+-      alt: Lista de productos con su código, nombre, categoría, unidad, impuesto, precio y estado.
+-      caption: Tus productos con código, categoría, impuesto y precio.
+-    - image: mesa
+-      alt: Cuenta de la mesa 1 con los productos por enviar a cocina, los botones para mover o unir la cuenta y el total.
+-      caption: Para restaurantes, cuentas por mesa que se envían a cocina.
++      description: Inicio de XASKA POS con las ventas del día, el número de ventas, el ticket promedio, la utilidad, las ventas por hora y los productos más vendidos.
++    - screen: tiquete
++      title: Tiquete
++      caption: Tiquete de 58 u 80 mm para imprimir, o como imagen para enviar por WhatsApp.
++      description: Tiquete de venta con el negocio, los productos, el total, el pago en efectivo, el cambio y el botón Enviar con las opciones WhatsApp e Imagen del tiquete.
++    - screen: cierre
++      title: Cierre de caja
++      caption: El cierre te dice cuánto efectivo debe haber, y lo comparas con lo que contaste.
++      description: Cierre de caja con las ventas por medio de pago, la base de apertura, los egresos, el efectivo esperado, el efectivo contado y la diferencia en cero.
++    - screen: fiado
++      title: Fiado
++      caption: Cada cliente con su cupo, lo que debe y sus abonos. El recordatorio sale por WhatsApp.
++      description: Estado de cuenta de un cliente de fiado con su cupo, lo que debe, lo que le queda disponible, sus últimos movimientos y el botón para enviar el recordatorio por WhatsApp.
++    - screen: sin-conexion
++      title: Sin internet
++      caption: Si se va el internet, sigues vendiendo. Las ventas se envían solas al volver la conexión.
++      description: Pantalla de ventas con el aviso Sin conexión, sigues vendiendo, y la lista de ventas guardadas en el equipo con número provisional, pendientes de enviar.
++    - screen: finanzas
++      title: Finanzas
++      caption: La plata que entra y sale en el mes, la ganancia y el punto de equilibrio.
++      description: Tablero de Finanzas con las ventas netas, la utilidad bruta y la operativa del mes, la plata que entró por medio de pago, los gastos y el avance hacia el punto de equilibrio.
++    - screen: mesas
++      title: Mesas
++      caption: Para restaurantes, las mesas por zona con su cuenta y un color para cada estado.
++      description: Mapa de mesas de un restaurante por zona, cada mesa con su color según el estado (libre, en cocina, comiendo o pidió la cuenta) y el valor de su cuenta abierta.
+ 
+ capabilities:
+   title: Qué puedes hacer
+diff --git a/src/pages/productos/index.astro b/src/pages/productos/index.astro
+index e052b9e..4091bab 100644
+--- a/src/pages/productos/index.astro
++++ b/src/pages/productos/index.astro
+@@ -7,9 +7,8 @@ import Card from '@/components/Card.astro';
+ import CTA from '@/components/CTA.astro';
+ import Icon from '@/components/Icon.astro';
+ import RomboList from '@/components/RomboList.astro';
+-import ScreenCard from '@/components/ScreenCard.astro';
++import PosScreen from '@/components/PosScreen.astro';
+ import AskaBand from '@/components/AskaBand.astro';
+-import sellScreen from '@/assets/pos/header-vender.png';
+ import { primaryCta, products, whatsappMessages } from '@/config/site';
+ 
+ const entry = await getEntry('products', 'index');
+@@ -91,11 +90,10 @@ const highlights = homeEntry.data.pos.highlights;
+           </CTA>
+         </div>
+       </Card>
+-      <ScreenCard
+-        src={sellScreen}
+-        alt="Pantalla de ventas de XASKA POS: buscador por código de barras, categorías, productos con precio y existencias, y el total a cobrar."
+-        fit="zoom"
+-        sizes="(min-width: 1280px) 1100px, (min-width: 1024px) 88vw, 175vw"
++      <PosScreen
++        screen="inicio"
++        title="Inicio"
++        description="Inicio de XASKA POS con datos de ejemplo: las ventas del día, la utilidad, el número de ventas, el ticket promedio, las ventas por hora y los productos más vendidos."
+         class="lg:col-span-7"
+       />
+     </div>
+diff --git a/src/pages/productos/xaska-pos.astro b/src/pages/productos/xaska-pos.astro
+index 1bbabd0..d28142f 100644
+--- a/src/pages/productos/xaska-pos.astro
++++ b/src/pages/productos/xaska-pos.astro
+@@ -1,10 +1,8 @@
+ ---
+ import { getEntry } from 'astro:content';
+-import { Image, getImage } from 'astro:assets';
+-import ScreenCard from '@/components/ScreenCard.astro';
+ import Icon from '@/components/Icon.astro';
+-import sellScreen from '@/assets/pos/header-vender.png';
+-import type { ImageMetadata } from 'astro';
++import LiveCheckout from '@/components/LiveCheckout.astro';
++import PosScreen from '@/components/PosScreen.astro';
+ import BaseLayout from '@/layouts/BaseLayout.astro';
+ import Section from '@/components/Section.astro';
+ import PageHeader from '@/components/PageHeader.astro';
+@@ -24,20 +22,6 @@ if (!posEntry || !faqEntry) throw new Error('Falta el contenido de XASKA POS o s
+ const pos = posEntry.data;
+ const faq = faqEntry.data;
+ 
+-// Capturas: cada `image` del contenido es un archivo de src/assets/pos/.
+-const screenFiles = import.meta.glob<{ default: ImageMetadata }>('/src/assets/pos/*.png', {
+-  eager: true,
+-});
+-const screens = await Promise.all(
+-  pos.screens.items.map(async (item) => {
+-    const file = screenFiles[`/src/assets/pos/${item.image}.png`];
+-    if (!file) throw new Error(`Falta la captura src/assets/pos/${item.image}.png`);
+-    // Versión grande en WebP para verla completa al tocar la miniatura.
+-    const full = await getImage({ src: file.default, format: 'webp' });
+-    return { ...item, src: file.default, fullSrc: full.src };
+-  }),
+-);
+-const [mainScreen, ...otherScreens] = screens;
+ const problemIcons = ['book', 'box', 'register', 'chart'] as const;
+ const [basicPlan] = pos.plans.items;
+ 
+@@ -79,14 +63,7 @@ const faqItems = faq.items.map((item) =>
+     )}
+ 
+     <Fragment slot="visual">
+-      <ScreenCard
+-        src={sellScreen}
+-        alt="Pantalla de ventas de XASKA POS en un minimercado: buscador por código de barras, categorías, productos con precio y existencias, y el total a cobrar."
+-        fit="zoom"
+-        sizes="(min-width: 1280px) 760px, (min-width: 1024px) 62vw, 175vw"
+-        eager
+-        class="flex-1"
+-      />
++      <LiveCheckout />
+       {basicPlan && (
+         <a
+           href="#planes-seccion"
+@@ -135,49 +112,41 @@ const faqItems = faq.items.map((item) =>
+     </Card>
+   </Section>
+ 
+-  {mainScreen && (
+-    <Section labelledby="asi-se-ve">
+-      <h2 id="asi-se-ve" class="text-3xl sm:text-4xl">
+-        {pos.screens.title}
+-      </h2>
+-      <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{pos.screens.lead}</p>
+-      <ScreenCard
+-        src={mainScreen.src}
+-        alt={mainScreen.alt}
+-        sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
+-        class="mt-8"
+-      >
+-        {mainScreen.caption}
+-      </ScreenCard>
+-      {otherScreens.length > 0 && (
+-        <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+-          {otherScreens.map((screen) => (
+-            <li>
+-              <figure class="bento h-full rounded-panel p-2 sm:p-3">
+-                <a
+-                  href={screen.fullSrc}
+-                  target="_blank"
+-                  rel="noopener"
+-                  class="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-block border border-line bg-inset p-4 transition-colors hover:border-accent"
+-                >
+-                  <Image
+-                    src={screen.src}
+-                    alt={screen.alt}
+-                    widths={[480, 720, 1080]}
+-                    sizes="(min-width: 1280px) 580px, (min-width: 640px) 45vw, calc(100vw - 2rem)"
+-                    class="max-h-full w-auto max-w-full rounded-control object-contain"
+-                    loading="lazy"
+-                  />
+-                  <span class="sr-only"> (ver la imagen completa en una pestaña nueva)</span>
+-                </a>
+-                <figcaption class="px-3 pt-3 pb-2 text-sm text-muted">{screen.caption}</figcaption>
+-              </figure>
+-            </li>
+-          ))}
+-        </ul>
+-      )}
+-    </Section>
+-  )}
++  <Section labelledby="asi-se-ve">
++    <h2 id="asi-se-ve" class="text-3xl sm:text-4xl">
++      {pos.screens.title}
++    </h2>
++    <p class="mt-4 max-w-(--container-prose) text-lg text-muted">{pos.screens.lead}</p>
++    <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
++      {pos.screens.items.map((item, index) => (
++        <li class:list={['flex', index === pos.screens.items.length - 1 && 'lg:col-span-2']}>
++          <figure class="bento flex w-full flex-col gap-3 rounded-panel p-2 sm:p-3">
++            <PosScreen
++              screen={item.screen}
++              title={item.title}
++              description={item.description}
++              class="flex-1"
++            />
++            <figcaption class="px-3 pb-2 text-sm text-muted">{item.caption}</figcaption>
++          </figure>
++        </li>
++      ))}
++      <li class="flex">
++        <Card tone="feature" class="flex w-full flex-col justify-between gap-6">
++          <p class="text-lg font-bold">{pos.screens.note}</p>
++          <a
++            class="link font-semibold"
++            href={products.pos.manualUrl}
++            target="_blank"
++            rel="noopener"
++          >
++            Ver el manual de uso, pantalla por pantalla
++            <span class="sr-only"> (se abre en una pestaña nueva)</span>
++          </a>
++        </Card>
++      </li>
++    </ul>
++  </Section>
+ 
+   <Section labelledby="funciones">
+     <h2 id="funciones" class="text-3xl sm:text-4xl">
+diff --git a/src/styles/global.css b/src/styles/global.css
+index 3627fe7..534768d 100644
+--- a/src/styles/global.css
++++ b/src/styles/global.css
+@@ -314,6 +314,43 @@
+     }
+   }
+ 
++  /*
++   * Pantalla de XASKA POS dibujada en código (caja de la portada, pantallas de la página del
++   * POS): marco índigo profundo y adentro los colores claros del POS (decisión 341 del POS),
++   * iguales en los dos temas del sitio, como un equipo encendido.
++   */
++  .pos-frame {
++    --pos-ground: #f5f7f7;
++    --pos-surface: #ffffff;
++    --pos-inset: #eef2f2;
++    --pos-border: #dbe2e2;
++    --pos-ink: #111827;
++    --pos-muted: #4b5563;
++    --pos-brand: #4338ca;
++    --pos-brand-soft: #e0e7ff;
++    --pos-brand-900: #312e81;
++    --pos-brand-950: #1e1b4b;
++    --pos-light: #818cf8;
++    --pos-ok: #047857;
++    --pos-ok-soft: #d1fae5;
++    --pos-warn: #92400e;
++    --pos-warn-soft: #fef3c7;
++    border-radius: 2rem;
++    background-image: linear-gradient(165deg, #1e1b4b 0%, #2b2a78 100%);
++    padding: 0.625rem;
++  }
++  .pos-screen {
++    color-scheme: light;
++    border-radius: 1.5rem;
++    background-color: var(--pos-ground);
++    color: var(--pos-ink);
++  }
++  .pos-screen :focus-visible {
++    outline: 2px solid var(--pos-brand);
++    outline-offset: 2px;
++    box-shadow: 0 0 0 6px color-mix(in srgb, var(--pos-brand) 28%, transparent);
++  }
++
+   /* Aparece con un pequeño rebote (líneas de la venta, total, resultado de una pestaña). */
+   @media (prefers-reduced-motion: no-preference) {
+     .pop {
+diff --git a/tests/smoke.spec.ts b/tests/smoke.spec.ts
+index da2ff86..85f24aa 100644
+--- a/tests/smoke.spec.ts
++++ b/tests/smoke.spec.ts
+@@ -190,17 +190,34 @@ test.describe('contenido de la fase 1', () => {
+     await expect(faq).toContainText('Todavía no.');
+   });
+ 
+-  test('XASKA POS muestra las capturas con texto alternativo', async ({ page }) => {
++  test('XASKA POS muestra sus pantallas con descripción', async ({ page }) => {
+     await page.goto('/productos/xaska-pos');
+-    const imgs = page.locator('#asi-se-ve ~ figure img, #asi-se-ve ~ ul img');
+-    await expect(imgs).toHaveCount(6);
+-    for (const alt of await imgs.evaluateAll((els) =>
+-      els.map((e) => e.getAttribute('alt') ?? ''),
++    const screens = page.locator('#asi-se-ve ~ ul [role="img"]');
++    await expect(screens).toHaveCount(7);
++    for (const label of await screens.evaluateAll((els) =>
++      els.map((e) => e.getAttribute('aria-label') ?? ''),
+     )) {
+-      expect(alt.length).toBeGreaterThan(20);
++      expect(label.length).toBeGreaterThan(40);
+     }
+   });
+ 
++  test('la ventana de cobro muestra el cambio según el billete, sin JavaScript', async ({
++    browser,
++  }) => {
++    const context = await browser.newContext({ javaScriptEnabled: false });
++    const page = await context.newPage();
++    await page.goto('/productos/xaska-pos');
++    const checkout = page.locator('.checkout');
++    await expect(checkout.locator('.ck-amount:visible')).toHaveText('$0');
++    await checkout.locator('label', { hasText: '$50.000' }).click();
++    await expect(checkout.locator('.ck-amount:visible')).toHaveText('$22.400');
++    await checkout.locator('label', { hasText: 'Mixto' }).click();
++    await expect(
++      checkout.getByText('Parte en efectivo y parte por transferencia', { exact: false }),
++    ).toBeVisible();
++    await context.close();
++  });
++
+   test('servicios tiene los cinco servicios con ancla', async ({ page }) => {
+     await page.goto('/servicios');
+     for (const id of [
+-- 
+2.43.0
+

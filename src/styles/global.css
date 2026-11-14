@@ -406,6 +406,17 @@
     text-underline-offset: 0.2em;
   }
 
+  /* Campos de formulario: el fondo cambia suave al enfocar. */
+  .field-control {
+    transition:
+      background-color 150ms,
+      border-color 150ms,
+      box-shadow 200ms;
+  }
+  .field-control:hover {
+    border-color: var(--c-text);
+  }
+
   /* Mensajes de error de formularios (se llenan desde JavaScript). */
   .field-error {
     color: var(--c-error);

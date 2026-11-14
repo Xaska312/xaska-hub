@@ -241,7 +241,11 @@ const aska = defineCollection({
       question: text,
       answer: text,
       source: text,
-      followUps: z.array(text).min(1).max(3),
+      // Preguntas para seguir: botones que muestran la respuesta en la conversación (sin cifras).
+      followUps: z
+        .array(z.object({ question: text, answer: text, source: text }))
+        .min(1)
+        .max(3),
     }),
     features: z.object({
       title: text,

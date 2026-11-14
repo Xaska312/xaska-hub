@@ -339,3 +339,16 @@ test.describe('portada viva', () => {
     await expect(page.getByText('sigues vendiendo en ese equipo', { exact: false })).toBeAttached();
   });
 });
+
+test.describe('ASKA viva', () => {
+  test('las preguntas de ejemplo responden en la conversación', async ({ page }) => {
+    await page.goto('/aska');
+    const log = page.getByRole('log');
+    await page.getByRole('button', { name: '¿Quién me debe?' }).click();
+    await expect(
+      log.getByText('Doña Rosa y don Pedro tienen fiado pendiente', { exact: false }),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: '¿Quién me debe?' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: '¿Cómo me fue hoy?' })).toBeFocused();
+  });
+});
