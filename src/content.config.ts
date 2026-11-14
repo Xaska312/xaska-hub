@@ -12,9 +12,36 @@ const home = defineCollection({
   loader: glob({ pattern: 'index.yaml', base: './src/content/home' }),
   schema: z.object({
     seo: z.object({ title: text, description: text }),
-    hero: z.object({ title: text, lead: text }),
+    hero: z.object({ title: text, lead: text, badge: text }),
+    // Caja de prueba de la portada: productos de ejemplo (precio en pesos, sin decimales).
+    register: z.object({
+      caption: text,
+      products: z
+        .array(z.object({ name: text, price: z.number().int().positive() }))
+        .min(3)
+        .max(6),
+    }),
+    // Pestañas Vende / Fía / Cobra / Controla, con renglones de ejemplo.
+    chapters: z.object({
+      title: text,
+      note: text,
+      items: z
+        .array(
+          z.object({
+            id: z.string().regex(/^[a-z]+$/),
+            title: text,
+            text: text,
+            rows: z
+              .array(z.object({ label: text, value: text }))
+              .min(2)
+              .max(4),
+          }),
+        )
+        .length(4),
+    }),
     pillars: z.object({
       title: text,
+      lead: text,
       items: z
         .array(
           z.object({

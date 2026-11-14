@@ -1,0 +1,438 @@
+---
+/**
+ * Caja de prueba de la portada: la pantalla de Vender de XASKA POS dibujada en código.
+ *
+ * Se tocan los productos, sube el total y se cobra. No guarda nada ni habla con ningún
+ * servidor: es una muestra con productos de ejemplo (src/content/home/index.yaml).
+ *
+ * - La pantalla va siempre en los colores claros de XASKA POS (como un equipo encendido),
+ *   dentro de un marco índigo profundo, en los dos temas del sitio.
+ * - Sin JavaScript se ve la caja con su mensaje inicial; los botones no hacen nada.
+ * - Cada cambio se anuncia en una región aria-live para lectores de pantalla.
+ * - El movimiento (hundirse al tocar, rebotar al aparecer) se apaga con movimiento reducido.
+ */
+import { formatPesos } from '@/lib/money';
+
+interface Props {
+  products: readonly { name: string; price: number }[];
+  caption: string;
+}
+
+const { products, caption } = Astro.props;
+---
+
+<div class="register-frame" data-register>
+  <div class="register-screen grid gap-3 sm:grid-cols-[1.45fr_1fr] sm:gap-4">
+    <div class="flex min-w-0 flex-col gap-3">
+      <div class="flex items-center justify-between gap-3">
+        <p class="text-[0.95rem] font-bold">Vender</p>
+        <p class="register-status">Caja abierta</p>
+      </div>
+      <ul class="grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Productos de ejemplo">
+        {products.map((product) => (
+          <li class="flex">
+            <button
+              type="button"
+              class="register-tile"
+              data-name={product.name}
+              data-price={product.price}
+            >
+              <span class="register-letter" aria-hidden="true">
+                {product.name.charAt(0)}
+              </span>
+              <span class="text-sm leading-tight font-semibold text-balance">{product.name}</span>
+              <span class="mt-auto text-[0.95rem] font-extrabold">
+                {formatPesos(product.price)}
+              </span>
+              <span class="sr-only">, agregar a la venta</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <section class="register-cart" aria-label="Venta">
+      <div class="register-empty" data-state="empty">
+        <svg
+          aria-hidden="true"
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 6h18l-2 9H6L3 6Zm4 13a1.5 1.5 0 1 0 0 .01M17 19a1.5 1.5 0 1 0 0 .01"></path>
+        </svg>
+        <p>Toca un producto para empezar la venta.</p>
+      </div>
+
+      <div class="register-open" data-state="cart" hidden>
+        <div class="flex items-center justify-between gap-2">
+          <p class="text-sm font-bold">Venta actual</p>
+          <button type="button" class="register-clear press" data-action="clear">
+            Vaciar
+          </button>
+        </div>
+        <ul class="flex flex-col gap-2 text-sm" data-lines></ul>
+        <div class="register-total">
+          <p class="flex items-baseline justify-between gap-2">
+            <span class="text-sm">Total</span>
+            <span class="text-[1.75rem] leading-none font-extrabold" data-total>
+              $0
+            </span>
+          </p>
+          <button type="button" class="register-pay press" data-action="pay">
+            Cobrar
+          </button>
+        </div>
+      </div>
+
+      <div class="register-done" data-state="paid" hidden>
+        <span class="register-check" aria-hidden="true">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m5 12.5 4.5 4.5L19 7.5"></path>
+          </svg>
+        </span>
+        <p class="text-lg font-bold">Venta registrada</p>
+        <p class="register-muted text-sm">
+          <span data-paid>$0</span> en efectivo
+        </p>
+        <p class="register-note">El recibo sale impreso o por WhatsApp</p>
+        <button type="button" class="register-again press" data-action="reset">
+          Nueva venta
+        </button>
+      </div>
+    </section>
+  </div>
+  <p class="register-caption">{caption}</p>
+  <p class="sr-only" aria-live="polite" data-announce></p>
+</div>
+
+<style>
+  /* Colores fijos de la pantalla de XASKA POS en tema claro (decisión 341 del POS). */
+  .register-frame {
+    --pos-ground: #f5f7f7;
+    --pos-surface: #ffffff;
+    --pos-ink: #111827;
+    --pos-muted: #4b5563;
+    --pos-brand: #4338ca;
+    --pos-brand-soft: #e0e7ff;
+    --pos-brand-900: #312e81;
+    --pos-brand-950: #1e1b4b;
+    --pos-light: #818cf8;
+
+    border-radius: 2.25rem;
+    background-image: linear-gradient(165deg, #1e1b4b 0%, #2b2a78 100%);
+    padding: 0.75rem;
+    box-shadow: 0 40px 80px -48px rgb(30 27 75 / 0.75);
+  }
+
+  @media (min-width: 640px) {
+    .register-frame {
+      padding: 1.125rem;
+    }
+  }
+
+  .register-screen {
+    color-scheme: light;
+    border-radius: 1.625rem;
+    background-color: var(--pos-ground);
+    padding: 0.75rem;
+    color: var(--pos-ink);
+  }
+
+  @media (min-width: 640px) {
+    .register-screen {
+      padding: 1.125rem;
+    }
+  }
+
+  .register-screen :focus-visible {
+    outline: 2px solid var(--pos-brand);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--pos-brand) 28%, transparent);
+  }
+
+  .register-status {
+    border-radius: 9999px;
+    background-color: #d1fae5;
+    padding: 0.2rem 0.65rem;
+    color: #047857;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .register-tile {
+    display: flex;
+    width: 100%;
+    min-height: 6.25rem;
+    flex-direction: column;
+    gap: 0.35rem;
+    border-radius: 1rem;
+    background-color: var(--pos-surface);
+    padding: 0.8rem;
+    color: var(--pos-ink);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      transform 220ms var(--ease-bounce),
+      box-shadow 200ms;
+  }
+
+  .register-letter {
+    display: inline-flex;
+    width: 1.75rem;
+    height: 1.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.55rem;
+    background-color: var(--pos-brand-soft);
+    color: #3730a3;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .register-cart {
+    display: flex;
+    min-height: 15rem;
+    flex-direction: column;
+    border-radius: 1.25rem;
+    background-color: var(--pos-surface);
+    padding: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .register-cart {
+      min-height: 21rem;
+    }
+  }
+
+  .register-empty,
+  .register-done {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    text-align: center;
+  }
+
+  .register-empty {
+    color: var(--pos-muted);
+    font-size: 0.875rem;
+  }
+
+  .register-empty svg {
+    color: var(--pos-brand);
+  }
+
+  .register-open {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .register-open[hidden],
+  .register-done[hidden],
+  .register-empty[hidden] {
+    display: none;
+  }
+
+  .register-clear {
+    border-radius: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    color: var(--pos-brand);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .register-clear:hover {
+    background-color: var(--pos-brand-soft);
+  }
+
+  .register-total {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-top: auto;
+    border-radius: 1rem;
+    background-color: var(--pos-brand-900);
+    padding: 0.875rem;
+    color: #ffffff;
+  }
+
+  .register-pay {
+    min-height: 3rem;
+    border-radius: 0.875rem;
+    background-color: var(--pos-light);
+    color: var(--pos-brand-950);
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 18px -8px rgb(129 140 248 / 0.9);
+  }
+
+  .register-pay:focus-visible {
+    outline-color: #ffffff;
+  }
+
+  .register-check {
+    display: inline-flex;
+    width: 3.5rem;
+    height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: #d1fae5;
+    color: #047857;
+  }
+
+  .register-muted {
+    color: var(--pos-muted);
+  }
+
+  .register-note {
+    border-radius: 9999px;
+    background-color: #eef2ff;
+    padding: 0.4rem 0.75rem;
+    color: #3730a3;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .register-again {
+    min-height: 2.75rem;
+    border-radius: 0.875rem;
+    background-color: var(--pos-ink);
+    padding-inline: 1.1rem;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .register-caption {
+    margin: 0.75rem 0.5rem 0.25rem;
+    color: #c7d2fe;
+    font-size: 0.8125rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .register-tile:hover {
+      box-shadow: 0 10px 24px -14px rgb(67 56 202 / 0.6);
+    }
+    .register-tile:active {
+      transform: scale(0.94);
+    }
+  }
+</style>
+
+<script>
+  import { formatPesos } from '@/lib/money';
+
+  document.querySelectorAll<HTMLElement>('[data-register]').forEach((root) => {
+    const cart = new Map<string, { price: number; qty: number }>();
+    const views = {
+      empty: root.querySelector<HTMLElement>('[data-state="empty"]'),
+      cart: root.querySelector<HTMLElement>('[data-state="cart"]'),
+      paid: root.querySelector<HTMLElement>('[data-state="paid"]'),
+    };
+    const lines = root.querySelector<HTMLUListElement>('[data-lines]');
+    const total = root.querySelector<HTMLElement>('[data-total]');
+    const paid = root.querySelector<HTMLElement>('[data-paid]');
+    const announce = root.querySelector<HTMLElement>('[data-announce]');
+    const tiles = [...root.querySelectorAll<HTMLButtonElement>('button[data-name]')];
+    if (!views.empty || !views.cart || !views.paid || !lines || !total || !paid || !announce) {
+      return;
+    }
+
+    const sum = () => [...cart.values()].reduce((acc, line) => acc + line.price * line.qty, 0);
+
+    function show(view: keyof typeof views) {
+      for (const [name, element] of Object.entries(views)) {
+        if (element) element.hidden = name !== view;
+      }
+    }
+
+    /** La animación vuelve a correr aunque el elemento ya la tuviera. */
+    function pop(element: Element) {
+      element.classList.remove('pop');
+      void (element as HTMLElement).offsetWidth;
+      element.classList.add('pop');
+    }
+
+    function render(changed?: string) {
+      if (cart.size === 0) {
+        show('empty');
+        return;
+      }
+      show('cart');
+      lines?.replaceChildren(
+        ...[...cart.entries()].map(([name, line]) => {
+          const item = document.createElement('li');
+          item.className = 'flex justify-between gap-2';
+          if (name === changed) item.classList.add('pop');
+          const label = document.createElement('span');
+          label.textContent = `${line.qty} × ${name}`;
+          const value = document.createElement('strong');
+          value.textContent = formatPesos(line.price * line.qty);
+          item.append(label, value);
+          return item;
+        }),
+      );
+      if (total) {
+        total.textContent = formatPesos(sum());
+        pop(total);
+      }
+    }
+
+    tiles.forEach((tile) => {
+      tile.addEventListener('click', () => {
+        const name = tile.dataset.name ?? '';
+        const price = Number(tile.dataset.price);
+        if (!name || !Number.isFinite(price)) return;
+        const line = cart.get(name) ?? { price, qty: 0 };
+        line.qty += 1;
+        cart.set(name, line);
+        render(name);
+        announce.textContent = `${name} agregado. Total ${formatPesos(sum())}.`;
+      });
+    });
+
+    root.querySelector('[data-action="pay"]')?.addEventListener('click', () => {
+      const amount = sum();
+      cart.clear();
+      paid.textContent = formatPesos(amount);
+      show('paid');
+      pop(views.paid as HTMLElement);
+      announce.textContent = `Venta registrada: ${formatPesos(amount)} en efectivo.`;
+      root.querySelector<HTMLButtonElement>('[data-action="reset"]')?.focus();
+    });
+
+    root.querySelector('[data-action="clear"]')?.addEventListener('click', () => {
+      cart.clear();
+      render();
+      announce.textContent = 'Venta vacía.';
+      tiles[0]?.focus();
+    });
+
+    root.querySelector('[data-action="reset"]')?.addEventListener('click', () => {
+      render();
+      announce.textContent = 'Nueva venta. Toca un producto para empezar.';
+      tiles[0]?.focus();
+    });
+  });
+</script>

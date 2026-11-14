@@ -5,7 +5,7 @@ items:
   - question: ¿Funciona en el celular?
     answer: Sí. La pantalla de ventas se adapta al celular, y el resto del sistema también se puede usar desde la tablet o el computador.
   - question: ¿Necesito internet todo el tiempo?
-    answer: Sí. XASKA POS funciona en línea, así que necesitas conexión para registrar ventas.
+    answer: No. Si se va el internet con la caja abierta, sigues vendiendo en ese equipo con los productos y precios que quedaron guardados, y las ventas se envían solas cuando vuelve la conexión. La app abre sin internet hasta 24 horas en el equipo donde abriste la caja. Necesitas conexión para registrarte, abrir la caja, fiar, venderle a un cliente con nombre, cobrar una mesa y cerrar la caja.
   - question: ¿Qué pasa cuando termina la prueba gratis?
     answer: No te pedimos tarjeta. Al terminar los 14 días tu información queda guardada y la puedes consultar, pero para seguir vendiendo eliges un plan y lo pagas. Te avisamos por correo antes de que termine.
   - question: ¿Cómo es el soporte?

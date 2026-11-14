@@ -262,3 +262,63 @@ test.describe('contenido de la fase 1', () => {
     }
   });
 });
+
+test.describe('portada viva', () => {
+  test('la caja de prueba suma productos, cobra y empieza otra venta', async ({ page }) => {
+    await page.goto('/');
+    const register = page.locator('[data-register]');
+    await expect(register.getByText('Toca un producto para empezar la venta.')).toBeVisible();
+    await register.getByRole('button', { name: /Arroz 1 kg/ }).click();
+    await register.getByRole('button', { name: /Arroz 1 kg/ }).click();
+    await register.getByRole('button', { name: /Leche 1 L/ }).click();
+    await expect(register.getByText('2 × Arroz 1 kg')).toBeVisible();
+    await expect(register.locator('[data-total]')).toHaveText('$13.000');
+    await expect(register.locator('[data-announce]')).toHaveText(
+      'Leche 1 L agregado. Total $13.000.',
+    );
+    await register.getByRole('button', { name: 'Cobrar' }).click();
+    await expect(register.getByText('Venta registrada', { exact: true })).toBeVisible();
+    await expect(register.locator('[data-paid]')).toHaveText('$13.000');
+    const again = register.getByRole('button', { name: 'Nueva venta' });
+    await expect(again).toBeFocused();
+    await again.click();
+    await expect(register.getByText('Toca un producto para empezar la venta.')).toBeVisible();
+  });
+
+  test('las pestañas Vende, Fía, Cobra y Controla se manejan con teclado', async ({ page }) => {
+    await page.goto('/');
+    const tablist = page.getByRole('tablist', { name: 'Lo que hace XASKA POS' });
+    const vende = tablist.getByRole('tab', { name: 'Vende' });
+    await expect(vende).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: 'Vende' })).toBeVisible();
+    await vende.focus();
+    await page.keyboard.press('ArrowRight');
+    const fia = tablist.getByRole('tab', { name: 'Fía' });
+    await expect(fia).toBeFocused();
+    await expect(fia).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: 'Fía' })).toBeVisible();
+    await expect(page.getByRole('tabpanel', { name: 'Vende' })).toBeHidden();
+    await page.keyboard.press('End');
+    await expect(page.getByRole('tabpanel', { name: 'Controla' })).toBeVisible();
+    await page.keyboard.press('ArrowRight');
+    await expect(vende).toBeFocused();
+  });
+
+  test('sin JavaScript se ven los cuatro paneles y no las pestañas', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('/');
+    await expect(page.locator('[role="tablist"]')).toBeHidden();
+    for (const name of ['Vende', 'Fía', 'Cobra', 'Controla']) {
+      await expect(
+        page.locator(`#panel-${name === 'Fía' ? 'fia' : name.toLowerCase()}`),
+      ).toBeVisible();
+    }
+    await context.close();
+  });
+
+  test('la pregunta del internet dice que se puede vender sin conexión', async ({ page }) => {
+    await page.goto('/productos/xaska-pos');
+    await expect(page.getByText('sigues vendiendo en ese equipo', { exact: false })).toBeAttached();
+  });
+});

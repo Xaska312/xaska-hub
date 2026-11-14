@@ -61,6 +61,7 @@ capabilities:
         - Tiquete imprimible de 58 u 80 mm
         - Impresión directa en la térmica y apertura del cajón monedero
         - Pantalla de ventas que funciona en el celular
+        - Venta sin internet en el equipo de la caja; las ventas se envían al volver la conexión
     - title: Clientes
       items:
         - Fiado con cupo por cliente, abonos y estado de cuenta
@@ -81,6 +82,14 @@ capabilities:
         - Apertura y cierre de caja con arqueo
         - Caja compartida entre varios vendedores
         - Cierre de caja para imprimir o enviar por WhatsApp
+        - Recibo como imagen del tiquete para enviar por WhatsApp
+    - title: Finanzas
+      items:
+        - Gastos con categorías, desde la caja o fuera de ella
+        - Gastos fijos de cada mes o cada quincena, con aviso cuando toca pagarlos
+        - Retenciones que te hacen los clientes al pagar
+        - Estado de resultados en PDF o para Excel
+        - Tablero con la plata que entra y sale, y el punto de equilibrio
     - title: Tu negocio y tu equipo
       items:
         - Varios negocios y varias sucursales en una sola cuenta
