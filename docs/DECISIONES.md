@@ -401,6 +401,15 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Formulario de contacto:** campos rellenos como en XASKA POS (fondo hundido, esquinas de 12 px, borde de 1,5 px con contraste de control y fondo de tarjeta al enfocar, con el halo de foco).
 - Servicios, Nosotros y Contacto ya tenían el estilo bento y ganan el movimiento nuevo de botones y tarjetas sin más cambios.
 
+### Búsqueda: títulos, negocio local, preguntas y llms.txt (2026-11-15)
+
+- **Por qué:** una auditoría SEO marcó títulos cortos, poco texto en la portada, sin esquema de negocio local y sin `llms.txt`, y en algunos computadores no aparecía XASKA al buscarla (ver `docs/PENDIENTES.md`, sección de buscadores).
+- **Títulos:** si el título de una página ya empieza con "XASKA" va tal cual. Portada: "XASKA | Software POS para tiendas y pymes en Ibagué"; XASKA POS: "XASKA POS: punto de venta para tiendas y negocios". La descripción de la portada nombra el punto de venta.
+- **Negocio local:** nodo `ProfessionalService` (`localBusiness()`) en la portada y en Contacto: Ibagué, Tolima, sin dirección de calle, teléfono, correo, horario y `parentOrganization`. La organización suma `founder` y `sameAs` con los perfiles de `socialProfiles` (`src/config/site.ts`): Instagram, Facebook y LinkedIn, que también salen en el pie de página como enlaces (`rel="me"`). No se ponen perfiles que no se usen.
+- **Preguntas frecuentes en la portada** (`src/content/faq/inicio.yaml`), con las palabras que la gente busca, y `FAQPage` en la portada, XASKA POS y ASKA. Una prueba revisa que los precios de la pregunta "¿Cuánto cuesta?" sean los de los planes.
+- **`/llms.txt`:** resumen del sitio en Markdown para buscadores con IA, armado con el mismo contenido (`src/pages/llms.txt.ts`), así que no se mantiene aparte.
+- **Descartado de la auditoría:** píxel de Facebook (solo sirve con anuncios en Meta y agrega rastreo), ocultar el correo (dificulta el contacto, el riesgo de spam es bajo), "recursos que bloquean el renderizado" (es la hoja de estilos; Lighthouse da 100) y "alt" en las imágenes señaladas (son el logo de la firma del pie y el monograma de ASKA, decorativos, con `alt=""` correcto).
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

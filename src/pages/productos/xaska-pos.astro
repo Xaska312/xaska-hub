@@ -14,7 +14,7 @@ import RomboList from '@/components/RomboList.astro';
 import WhatsAppButton from '@/components/WhatsAppButton.astro';
 import AskaBand from '@/components/AskaBand.astro';
 import { flags, primaryCta, primaryCtaIsWhatsApp, products, whatsappMessages } from '@/config/site';
-import { posApplication } from '@/lib/structured-data';
+import { faqPage, posApplication } from '@/lib/structured-data';
 
 const posEntry = await getEntry('pos', 'index');
 const faqEntry = await getEntry('faq', 'xaska-pos');
@@ -40,7 +40,7 @@ const faqItems = faq.items.map((item) =>
   title={pos.seo.title}
   description={pos.seo.description}
   whatsappMessage={whatsappMessages.pos}
-  jsonLd={[posApplication(pos.seo.description)]}
+  jsonLd={[posApplication(pos.seo.description), faqPage(faqItems)]}
 >
   {/* Como el ingreso a XASKA POS: panel índigo profundo con el lema y "POS" gigante al pie. */}
   <PageHeader

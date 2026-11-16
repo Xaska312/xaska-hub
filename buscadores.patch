@@ -1,0 +1,510 @@
+diff --git a/docs/DECISIONES.md b/docs/DECISIONES.md
+index e475324..fbdee3c 100644
+--- a/docs/DECISIONES.md
++++ b/docs/DECISIONES.md
+@@ -401,6 +401,15 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa
+ - **Formulario de contacto:** campos rellenos como en XASKA POS (fondo hundido, esquinas de 12 px, borde de 1,5 px con contraste de control y fondo de tarjeta al enfocar, con el halo de foco).
+ - Servicios, Nosotros y Contacto ya tenían el estilo bento y ganan el movimiento nuevo de botones y tarjetas sin más cambios.
+ 
++### Búsqueda: títulos, negocio local, preguntas y llms.txt (2026-11-15)
++
++- **Por qué:** una auditoría SEO marcó títulos cortos, poco texto en la portada, sin esquema de negocio local y sin `llms.txt`, y en algunos computadores no aparecía XASKA al buscarla (ver `docs/PENDIENTES.md`, sección de buscadores).
++- **Títulos:** si el título de una página ya empieza con "XASKA" va tal cual. Portada: "XASKA | Software POS para tiendas y pymes en Ibagué"; XASKA POS: "XASKA POS: punto de venta para tiendas y negocios". La descripción de la portada nombra el punto de venta.
++- **Negocio local:** nodo `ProfessionalService` (`localBusiness()`) en la portada y en Contacto: Ibagué, Tolima, sin dirección de calle, teléfono, correo, horario y `parentOrganization`. La organización suma `founder` y `sameAs` con los perfiles de `socialProfiles` (`src/config/site.ts`): Instagram, Facebook y LinkedIn, que también salen en el pie de página como enlaces (`rel="me"`). No se ponen perfiles que no se usen.
++- **Preguntas frecuentes en la portada** (`src/content/faq/inicio.yaml`), con las palabras que la gente busca, y `FAQPage` en la portada, XASKA POS y ASKA. Una prueba revisa que los precios de la pregunta "¿Cuánto cuesta?" sean los de los planes.
++- **`/llms.txt`:** resumen del sitio en Markdown para buscadores con IA, armado con el mismo contenido (`src/pages/llms.txt.ts`), así que no se mantiene aparte.
++- **Descartado de la auditoría:** píxel de Facebook (solo sirve con anuncios en Meta y agrega rastreo), ocultar el correo (dificulta el contacto, el riesgo de spam es bajo), "recursos que bloquean el renderizado" (es la hoja de estilos; Lighthouse da 100) y "alt" en las imágenes señaladas (son el logo de la firma del pie y el monograma de ASKA, decorativos, con `alt=""` correcto).
++
+ ## Tabla de contrastes (WCAG 2.2 AA)
+ 
+ Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
+diff --git a/docs/PENDIENTES.md b/docs/PENDIENTES.md
+index 1d3ac2a..1ca7fab 100644
+--- a/docs/PENDIENTES.md
++++ b/docs/PENDIENTES.md
+@@ -7,6 +7,20 @@ Lo que falta aportar o decidir. La sección "Marcadores en el código" se regene
+ - [x] Node 24 en tu equipo (fase 0 probada en local).
+ - [x] Repositorio en GitHub (`Xaska312/xaska-hub`) y conectado a Cloudflare (versión de prueba en `xaska-hub.daniimejia1558.workers.dev`).
+ 
++## Que XASKA aparezca en los buscadores (2026-11-15)
++
++La auditoría del 2026-11-15 encontró 0 enlaces de otros sitios, y en algunos computadores buscar "XASKA" no muestra el sitio. Lo más probable es que esos equipos busquen con Bing (Edge y Windows) y que Bing no conozca el sitio: solo se registró en Google. Lo del código ya está hecho (títulos, negocio local, preguntas frecuentes, `llms.txt`). Lo que te toca:
++
++- [ ] **Bing Webmaster Tools** (`bing.com/webmasters`): entrar con la cuenta de Microsoft → "Importar desde Google Search Console". Cubre también DuckDuckGo y Yahoo.
++- [ ] **Cloudflare → Caching → Configuration → Crawler Hints: activado.** Avisa a Bing y otros buscadores (IndexNow) cuando cambia algo.
++- [ ] **Search Console → Inspección de URL** de `/`, `/productos/xaska-pos` y `/aska` → "Solicitar indexación" (después de publicar este cambio en `main`).
++- [x] **Perfil de empresa en Google** (2026-11-15): "XASKA", empresa de software, servicio en Ibagué y Tolima sin dirección visible.
++- [ ] Pasarle a Claude el enlace del perfil de Google ("Compartir perfil") y la dirección definitiva de la página de Facebook (`facebook.com/<usuario>`) para `socialProfiles`.
++- [x] **Redes:** Instagram, Facebook y LinkedIn en `socialProfiles` (pie de página y `sameAs`). Revisar que cada una tenga `https://xaska.co` en la biografía.
++- [ ] **Enlaces desde lo que ya tienes:** `app.xaska.co` (pie de página y correos) y tu perfil de LinkedIn personal enlazando a `https://xaska.co`.
++- [ ] **Directorios de empresas** de Colombia y del Tolima (por ejemplo, el de la Cámara de Comercio de Ibagué cuando XASKA esté formalizada), con el mismo nombre, teléfono y sitio.
++- [ ] Repetir la auditoría en unas 4 semanas.
++
+ ## ASKA (2026-11-09)
+ 
+ - [x] Textos de ASKA y del registro abierto aprobados (2026-11-09).
+diff --git a/src/components/Footer.astro b/src/components/Footer.astro
+index e46a4fa..67646e2 100644
+--- a/src/components/Footer.astro
++++ b/src/components/Footer.astro
+@@ -1,7 +1,15 @@
+ ---
+ import Logo from './Logo.astro';
+ import Icon from './Icon.astro';
+-import { contact, mainNav, products, site, whatsappUrl, whatsappMessages } from '@/config/site';
++import {
++  contact,
++  mainNav,
++  products,
++  site,
++  socialProfiles,
++  whatsappUrl,
++  whatsappMessages,
++} from '@/config/site';
+ 
+ const year = new Date().getFullYear();
+ ---
+@@ -69,6 +77,23 @@ const year = new Date().getFullYear();
+           </li>
+           {contact.hours && <li class="text-sm text-muted">{contact.hours}</li>}
+         </ul>
++        {socialProfiles.length > 0 && (
++          <ul class="mt-4 flex flex-wrap gap-2" aria-label="XASKA en redes">
++            {socialProfiles.map((profile) => (
++              <li>
++                <a
++                  href={profile.url}
++                  target="_blank"
++                  rel="noopener me"
++                  class="press inline-flex min-h-10 items-center rounded-full border border-line-strong px-4 text-sm font-semibold text-ink hover:border-accent hover:bg-accent-soft"
++                >
++                  {profile.name}
++                  <span class="sr-only">(se abre en una pestaña nueva)</span>
++                </a>
++              </li>
++            ))}
++          </ul>
++        )}
+       </div>
+     </div>
+ 
+diff --git a/src/config/site.ts b/src/config/site.ts
+index 32012e6..282586e 100644
+--- a/src/config/site.ts
++++ b/src/config/site.ts
+@@ -62,6 +62,18 @@ export const founder = {
+   role: 'Fundador y director de proyectos',
+ } as const;
+ 
++/**
++ * Perfiles reales de XASKA en redes (dados por Daniel el 2026-11-15). Salen en el pie de
++ * página y en los datos estructurados (sameAs). No poner perfiles que no se usen.
++ * Facebook usa por ahora el enlace de "Compartir"; cambiarlo por la dirección de la página
++ * (facebook.com/<usuario>) cuando se tenga.
++ */
++export const socialProfiles: readonly { name: string; url: string }[] = [
++  { name: 'Instagram', url: 'https://www.instagram.com/xaskapos/' },
++  { name: 'Facebook', url: 'https://www.facebook.com/share/1A7gp8Sy7H/' },
++  { name: 'LinkedIn', url: 'https://www.linkedin.com/company/xaska/' },
++];
++
+ export const contact = {
+   email: 'soporte@xaska.co',
+   whatsapp: {
+diff --git a/src/content/faq/inicio.yaml b/src/content/faq/inicio.yaml
+new file mode 100644
+index 0000000..5ef044d
+--- /dev/null
++++ b/src/content/faq/inicio.yaml
+@@ -0,0 +1,17 @@
++# Preguntas frecuentes de la portada: lo que alguien pregunta antes de escribirnos, con las
++# palabras con que lo busca. Si cambian los precios (src/content/pos/index.yaml, plans, y
++# src/config/site.ts, ASKA), cambiarlos también aquí.
++title: Preguntas frecuentes
++items:
++  - question: ¿Qué es XASKA?
++    answer: XASKA es una empresa de software de Ibagué, Tolima. Creamos XASKA POS, un sistema de punto de venta para comercios, y hacemos desarrollo a medida, automatización de procesos, páginas web y consultoría para pymes colombianas.
++  - question: ¿Qué es XASKA POS?
++    answer: Es un sistema de punto de venta en la web. Vendes con lector de código de barras y pagos mixtos, abres y cierras caja con arqueo, llevas el inventario por sucursal, manejas fiado y ves tus reportes. Funciona en el computador, la tablet o el celular, sin instalar nada, y sigue vendiendo aunque se vaya el internet.
++  - question: ¿Para qué negocios sirve XASKA POS?
++    answer: Para tiendas de barrio y de centro comercial, minimercados, papelerías, tiendas de ropa y calzado (maneja tallas y colores), restaurantes que atienden a la mesa y droguerías, con fórmulas, lotes y vencimientos.
++  - question: ¿Cuánto cuesta XASKA POS?
++    answer: Hay tres planes. Emprende cuesta $34.900 al mes, Negocio $69.900 y Empresa $129.900. Si pagas el año, pagas 10 meses. Todos empiezan con 14 días de prueba gratis, sin tarjeta.
++  - question: ¿Qué es ASKA?
++    answer: ASKA es la inteligencia artificial de XASKA POS. Le preguntas por tus ventas, recibes la mercancía con una foto de la factura y te manda el resumen del día. Se agrega a cualquier plan por $39.900 al mes, con 14 días de prueba gratis.
++  - question: ¿Dónde está XASKA y cómo los contacto?
++    answer: Estamos en Ibagué, Tolima. Nos escribes por WhatsApp al +57 316 778 4193 o al correo soporte@xaska.co, de lunes a sábado de 8:00 a. m. a 6:00 p. m. Te responde directamente quien construye el software.
+diff --git a/src/content/home/index.yaml b/src/content/home/index.yaml
+index 267f2ef..dfaf04e 100644
+--- a/src/content/home/index.yaml
++++ b/src/content/home/index.yaml
+@@ -1,6 +1,6 @@
+ seo:
+-  title: XASKA
+-  description: Software para pymes colombianas. XASKA POS para vender y controlar tu inventario, y desarrollo a medida, automatización y páginas web. Desde Ibagué.
++  title: XASKA | Software POS para tiendas y pymes en Ibagué
++  description: Software para pymes desde Ibagué. XASKA POS, el punto de venta para tiendas, restaurantes y droguerías, y desarrollo a medida, automatización y páginas web.
+ 
+ hero:
+   badge: Pruébalo aquí mismo
+diff --git a/src/content/pos/index.yaml b/src/content/pos/index.yaml
+index cc591e6..47b3019 100644
+--- a/src/content/pos/index.yaml
++++ b/src/content/pos/index.yaml
+@@ -1,5 +1,5 @@
+ seo:
+-  title: XASKA POS
++  title: 'XASKA POS: punto de venta para tiendas y negocios'
+   description: Sistema de punto de venta en la web para comercios, restaurantes y droguerías en Colombia. Ventas con código de barras, inventario por sucursal, tallas y colores, caja con arqueo. Prueba gratis de 14 días.
+ # Lema: el mismo de las tarjetas impresas. La última palabra sale resaltada.
+ slogan:
+diff --git a/src/layouts/BaseLayout.astro b/src/layouts/BaseLayout.astro
+index a4af59f..ba3ea4a 100644
+--- a/src/layouts/BaseLayout.astro
++++ b/src/layouts/BaseLayout.astro
+@@ -28,9 +28,14 @@ interface Props {
+ }
+ 
+ const { title, description, whatsappMessage, noindex = false, jsonLd = [] } = Astro.props;
+-// La portada usa el nombre y el lema; las demás, "Página | XASKA".
++// "Página | XASKA". Si el título ya empieza con "XASKA" (portada, XASKA POS) va tal cual,
++// para que sea completo y con las palabras que la gente busca (50 a 60 caracteres).
+ const fullTitle =
+-  title === site.name ? `${site.name} | ${site.tagline}` : `${title} | ${site.name}`;
++  title === site.name
++    ? `${site.name} | ${site.tagline}`
++    : title.startsWith(site.name)
++      ? title
++      : `${title} | ${site.name}`;
+ // Con build.format 'file' la portada se genera como /index.html: su canonical es la raíz.
+ const pathname =
+   Astro.url.pathname
+diff --git a/src/lib/structured-data.ts b/src/lib/structured-data.ts
+index 61588d7..3c669e2 100644
+--- a/src/lib/structured-data.ts
++++ b/src/lib/structured-data.ts
+@@ -5,7 +5,14 @@
+  *  - Organization sin legalName (la empresa está en proceso de formalización).
+  *  - SoftwareApplication sin offers con precio y sin aggregateRating (no hay datos reales).
+  */
+-import { contact, products, site, structuredDataLogo } from '@/config/site';
++import {
++  contact,
++  founder,
++  products,
++  site,
++  socialProfiles,
++  structuredDataLogo,
++} from '@/config/site';
+ 
+ export type JsonLd = Record<string, unknown>;
+ 
+@@ -32,6 +39,8 @@ export function organization(): JsonLd {
+       addressCountry: site.country,
+     },
+     areaServed: site.country,
++    founder: { '@type': 'Person', name: founder.name },
++    ...(socialProfiles.length > 0 ? { sameAs: socialProfiles.map((profile) => profile.url) } : {}),
+     contactPoint: [
+       {
+         '@type': 'ContactPoint',
+@@ -45,6 +54,63 @@ export function organization(): JsonLd {
+   };
+ }
+ 
++/**
++ * Negocio local (ProfessionalService) en Ibagué, para búsquedas como "software POS Ibagué".
++ * Sin dirección de calle: XASKA atiende en el negocio del cliente o en línea.
++ */
++export function localBusiness(): JsonLd {
++  return {
++    '@context': 'https://schema.org',
++    '@type': 'ProfessionalService',
++    '@id': `${site.url}/#negocio`,
++    name: site.name,
++    description:
++      'Software para pymes en Ibagué: XASKA POS, desarrollo a medida, automatización, páginas web y consultoría.',
++    url: site.url,
++    image: new URL(structuredDataLogo.path, site.url).href,
++    email: contact.email,
++    telephone: `+${contact.whatsapp.number}`,
++    address: {
++      '@type': 'PostalAddress',
++      addressLocality: 'Ibagué',
++      addressRegion: 'Tolima',
++      addressCountry: site.country,
++    },
++    areaServed: [
++      { '@type': 'City', name: 'Ibagué' },
++      { '@type': 'State', name: 'Tolima' },
++      { '@type': 'Country', name: 'Colombia' },
++    ],
++    ...(contact.hours
++      ? {
++          openingHoursSpecification: [
++            {
++              '@type': 'OpeningHoursSpecification',
++              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
++              opens: '08:00',
++              closes: '18:00',
++            },
++          ],
++        }
++      : {}),
++    parentOrganization: { '@id': ORGANIZATION_ID },
++    ...(socialProfiles.length > 0 ? { sameAs: socialProfiles.map((profile) => profile.url) } : {}),
++  };
++}
++
++/** Preguntas frecuentes de una página (FAQPage). */
++export function faqPage(items: readonly { question: string; answer: string }[]): JsonLd {
++  return {
++    '@context': 'https://schema.org',
++    '@type': 'FAQPage',
++    mainEntity: items.map((item) => ({
++      '@type': 'Question',
++      name: item.question,
++      acceptedAnswer: { '@type': 'Answer', text: item.answer },
++    })),
++  };
++}
++
+ export function posApplication(description: string): JsonLd {
+   return {
+     '@context': 'https://schema.org',
+diff --git a/src/pages/aska.astro b/src/pages/aska.astro
+index 783b031..d954829 100644
+--- a/src/pages/aska.astro
++++ b/src/pages/aska.astro
+@@ -12,6 +12,7 @@ import CTA from '@/components/CTA.astro';
+ import Faq from '@/components/Faq.astro';
+ import Icon from '@/components/Icon.astro';
+ import { products, whatsappMessages, whatsappUrl } from '@/config/site';
++import { faqPage } from '@/lib/structured-data';
+ 
+ const entry = await getEntry('aska', 'index');
+ const faqEntry = await getEntry('faq', 'aska');
+@@ -26,6 +27,7 @@ const [mainFeature, ...otherFeatures] = aska.features.items;
+   title={aska.seo.title}
+   description={aska.seo.description}
+   whatsappMessage={whatsappMessages.aska}
++  jsonLd={[faqPage(faq.items)]}
+ >
+   <section class="pt-4 pb-2 sm:pt-8">
+     <div class="mx-auto w-full max-w-(--container-page) px-4 sm:px-6 lg:px-8">
+diff --git a/src/pages/contacto/index.astro b/src/pages/contacto/index.astro
+index 9bb56a1..11f6983 100644
+--- a/src/pages/contacto/index.astro
++++ b/src/pages/contacto/index.astro
+@@ -8,6 +8,7 @@ import Card from '@/components/Card.astro';
+ import Icon from '@/components/Icon.astro';
+ import { contact, site, whatsappMessages, whatsappUrl } from '@/config/site';
+ import { TURNSTILE_ORIGIN } from '@/lib/turnstile';
++import { localBusiness } from '@/lib/structured-data';
+ 
+ // Turnstile: script y marco desde challenges.cloudflare.com, solo en esta página.
+ if (!Astro.csp) throw new Error('La CSP debe estar activa (security.csp en astro.config.mjs).');
+@@ -21,6 +22,7 @@ Astro.csp.insertDirective(`frame-src ${TURNSTILE_ORIGIN}`);
+   title="Contacto"
+   description="Escríbele a XASKA por el formulario, por WhatsApp o por correo. Estamos en Ibagué, Tolima, y trabajamos con pymes de toda Colombia."
+   whatsappMessage={whatsappMessages.general}
++  jsonLd={[localBusiness()]}
+ >
+   <PageHeader
+     title="Contacto"
+diff --git a/src/pages/index.astro b/src/pages/index.astro
+index e1b2a37..44a0083 100644
+--- a/src/pages/index.astro
++++ b/src/pages/index.astro
+@@ -1,6 +1,8 @@
+ ---
+ import { getCollection, getEntry } from 'astro:content';
+ import BaseLayout from '@/layouts/BaseLayout.astro';
++import Faq from '@/components/Faq.astro';
++import { faqPage, localBusiness } from '@/lib/structured-data';
+ import Section from '@/components/Section.astro';
+ import CTA from '@/components/CTA.astro';
+ import Card from '@/components/Card.astro';
+@@ -22,8 +24,12 @@ import {
+ } from '@/config/site';
+ 
+ const entry = await getEntry('home', 'index');
++const faqEntry = await getEntry('faq', 'inicio');
+ const posEntry = await getEntry('pos', 'index');
+-if (!entry || !posEntry) throw new Error('Falta src/content/home/index.yaml o el de XASKA POS');
++if (!entry || !posEntry || !faqEntry) {
++  throw new Error('Falta src/content/home/index.yaml, el de XASKA POS o las preguntas de inicio');
++}
++const faq = faqEntry.data;
+ const home = entry.data;
+ const slogan = posEntry.data.slogan.join(' ');
+ const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+@@ -34,6 +40,7 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
+   title={home.seo.title}
+   description={home.seo.description}
+   whatsappMessage={whatsappMessages.general}
++  jsonLd={[localBusiness(), faqPage(faq.items)]}
+ >
+   {/* Entrada: la caja de XASKA POS funcionando. A la izquierda el título, a la derecha la caja. */}
+   <section class="pt-6 pb-4 sm:pt-10" aria-labelledby="portada">
+@@ -247,6 +254,10 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
+     </div>
+   </Section>
+ 
++  <Section labelledby="preguntas-inicio">
++    <Faq title={faq.title} items={faq.items} headingId="preguntas-inicio" />
++  </Section>
++
+   <Section labelledby="cierre">
+     <Card tone="deep" size="panel" class="grid items-center gap-8 lg:grid-cols-[1fr_auto] lg:p-14">
+       <div>
+diff --git a/src/pages/llms.txt.ts b/src/pages/llms.txt.ts
+new file mode 100644
+index 0000000..a9ba576
+--- /dev/null
++++ b/src/pages/llms.txt.ts
+@@ -0,0 +1,70 @@
++/**
++ * /llms.txt: resumen del sitio en Markdown para los buscadores con IA (https://llmstxt.org).
++ * Se arma con el mismo contenido de las páginas, así que no hay que mantenerlo aparte.
++ */
++import type { APIRoute } from 'astro';
++import { getCollection, getEntry } from 'astro:content';
++import { contact, products, site, socialProfiles } from '@/config/site';
++
++export const GET: APIRoute = async () => {
++  const home = (await getEntry('home', 'index'))?.data;
++  const pos = (await getEntry('pos', 'index'))?.data;
++  const aska = (await getEntry('aska', 'index'))?.data;
++  const faq = (await getEntry('faq', 'inicio'))?.data;
++  if (!home || !pos || !aska || !faq) throw new Error('Falta contenido para /llms.txt');
++  const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
++  const page = (path: string) => new URL(path, site.url).href;
++
++  const lines = [
++    `# ${site.name}`,
++    '',
++    `> ${home.seo.description}`,
++    '',
++    `${site.name} es una empresa de software de ${site.city}. ${home.pillars.lead}`,
++    '',
++    '## XASKA POS',
++    '',
++    pos.seo.description,
++    '',
++    ...pos.plans.items.map(
++      (plan) => `- Plan ${plan.name}: ${plan.price} al mes (${plan.annual}). ${plan.limits}.`,
++    ),
++    `- ${pos.plans.lead}`,
++    `- Precios completos: ${products.pos.pricingUrl}`,
++    `- Probar gratis: ${products.pos.trialUrl}`,
++    `- Manual de uso: ${products.pos.manualUrl}`,
++    '',
++    `## ${products.aska.name}`,
++    '',
++    `${aska.seo.description}`,
++    '',
++    '## Servicios',
++    '',
++    ...services.map((service) => `- ${service.data.title}: ${service.data.summary}`),
++    '',
++    '## Preguntas frecuentes',
++    '',
++    ...faq.items.flatMap((item) => [`### ${item.question}`, '', item.answer, '']),
++    '## Páginas',
++    '',
++    `- [Inicio](${page('/')}): qué hace XASKA y la caja de XASKA POS para probar.`,
++    `- [XASKA POS](${page(products.pos.path)}): funciones, pantallas, planes y preguntas.`,
++    `- [ASKA](${page(products.aska.path)}): la inteligencia artificial de XASKA POS.`,
++    `- [Servicios](${page('/servicios')}): desarrollo a medida, automatización, páginas web, consultoría y equipos.`,
++    `- [Nosotros](${page('/nosotros')}): quiénes somos, misión y visión.`,
++    `- [Contacto](${page('/contacto')}): WhatsApp, correo y formulario.`,
++    '',
++    '## Contacto',
++    '',
++    `- WhatsApp: ${contact.whatsapp.display}`,
++    `- Correo: ${contact.email}`,
++    ...(contact.hours ? [`- Horario: ${contact.hours}`] : []),
++    `- Ubicación: ${site.city}`,
++    ...socialProfiles.map((profile) => `- ${profile.name}: ${profile.url}`),
++    '',
++  ];
++
++  return new Response(lines.join('\n'), {
++    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
++  });
++};
+diff --git a/src/pages/productos/xaska-pos.astro b/src/pages/productos/xaska-pos.astro
+index d28142f..5503899 100644
+--- a/src/pages/productos/xaska-pos.astro
++++ b/src/pages/productos/xaska-pos.astro
+@@ -14,7 +14,7 @@ import RomboList from '@/components/RomboList.astro';
+ import WhatsAppButton from '@/components/WhatsAppButton.astro';
+ import AskaBand from '@/components/AskaBand.astro';
+ import { flags, primaryCta, primaryCtaIsWhatsApp, products, whatsappMessages } from '@/config/site';
+-import { posApplication } from '@/lib/structured-data';
++import { faqPage, posApplication } from '@/lib/structured-data';
+ 
+ const posEntry = await getEntry('pos', 'index');
+ const faqEntry = await getEntry('faq', 'xaska-pos');
+@@ -40,7 +40,7 @@ const faqItems = faq.items.map((item) =>
+   title={pos.seo.title}
+   description={pos.seo.description}
+   whatsappMessage={whatsappMessages.pos}
+-  jsonLd={[posApplication(pos.seo.description)]}
++  jsonLd={[posApplication(pos.seo.description), faqPage(faqItems)]}
+ >
+   {/* Como el ingreso a XASKA POS: panel índigo profundo con el lema y "POS" gigante al pie. */}
+   <PageHeader
+diff --git a/tests/seo.spec.ts b/tests/seo.spec.ts
+index 9853f6b..8400fe9 100644
+--- a/tests/seo.spec.ts
++++ b/tests/seo.spec.ts
+@@ -130,3 +130,47 @@ test.describe('analítica', () => {
+     }
+   });
+ });
++
++test.describe('búsqueda local y buscadores con IA', () => {
++  test('la portada tiene el negocio local en Ibagué y sus preguntas frecuentes', async ({
++    page,
++  }) => {
++    await page.goto('/');
++    const data = await jsonLd(page);
++    const local = data.find((d) => d['@type'] === 'ProfessionalService');
++    expect(local, 'ProfessionalService').toBeDefined();
++    expect(JSON.stringify(local?.['address'])).toContain('Ibagué');
++    expect(local?.['sameAs']).toContain('https://www.linkedin.com/company/xaska/');
++    const org = data.find((d) => d['@type'] === 'Organization');
++    expect(org?.['sameAs']).toContain('https://www.instagram.com/xaskapos/');
++    await expect(
++      page.getByRole('contentinfo').getByRole('list', { name: 'XASKA en redes' }).getByRole('link'),
++    ).toHaveCount(3);
++    const faq = data.find((d) => d['@type'] === 'FAQPage');
++    const questions = (faq?.['mainEntity'] as unknown[] | undefined) ?? [];
++    await expect(page.locator('#preguntas-inicio ~ div details')).toHaveCount(questions.length);
++    expect(await page.title()).toBe('XASKA | Software POS para tiendas y pymes en Ibagué');
++  });
++
++  test('los precios de las preguntas de la portada son los de los planes', async ({ page }) => {
++    await page.goto('/productos/xaska-pos');
++    const plans = (await page.locator('#planes-seccion').textContent()) ?? '';
++    const prices = [...plans.matchAll(/(\$[\d.]+)\s*al mes/g)].map((match) => match[1] ?? '');
++    await page.goto('/');
++    const answer = await page
++      .locator('details', { hasText: '¿Cuánto cuesta XASKA POS?' })
++      .textContent();
++    expect(prices.length).toBeGreaterThan(0);
++    for (const price of prices) expect(answer).toContain(price);
++  });
++
++  test('llms.txt resume el sitio con los planes y el contacto', async ({ request }) => {
++    const response = await request.get('/llms.txt');
++    expect(response.ok()).toBe(true);
++    const text = await response.text();
++    expect(text.startsWith('# XASKA')).toBe(true);
++    expect(text).toContain('Plan Emprende');
++    expect(text).toContain('soporte@xaska.co');
++    expect(text).not.toMatch(/PENDIENTE|BORRADOR/);
++  });
++});

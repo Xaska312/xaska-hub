@@ -130,3 +130,47 @@ test.describe('analítica', () => {
     }
   });
 });
+
+test.describe('búsqueda local y buscadores con IA', () => {
+  test('la portada tiene el negocio local en Ibagué y sus preguntas frecuentes', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const data = await jsonLd(page);
+    const local = data.find((d) => d['@type'] === 'ProfessionalService');
+    expect(local, 'ProfessionalService').toBeDefined();
+    expect(JSON.stringify(local?.['address'])).toContain('Ibagué');
+    expect(local?.['sameAs']).toContain('https://www.linkedin.com/company/xaska/');
+    const org = data.find((d) => d['@type'] === 'Organization');
+    expect(org?.['sameAs']).toContain('https://www.instagram.com/xaskapos/');
+    await expect(
+      page.getByRole('contentinfo').getByRole('list', { name: 'XASKA en redes' }).getByRole('link'),
+    ).toHaveCount(3);
+    const faq = data.find((d) => d['@type'] === 'FAQPage');
+    const questions = (faq?.['mainEntity'] as unknown[] | undefined) ?? [];
+    await expect(page.locator('#preguntas-inicio ~ div details')).toHaveCount(questions.length);
+    expect(await page.title()).toBe('XASKA | Software POS para tiendas y pymes en Ibagué');
+  });
+
+  test('los precios de las preguntas de la portada son los de los planes', async ({ page }) => {
+    await page.goto('/productos/xaska-pos');
+    const plans = (await page.locator('#planes-seccion').textContent()) ?? '';
+    const prices = [...plans.matchAll(/(\$[\d.]+)\s*al mes/g)].map((match) => match[1] ?? '');
+    await page.goto('/');
+    const answer = await page
+      .locator('details', { hasText: '¿Cuánto cuesta XASKA POS?' })
+      .textContent();
+    expect(prices.length).toBeGreaterThan(0);
+    for (const price of prices) expect(answer).toContain(price);
+  });
+
+  test('llms.txt resume el sitio con los planes y el contacto', async ({ request }) => {
+    const response = await request.get('/llms.txt');
+    expect(response.ok()).toBe(true);
+    const text = await response.text();
+    expect(text.startsWith('# XASKA')).toBe(true);
+    expect(text).toContain('Plan Emprende');
+    expect(text).toContain('soporte@xaska.co');
+    expect(text).not.toMatch(/PENDIENTE|BORRADOR/);
+  });
+});

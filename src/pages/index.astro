@@ -1,6 +1,8 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Faq from '@/components/Faq.astro';
+import { faqPage, localBusiness } from '@/lib/structured-data';
 import Section from '@/components/Section.astro';
 import CTA from '@/components/CTA.astro';
 import Card from '@/components/Card.astro';
@@ -22,8 +24,12 @@ import {
 } from '@/config/site';
 
 const entry = await getEntry('home', 'index');
+const faqEntry = await getEntry('faq', 'inicio');
 const posEntry = await getEntry('pos', 'index');
-if (!entry || !posEntry) throw new Error('Falta src/content/home/index.yaml o el de XASKA POS');
+if (!entry || !posEntry || !faqEntry) {
+  throw new Error('Falta src/content/home/index.yaml, el de XASKA POS o las preguntas de inicio');
+}
+const faq = faqEntry.data;
 const home = entry.data;
 const slogan = posEntry.data.slogan.join(' ');
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
@@ -34,6 +40,7 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
   title={home.seo.title}
   description={home.seo.description}
   whatsappMessage={whatsappMessages.general}
+  jsonLd={[localBusiness(), faqPage(faq.items)]}
 >
   {/* Entrada: la caja de XASKA POS funcionando. A la izquierda el título, a la derecha la caja. */}
   <section class="pt-6 pb-4 sm:pt-10" aria-labelledby="portada">
@@ -245,6 +252,10 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
     <div class="mt-8">
       <Steps steps={home.process.steps} />
     </div>
+  </Section>
+
+  <Section labelledby="preguntas-inicio">
+    <Faq title={faq.title} items={faq.items} headingId="preguntas-inicio" />
   </Section>
 
   <Section labelledby="cierre">

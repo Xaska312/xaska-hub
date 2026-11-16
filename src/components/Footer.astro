@@ -1,7 +1,15 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { contact, mainNav, products, site, whatsappUrl, whatsappMessages } from '@/config/site';
+import {
+  contact,
+  mainNav,
+  products,
+  site,
+  socialProfiles,
+  whatsappUrl,
+  whatsappMessages,
+} from '@/config/site';
 
 const year = new Date().getFullYear();
 ---
@@ -69,6 +77,23 @@ const year = new Date().getFullYear();
           </li>
           {contact.hours && <li class="text-sm text-muted">{contact.hours}</li>}
         </ul>
+        {socialProfiles.length > 0 && (
+          <ul class="mt-4 flex flex-wrap gap-2" aria-label="XASKA en redes">
+            {socialProfiles.map((profile) => (
+              <li>
+                <a
+                  href={profile.url}
+                  target="_blank"
+                  rel="noopener me"
+                  class="press inline-flex min-h-10 items-center rounded-full border border-line-strong px-4 text-sm font-semibold text-ink hover:border-accent hover:bg-accent-soft"
+                >
+                  {profile.name}
+                  <span class="sr-only">(se abre en una pestaña nueva)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
 
