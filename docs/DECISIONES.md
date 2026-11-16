@@ -410,6 +410,12 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **`/llms.txt`:** resumen del sitio en Markdown para buscadores con IA, armado con el mismo contenido (`src/pages/llms.txt.ts`), así que no se mantiene aparte.
 - **Descartado de la auditoría:** píxel de Facebook (solo sirve con anuncios en Meta y agrega rastreo), ocultar el correo (dificulta el contacto, el riesgo de spam es bajo), "recursos que bloquean el renderizado" (es la hoja de estilos; Lighthouse da 100) y "alt" en las imágenes señaladas (son el logo de la firma del pie y el monograma de ASKA, decorativos, con `alt=""` correcto).
 
+### Logo nuevo de ASKA (2026-11-16)
+
+- XASKA POS cambió el logo de ASKA (decisión 358 del POS): burbuja de chat con la A del nombre XASKA y el rombo ámbar, degradado índigo, sin halo ni brillo. Se copió sin cambios a `public/brand/xaska-ia/xaska-ia.svg`.
+- `.aska-halo` deja el halo circular (no sigue la forma de burbuja) y queda con una sombra suave con `drop-shadow`, como el botón de ASKA en el POS.
+- La tarjeta "Pregúntale a tu negocio" suma lo nuevo de ASKA (decisiones 356 y 357 del POS): ventas por hora y por día de la semana, margen de todo el catálogo, efectivo esperado en la caja y explicar cómo se usa XASKA con el manual.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

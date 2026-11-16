@@ -444,12 +444,12 @@
     color: #fcd34d;
   }
 
-  /* Halo del monograma de ASKA en la portada de su página. */
+  /*
+   * Logo de ASKA (burbuja de chat, decisión 358 del POS): solo una sombra suave que sigue su
+   * forma, sin halo ni brillo, como el botón de ASKA en XASKA POS.
+   */
   .aska-halo {
-    border-radius: 1.6rem;
-    box-shadow:
-      0 0 0 1px rgb(165 180 252 / 0.45),
-      0 0 48px 6px rgb(129 140 248 / 0.4);
+    filter: drop-shadow(0 10px 18px rgb(30 27 75 / 0.35));
   }
 }
 

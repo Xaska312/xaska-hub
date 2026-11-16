@@ -35,7 +35,7 @@ features:
     - icon: chat
       kicker: Pregúntale a tu negocio
       title: Pregúntale como le preguntarías a tu socio
-      text: Ventas por día, por vendedor o por medio de pago. Lo que más se vende y lo que no rota. Fiados, cuentas por pagar y caja. ASKA te responde con la cifra resaltada y te sugiere qué preguntar después.
+      text: Ventas por hora, por día de la semana, por vendedor o por medio de pago. Lo que más se vende, lo que menos margen deja y lo que no rota. Fiados, cuentas por pagar y cuánto efectivo debería haber en la caja. Y si no sabes cómo hacer algo en XASKA, te lo explica con el manual.
     - icon: camera
       kicker: La factura del proveedor
       title: Recibe la mercancía con una foto
