@@ -8,6 +8,7 @@ import Card from '@/components/Card.astro';
 import Icon from '@/components/Icon.astro';
 import { contact, site, whatsappMessages, whatsappUrl } from '@/config/site';
 import { TURNSTILE_ORIGIN } from '@/lib/turnstile';
+import { localBusiness } from '@/lib/structured-data';
 
 // Turnstile: script y marco desde challenges.cloudflare.com, solo en esta página.
 if (!Astro.csp) throw new Error('La CSP debe estar activa (security.csp en astro.config.mjs).');
@@ -21,6 +22,7 @@ Astro.csp.insertDirective(`frame-src ${TURNSTILE_ORIGIN}`);
   title="Contacto"
   description="Escríbele a XASKA por el formulario, por WhatsApp o por correo. Estamos en Ibagué, Tolima, y trabajamos con pymes de toda Colombia."
   whatsappMessage={whatsappMessages.general}
+  jsonLd={[localBusiness()]}
 >
   <PageHeader
     title="Contacto"

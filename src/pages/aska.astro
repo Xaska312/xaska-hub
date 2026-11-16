@@ -12,6 +12,7 @@ import CTA from '@/components/CTA.astro';
 import Faq from '@/components/Faq.astro';
 import Icon from '@/components/Icon.astro';
 import { products, whatsappMessages, whatsappUrl } from '@/config/site';
+import { faqPage } from '@/lib/structured-data';
 
 const entry = await getEntry('aska', 'index');
 const faqEntry = await getEntry('faq', 'aska');
@@ -26,6 +27,7 @@ const [mainFeature, ...otherFeatures] = aska.features.items;
   title={aska.seo.title}
   description={aska.seo.description}
   whatsappMessage={whatsappMessages.aska}
+  jsonLd={[faqPage(faq.items)]}
 >
   <section class="pt-4 pb-2 sm:pt-8">
     <div class="mx-auto w-full max-w-(--container-page) px-4 sm:px-6 lg:px-8">

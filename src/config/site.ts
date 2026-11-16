@@ -62,6 +62,18 @@ export const founder = {
   role: 'Fundador y director de proyectos',
 } as const;
 
+/**
+ * Perfiles reales de XASKA en redes (dados por Daniel el 2026-11-15). Salen en el pie de
+ * página y en los datos estructurados (sameAs). No poner perfiles que no se usen.
+ * Facebook usa por ahora el enlace de "Compartir"; cambiarlo por la dirección de la página
+ * (facebook.com/<usuario>) cuando se tenga.
+ */
+export const socialProfiles: readonly { name: string; url: string }[] = [
+  { name: 'Instagram', url: 'https://www.instagram.com/xaskapos/' },
+  { name: 'Facebook', url: 'https://www.facebook.com/share/1A7gp8Sy7H/' },
+  { name: 'LinkedIn', url: 'https://www.linkedin.com/company/xaska/' },
+];
+
 export const contact = {
   email: 'soporte@xaska.co',
   whatsapp: {

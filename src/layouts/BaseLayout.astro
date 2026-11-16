@@ -28,9 +28,14 @@ interface Props {
 }
 
 const { title, description, whatsappMessage, noindex = false, jsonLd = [] } = Astro.props;
-// La portada usa el nombre y el lema; las demás, "Página | XASKA".
+// "Página | XASKA". Si el título ya empieza con "XASKA" (portada, XASKA POS) va tal cual,
+// para que sea completo y con las palabras que la gente busca (50 a 60 caracteres).
 const fullTitle =
-  title === site.name ? `${site.name} | ${site.tagline}` : `${title} | ${site.name}`;
+  title === site.name
+    ? `${site.name} | ${site.tagline}`
+    : title.startsWith(site.name)
+      ? title
+      : `${title} | ${site.name}`;
 // Con build.format 'file' la portada se genera como /index.html: su canonical es la raíz.
 const pathname =
   Astro.url.pathname
