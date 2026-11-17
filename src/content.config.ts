@@ -8,6 +8,17 @@ import { z } from 'astro/zod';
 
 const text = z.string().min(1);
 
+/** Pantallas dibujadas en src/components/PosScreen.astro. */
+const posScreen = z.enum([
+  'inicio',
+  'tiquete',
+  'cierre',
+  'fiado',
+  'sin-conexion',
+  'finanzas',
+  'mesas',
+]);
+
 const home = defineCollection({
   loader: glob({ pattern: 'index.yaml', base: './src/content/home' }),
   schema: z.object({
@@ -158,16 +169,7 @@ const pos = defineCollection({
       items: z
         .array(
           z.object({
-            // Pantalla dibujada en src/components/PosScreen.astro.
-            screen: z.enum([
-              'inicio',
-              'tiquete',
-              'cierre',
-              'fiado',
-              'sin-conexion',
-              'finanzas',
-              'mesas',
-            ]),
+            screen: posScreen,
             title: text,
             caption: text,
             description: text,
@@ -295,6 +297,76 @@ const faq = defineCollection({
   }),
 });
 
+/**
+ * Landings por tipo de negocio (/para/<archivo>): un solo botón (WhatsApp con mensaje propio, para
+ * saber de qué landing llegó cada conversación), pantallas vivas y preguntas de ese negocio.
+ */
+const iconName = z.enum([
+  'cart',
+  'code',
+  'globe',
+  'zap',
+  'monitor',
+  'compass',
+  'chat',
+  'mail',
+  'pin',
+  'arrow',
+  'register',
+  'box',
+  'book',
+  'chart',
+  'users',
+  'check',
+  'camera',
+  'sparkle',
+  'store',
+]);
+const screenItem = z.object({ screen: posScreen, title: text, caption: text, description: text });
+const landings = defineCollection({
+  loader: glob({ pattern: '*.yaml', base: './src/content/landings' }),
+  schema: z.object({
+    order: z.number().int(),
+    name: text,
+    seo: z.object({ title: text, description: text }),
+    whatsapp: text,
+    chip: text,
+    hero: z.discriminatedUnion('screen', [
+      z.object({
+        screen: z.literal('register'),
+        title: text,
+        lead: text,
+        caption: text,
+        products: z
+          .array(z.object({ name: text, price: z.number().int().positive() }))
+          .min(3)
+          .max(6),
+      }),
+      z.object({
+        screen: posScreen,
+        title: text,
+        lead: text,
+        screenTitle: text,
+        screenDescription: text,
+      }),
+    ]),
+    pains: z.object({
+      title: text,
+      items: z
+        .array(z.object({ icon: iconName, title: text, text: text }))
+        .min(3)
+        .max(4),
+    }),
+    screens: z.object({ title: text, items: z.array(screenItem).min(1).max(3) }),
+    // Plan que necesita este negocio: el precio sale de los planes de XASKA POS.
+    pricing: z.object({ plan: z.enum(['Emprende', 'Negocio', 'Empresa']), note: text }),
+    faq: z
+      .array(z.object({ question: text, answer: text }))
+      .min(2)
+      .max(6),
+  }),
+});
+
 const hardwareLine = defineCollection({
   loader: glob({ pattern: 'index.yaml', base: './src/content/hardware' }),
   schema: z.object({
@@ -324,5 +396,6 @@ export const collections = {
   pos,
   aska,
   faq,
+  landings,
   hardwareLine,
 };

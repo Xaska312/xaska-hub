@@ -416,6 +416,15 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - `.aska-halo` deja el halo circular (no sigue la forma de burbuja) y queda con una sombra suave con `drop-shadow`, como el botón de ASKA en el POS.
 - La tarjeta "Pregúntale a tu negocio" suma lo nuevo de ASKA (decisiones 356 y 357 del POS): ventas por hora y por día de la semana, margen de todo el catálogo, efectivo esperado en la caja y explicar cómo se usa XASKA con el manual.
 
+### Landings por tipo de negocio (2026-11-17)
+
+- **Por qué:** recomendación de un asesor de páginas y anuncios ("landings enfocadas a la conversión") y los segmentos de la estrategia comercial del 2 de noviembre. Para el mes de campañas: cada anuncio lleva a la landing de su negocio y se compara cuál trae más conversaciones.
+- **Páginas:** `/para/distribuidores` (fiado a tiendas, pedidos, venta en la ruta), `/para/papelerias` (precio libre, productos sin rotación, Excel, cotizaciones) y `/para/restaurantes` (mesas, comandas, cocina en tiempo real). Contenido en `src/content/landings/*.yaml`, plantilla `src/pages/para/[segmento].astro`. Se pueden agregar más con solo otro YAML.
+- **Un solo objetivo:** el botón principal es WhatsApp con un mensaje prellenado distinto en cada landing ("vengo de la página para distribuidores…"), así se sabe de dónde llegó cada conversación sin instalar rastreo. "Probar gratis 14 días" queda como segunda opción.
+- **Contenido:** entrada con una pantalla viva de ese negocio (fiado, caja con productos de papelería, mesas), 4 problemas que resuelve, 2 pantallas, "Así empiezas" (escribir, ver una demostración de 10 minutos, probar 14 días), el plan que necesita ese negocio (precio tomado de los planes de XASKA POS: pedidos, cotizaciones y restaurante empiezan en Negocio), preguntas frecuentes con `FAQPage` y enlaces a las otras landings. Todo verificado contra las decisiones del POS (cupo que no se pasa sin autorización, decisión 255; restaurante abierto al público, 273; cocina en tiempo real, 271; productos sin rotación, 254; Excel, 245; listas de precios, 44).
+- **Enlaces:** XASKA POS las enlaza bajo "Para quién es", y van en el sitemap y en `/llms.txt`.
+- **Pendiente:** el video de Daniel y testimonios reales (con permiso por escrito) en cada landing.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
