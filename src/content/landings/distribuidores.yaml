@@ -1,0 +1,53 @@
+# Landing para distribuidores que surten y fían a tiendas (segmento 1 de la estrategia comercial).
+# Pensada para anuncios y visitas: un solo botón (WhatsApp, con mensaje propio para saber de dónde llegó).
+order: 1
+name: Distribuidores
+seo:
+  title: Programa para distribuidores que fían a tiendas
+  description: XASKA POS para distribuidores de Ibagué. Fía a cada tienda con cupo, lleva los pedidos y cobra con recibo por WhatsApp, desde el celular en la ruta.
+whatsapp: Hola, vengo de la página para distribuidores y quiero ver XASKA POS
+chip: Para distribuidores
+hero:
+  title: Sabe cuánto te debe cada tienda, sin buscar el cuaderno.
+  lead: Con XASKA POS fías a cada tienda con su cupo, anotas los abonos y cobras con el recibo por WhatsApp. Desde el celular, en la ruta, aunque no haya señal.
+  screen: fiado
+  screenTitle: Fiado
+  screenDescription: Estado de cuenta de una tienda con su cupo, lo que debe, lo disponible, sus movimientos y el botón para mandarle el recordatorio por WhatsApp. Datos de ejemplo.
+pains:
+  title: Lo que te resuelve en el día a día
+  items:
+    - icon: users
+      title: El fiado, tienda por tienda
+      text: Cada tienda con su cupo, lo que debe, sus abonos y desde cuándo. Ves la cartera ordenada por antigüedad y sabes a quién cobrarle primero.
+    - icon: chat
+      title: El cobro, por WhatsApp
+      text: Mandas el recordatorio y el recibo por WhatsApp. Sin papeles que se pierden y con todo anotado.
+    - icon: box
+      title: Los pedidos, en orden
+      text: Anotas lo que pide cada tienda, con o sin anticipo, y entregas por partes si hace falta. El pedido sale en PDF para mandarlo.
+    - icon: register
+      title: La venta, en la ruta
+      text: Vendes desde el celular en el camión o en la tienda. Si se cae la señal, sigues vendiendo y se envía cuando vuelve.
+screens:
+  title: Así se ve
+  items:
+    - screen: tiquete
+      title: Tiquete
+      caption: El recibo impreso o como imagen por WhatsApp.
+      description: Tiquete de venta con los productos, el total, el pago y el botón Enviar con la opción de imagen del tiquete. Datos de ejemplo.
+    - screen: sin-conexion
+      title: Sin señal
+      caption: Sin internet sigues vendiendo; las ventas se envían al volver.
+      description: Pantalla de ventas con el aviso Sin conexión y las ventas guardadas en el equipo, pendientes de enviar. Datos de ejemplo.
+pricing:
+  plan: Negocio
+  note: El fiado viene en todos los planes. Los pedidos, desde el plan Negocio.
+faq:
+  - question: ¿Puedo ponerle un cupo distinto a cada tienda?
+    answer: Sí. Cada cliente tiene su cupo y XASKA no deja fiar por encima de él; solo el dueño o el administrador pueden autorizarlo, y queda registrado. Ves lo que debe, lo que le queda y todos sus abonos.
+  - question: ¿Sirve si vendo desde el celular en la ruta?
+    answer: Sí. XASKA POS funciona en el celular sin instalar nada. Si se va la señal con la caja abierta, sigues vendiendo en ese equipo y las ventas se envían solas cuando vuelve la conexión. Para fiar sí necesitas conexión en ese momento.
+  - question: ¿Cómo le cobro a una tienda que me debe?
+    answer: Desde su estado de cuenta le mandas el recordatorio por WhatsApp. Cuando abona, lo registras y le llega el recibo.
+  - question: ¿Puedo tener precios distintos para cada tipo de cliente?
+    answer: Sí. Con las listas de precios manejas, por ejemplo, un precio para tiendas y otro para el público.

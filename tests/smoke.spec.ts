@@ -352,3 +352,27 @@ test.describe('ASKA viva', () => {
     await expect(page.getByRole('button', { name: '¿Cómo me fue hoy?' })).toBeFocused();
   });
 });
+
+test.describe('landings por tipo de negocio', () => {
+  const landings = [
+    { path: '/para/distribuidores', from: 'distribuidores', plan: 'Negocio' },
+    { path: '/para/papelerias', from: 'papelerías', plan: 'Emprende' },
+    { path: '/para/restaurantes', from: 'restaurantes', plan: 'Negocio' },
+  ];
+  for (const landing of landings) {
+    test(`${landing.path} lleva a WhatsApp con su propio mensaje y su plan`, async ({ page }) => {
+      await page.goto(landing.path);
+      const whatsapp = page.locator('main a[href*="wa.me"]').first();
+      const href = decodeURIComponent((await whatsapp.getAttribute('href')) ?? '');
+      expect(href).toContain(`vengo de la página para ${landing.from}`);
+      await expect(page.getByText(`Plan ${landing.plan}`, { exact: true })).toBeVisible();
+      await expect(page.locator('#preguntas-landing ~ div details').first()).toBeAttached();
+    });
+  }
+
+  test('XASKA POS enlaza las tres landings', async ({ page }) => {
+    await page.goto('/productos/xaska-pos');
+    const list = page.getByRole('list', { name: 'XASKA POS para tu tipo de negocio' });
+    await expect(list.getByRole('link')).toHaveCount(3);
+  });
+});

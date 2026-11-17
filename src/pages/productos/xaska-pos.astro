@@ -1,5 +1,5 @@
 ---
-import { getEntry } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import Icon from '@/components/Icon.astro';
 import LiveCheckout from '@/components/LiveCheckout.astro';
 import PosScreen from '@/components/PosScreen.astro';
@@ -34,6 +34,8 @@ const faqItems = faq.items.map((item) =>
     ? { ...item, answer: pos.eInvoicing.faqAnswer }
     : item,
 );
+// Landings por tipo de negocio (/para/...), enlazadas bajo "Para quién es".
+const landings = (await getCollection('landings')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <BaseLayout
@@ -108,7 +110,22 @@ const faqItems = faq.items.map((item) =>
       <h2 id="para-quien" class="text-3xl sm:text-4xl">
         {pos.audience.title}
       </h2>
-      <p class="max-w-(--container-prose) text-lg">{pos.audience.text}</p>
+      <div class="flex flex-col gap-6">
+        <p class="max-w-(--container-prose) text-lg">{pos.audience.text}</p>
+        <ul class="flex flex-wrap gap-2" aria-label="XASKA POS para tu tipo de negocio">
+          {landings.map((item) => (
+            <li>
+              <a
+                href={`/para/${item.id}`}
+                class="press inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong px-5 font-semibold hover:border-accent hover:bg-accent-soft"
+              >
+                Para {item.data.name.toLowerCase()}
+                <Icon name="arrow" size={18} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </Card>
   </Section>
 

@@ -13,6 +13,7 @@ export const GET: APIRoute = async () => {
   const faq = (await getEntry('faq', 'inicio'))?.data;
   if (!home || !pos || !aska || !faq) throw new Error('Falta contenido para /llms.txt');
   const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+  const landings = (await getCollection('landings')).sort((a, b) => a.data.order - b.data.order);
   const page = (path: string) => new URL(path, site.url).href;
 
   const lines = [
@@ -49,6 +50,10 @@ export const GET: APIRoute = async () => {
     '',
     `- [Inicio](${page('/')}): qué hace XASKA y la caja de XASKA POS para probar.`,
     `- [XASKA POS](${page(products.pos.path)}): funciones, pantallas, planes y preguntas.`,
+    ...landings.map(
+      (item) =>
+        `- [XASKA POS para ${item.data.name.toLowerCase()}](${page(`/para/${item.id}`)}): ${item.data.seo.description}`,
+    ),
     `- [ASKA](${page(products.aska.path)}): la inteligencia artificial de XASKA POS.`,
     `- [Servicios](${page('/servicios')}): desarrollo a medida, automatización, páginas web, consultoría y equipos.`,
     `- [Nosotros](${page('/nosotros')}): quiénes somos, misión y visión.`,
