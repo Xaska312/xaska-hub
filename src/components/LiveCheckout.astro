@@ -123,7 +123,12 @@ const mixed = { cash: 20000, transfer: total - 20000 };
     font-weight: 600;
   }
 
+  /*
+   * position: relative contiene los textos ocultos (.sr-only, absolutos) dentro del botón. Sin
+   * esto quedaban fuera de la pantalla y en el celular la página se podía alejar con zoom.
+   */
   .ck-option {
+    position: relative;
     display: flex;
     min-height: 2.75rem;
     align-items: center;

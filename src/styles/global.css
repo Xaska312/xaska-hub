@@ -265,6 +265,17 @@
     background-color: var(--c-surface);
   }
 
+  /*
+   * Las tarjetas se pueden encoger dentro de una cuadrícula o un flex (min-width: auto las dejaba
+   * más anchas que un celular de 320 px), y las palabras largas parten en vez de salirse.
+   */
+  .bento,
+  .on-deep,
+  .on-feature {
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
   /* Tarjeta que es un enlace completo: el borde se ilumina, sube un poco y se hunde al tocarla. */
   .bento-link {
     transition:

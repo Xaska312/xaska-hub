@@ -2,14 +2,14 @@
 title: Términos de uso del sitio
 description: Condiciones para usar el sitio informativo xaska.co.
 reviewed: true
-updated: '2026-11-02'
+updated: '2026-11-18'
 ---
 
 Estos términos aplican al sitio informativo **xaska.co**. El uso de **XASKA POS** (`app.xaska.co`) se rige por sus propios [términos](https://app.xaska.co/terminos) y su [política de privacidad](https://app.xaska.co/privacidad).
 
 ## 1. Quiénes somos
 
-XASKA es el nombre comercial de Daniel Felipe Mejía Martínez, persona natural, con domicilio en Ibagué, Tolima, Colombia. Puedes escribirnos a soporte@xaska.co o por WhatsApp al +57 316 778 4193.
+XASKA es el nombre comercial de Daniel Felipe Mejía Martínez, persona natural, con domicilio en Ibagué, Tolima, Colombia. Puedes escribirnos a soporte@xaska.co o por WhatsApp al +57 324 556 0729.
 
 ## 2. Uso del sitio
 

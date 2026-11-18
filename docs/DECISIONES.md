@@ -425,6 +425,12 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Enlaces:** XASKA POS las enlaza bajo "Para quién es", y van en el sitemap y en `/llms.txt`.
 - **Pendiente:** el video de Daniel y testimonios reales (con permiso por escrito) en cada landing.
 
+### Número nuevo con asistente de IA y arreglo del zoom en el celular (2026-11-18)
+
+- **WhatsApp nuevo: +57 324 556 0729.** Lo responde primero un asistente de IA, las 24 horas, que pasa con Daniel cuando hace falta (decisión de Daniel). En el sitio se dice así: "Te responde nuestro asistente al instante, a cualquier hora, y si hace falta te pasa con Daniel" (`contact.assistant`). Se quitaron las frases que ya no son ciertas ("sin respuestas automáticas", "te respondemos nosotros mismos", "te responde Daniel"). El horario de lunes a sábado de 8 a 6 queda como horario de atención de personas.
+- **Privacidad y términos:** número nuevo, fecha 2026-11-18, y en las finalidades que los mensajes de WhatsApp los atiende primero un asistente de IA con proveedores tecnológicos. Falta nombrar el proveedor del asistente en "encargados" cuando Daniel lo confirme.
+- **Zoom en el celular:** en `/productos/xaska-pos` la página medía 514 px en un celular de 390 px y se podía alejar con zoom. La causa eran textos solo para lectores de pantalla (`.sr-only`, posición absoluta) sin un contenedor posicionado: los "Incluido" de la tabla de planes se escapaban de su caja con desplazamiento y los "cambio $…" de la ventana de cobro quedaban fuera de la pantalla. Se arregló con `relative` en esos contenedores. Además, `.bento`, `.on-deep` y `.on-feature` llevan `min-width: 0` y parten palabras largas (en 320 px, Aska y Servicios se salían 12 a 33 px). Una prueba revisa en cada página que nada sea más ancho que la pantalla, en 360 y en 320 px.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

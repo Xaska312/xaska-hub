@@ -23,6 +23,12 @@ test.describe('páginas publicadas', () => {
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('main#contenido')).toBeVisible();
       expect(errors).toEqual([]);
+      // Nada más ancho que la pantalla: si no, en el celular la página se puede alejar con zoom.
+      const width = await page.evaluate(() => ({
+        page: document.documentElement.scrollWidth,
+        screen: document.documentElement.clientWidth,
+      }));
+      expect(width.page).toBeLessThanOrEqual(width.screen);
     });
   }
 
@@ -30,7 +36,7 @@ test.describe('páginas publicadas', () => {
     const response = await page.goto('/esta-pagina-no-existe');
     expect(response?.status()).toBe(404);
     await expect(page.locator('h1')).toHaveText('No encontramos esta página');
-    await expect(page.locator('main a[href^="https://wa.me/573167784193"]')).toBeVisible();
+    await expect(page.locator('main a[href^="https://wa.me/573245560729"]')).toBeVisible();
   });
 });
 
@@ -69,7 +75,7 @@ test.describe('navegación', () => {
   test('enlaces externos con formato correcto', async ({ page }) => {
     await page.goto('/');
     const wa = await page.locator('a[href^="https://wa.me/"]').first().getAttribute('href');
-    expect(wa).toMatch(/^https:\/\/wa\.me\/573167784193\?text=.+/);
+    expect(wa).toMatch(/^https:\/\/wa\.me\/573245560729\?text=.+/);
     const trial = page.locator('a[href^="https://app.xaska.co"]').first();
     await expect(trial).toHaveAttribute('rel', 'noopener');
   });
@@ -375,4 +381,19 @@ test.describe('landings por tipo de negocio', () => {
     const list = page.getByRole('list', { name: 'XASKA POS para tu tipo de negocio' });
     await expect(list.getByRole('link')).toHaveCount(3);
   });
+});
+
+test.describe('celular pequeño (320 px)', () => {
+  test.use({ viewport: { width: 320, height: 700 } });
+  for (const path of pages) {
+    test(`${path} cabe en 320 px sin desplazarse de lado`, async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name !== 'movil', 'Solo en el proyecto móvil');
+      await page.goto(path);
+      const width = await page.evaluate(() => ({
+        page: document.documentElement.scrollWidth,
+        screen: document.documentElement.clientWidth,
+      }));
+      expect(width.page).toBeLessThanOrEqual(width.screen);
+    });
+  }
 });

@@ -2,7 +2,7 @@
 title: Política de tratamiento de datos personales
 description: Cómo XASKA trata los datos personales que recibe por el sitio xaska.co, conforme a la Ley 1581 de 2012.
 reviewed: true
-updated: '2026-11-02'
+updated: '2026-11-18'
 ---
 
 Esta política explica cómo tratamos los datos personales que nos envías por el sitio web **xaska.co** (formulario de contacto, correo y WhatsApp). Cumple la Ley Estatutaria 1581 de 2012 y su reglamentación (Decreto 1377 de 2013, compilado en el Decreto Único 1074 de 2015).
@@ -15,7 +15,7 @@ El uso de **XASKA POS** (`app.xaska.co`) tiene su propia [política de privacida
 - **Dirección para notificaciones:** Carrera 10 # 122-39, Ibagué, Tolima.
 - **Ciudad:** Ibagué, Tolima, Colombia.
 - **Correo:** soporte@xaska.co
-- **WhatsApp:** +57 316 778 4193
+- **WhatsApp:** +57 324 556 0729
 
 ## 2. Qué datos recogemos
 
@@ -30,6 +30,7 @@ No pedimos datos sensibles ni datos de niños, niñas o adolescentes. Por favor 
 - Responder tu solicitud, pregunta o petición de cotización.
 - Enviarte la información que nos pediste sobre XASKA POS o nuestros servicios.
 - Llevar un registro de las conversaciones para darte un mejor seguimiento.
+- Responderte por WhatsApp a cualquier hora: los mensajes los atiende primero un asistente de inteligencia artificial, que usa servicios de proveedores tecnológicos solo para entender tu mensaje y responderte. Si el asistente no puede resolverlo, la conversación pasa a una persona de XASKA.
 - Proteger el sitio contra el abuso y los envíos automáticos.
 
 No vendemos ni alquilamos tus datos, y no te enviaremos publicidad que no hayas pedido.

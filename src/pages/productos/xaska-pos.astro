@@ -227,7 +227,11 @@ const landings = (await getCollection('landings')).sort((a, b) => a.data.order -
 
     <div class="bento mt-4 rounded-panel p-2 sm:p-4">
       <h3 class="px-4 pt-4 text-lg">{pos.plans.comparison.title}</h3>
-      <div class="mt-2 overflow-x-auto" tabindex="0" aria-label={pos.plans.comparison.title}>
+      <div
+        class="relative mt-2 overflow-x-auto"
+        tabindex="0"
+        aria-label={pos.plans.comparison.title}
+      >
         <table class="w-full min-w-[40rem] border-collapse text-left">
           <thead>
             <tr class="border-b border-line">
