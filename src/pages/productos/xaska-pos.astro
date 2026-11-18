@@ -1,6 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Icon from '@/components/Icon.astro';
+import SegmentGlyph from '@/components/SegmentGlyph.astro';
 import LiveCheckout from '@/components/LiveCheckout.astro';
 import PosScreen from '@/components/PosScreen.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -114,13 +115,15 @@ const landings = (await getCollection('landings')).sort((a, b) => a.data.order -
         <p class="max-w-(--container-prose) text-lg">{pos.audience.text}</p>
         <ul class="flex flex-wrap gap-2" aria-label="XASKA POS para tu tipo de negocio">
           {landings.map((item) => (
-            <li>
+            <li class={`seg-${item.id}`}>
               <a
                 href={`/para/${item.id}`}
-                class="press inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong px-5 font-semibold hover:border-accent hover:bg-accent-soft"
+                class="press inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-5 font-semibold hover:border-(--seg)"
               >
+                <span class="text-(--seg-strong)">
+                  <SegmentGlyph segment={item.id} size={18} />
+                </span>
                 Para {item.data.name.toLowerCase()}
-                <Icon name="arrow" size={18} />
               </a>
             </li>
           ))}

@@ -359,11 +359,13 @@ test.describe('ASKA viva', () => {
   });
 });
 
-test.describe('landings por tipo de negocio', () => {
+test.describe('secciones por tipo de negocio', () => {
   const landings = [
+    { path: '/para/restaurantes', from: 'restaurantes y bares', plan: 'Negocio' },
+    { path: '/para/tiendas', from: 'tiendas', plan: 'Emprende' },
+    { path: '/para/servicios', from: 'negocios de servicios', plan: 'Negocio' },
+    { path: '/para/droguerias', from: 'droguerías', plan: 'Negocio' },
     { path: '/para/distribuidores', from: 'distribuidores', plan: 'Negocio' },
-    { path: '/para/papelerias', from: 'papelerías', plan: 'Emprende' },
-    { path: '/para/restaurantes', from: 'restaurantes', plan: 'Negocio' },
   ];
   for (const landing of landings) {
     test(`${landing.path} lleva a WhatsApp con su propio mensaje y su plan`, async ({ page }) => {
@@ -376,10 +378,131 @@ test.describe('landings por tipo de negocio', () => {
     });
   }
 
-  test('XASKA POS enlaza las tres landings', async ({ page }) => {
+  test('restaurante: la mesa cambia de estado y la cuenta se divide', async ({ page }) => {
+    await page.goto('/para/restaurantes');
+    const mesa1 = page.getByRole('button', { name: /Mesa 1/ });
+    await expect(mesa1).toContainText('Libre');
+    await mesa1.click();
+    await expect(mesa1).toContainText('En cocina');
+    await expect(mesa1).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: /Mesa 4/ }).click();
+    await page.getByRole('button', { name: '÷ 2' }).click();
+    await expect(page.locator('[data-bill-per]')).toContainText('Cada uno');
+  });
+
+  test('tienda: el producto pasa a la caja y se puede fiar', async ({ page }) => {
+    await page.goto('/para/tiendas');
+    await page.getByRole('button', { name: /Agregar Huevos x 12/ }).click();
+    await page.getByRole('button', { name: /Agregar Huevos x 12/ }).click();
+    await expect(page.locator('[data-lines]')).toContainText('2 × Huevos x 12');
+    await expect(page.locator('[data-total]')).toHaveText('$27.600');
+    await page.getByRole('button', { name: 'Fiar a Doña Rosa' }).click();
+    await expect(page.locator('[data-note]')).toContainText('$80.100');
+  });
+
+  test('servicios: el pedido pasa a la siguiente columna', async ({ page }) => {
+    await page.goto('/para/servicios');
+    const card = page.getByRole('button', { name: /Mantenimiento portátil.*En Listo/ });
+    await card.click();
+    const delivered = page.locator('[data-col="3"]');
+    await expect(delivered.getByText('Mantenimiento portátil')).toBeVisible();
+    await expect(delivered.getByText('Pagado $90.000')).toBeVisible();
+  });
+
+  test('droguería: vende del lote que vence primero', async ({ page }) => {
+    await page.goto('/para/droguerias');
+    await page.getByRole('button', { name: 'Vender 1 caja' }).click();
+    await expect(page.locator('[data-msg]').first()).toContainText('lote B11');
+    await expect(page.locator('[data-lot="0"] [data-qty]')).toHaveText('2');
+  });
+
+  test('distribuidora: el abono baja la cuenta de la tienda', async ({ page }) => {
+    await page.goto('/para/distribuidores');
+    await page.getByRole('button', { name: /Tienda Doña Rosa/ }).click();
+    await expect(page.locator('[data-debt]').first()).toHaveText('$86.500');
+    await page.getByRole('button', { name: 'Recibir abono de $20.000' }).click();
+    await expect(page.locator('[data-debt]').first()).toHaveText('$66.500');
+  });
+
+  test('XASKA POS enlaza las cinco secciones', async ({ page }) => {
     await page.goto('/productos/xaska-pos');
     const list = page.getByRole('list', { name: 'XASKA POS para tu tipo de negocio' });
-    await expect(list.getByRole('link')).toHaveCount(3);
+    await expect(list.getByRole('link')).toHaveCount(5);
+  });
+});
+
+test.describe('páginas de servicios', () => {
+  test('desarrollo a medida: las piezas arman el mensaje de WhatsApp', async ({ page }) => {
+    await page.goto('/servicios/desarrollo-a-medida');
+    await page.getByRole('button', { name: 'Agenda' }).click();
+    await page.getByRole('button', { name: 'Portal para clientes' }).click();
+    await expect(page.locator('[data-message]')).toHaveText(
+      'Hola, quiero un programa a la medida con pedidos, inventario y agenda.',
+    );
+    const href = decodeURIComponent((await page.locator('[data-send]').getAttribute('href')) ?? '');
+    expect(href).toContain('pedidos, inventario y agenda');
+  });
+
+  test('automatización: cambia de a mano a automático', async ({ page }) => {
+    await page.goto('/servicios/automatizacion');
+    await expect(page.locator('[data-steps]')).toContainText('Una persona');
+    await page.getByRole('button', { name: 'Automático' }).click();
+    await expect(page.locator('[data-steps]')).toContainText('El flujo arranca solo');
+    await page.getByRole('button', { name: 'Avisos' }).click();
+    await expect(page.locator('[data-steps]')).toContainText('Revisa todo');
+  });
+
+  test('páginas web: cambia el negocio y la pantalla', async ({ page }) => {
+    await page.goto('/servicios/paginas-web');
+    await page.getByRole('button', { name: 'Taller' }).click();
+    await expect(page.locator('[data-out="name"]')).toHaveText('Taller Motos Ya');
+    await page.getByRole('button', { name: 'Celular' }).click();
+    await expect(page.locator('[data-web]')).toHaveAttribute('data-device', 'celular');
+    await page.getByRole('button', { name: 'Color Verde' }).click();
+    await expect(page.locator('[data-web]')).toHaveAttribute('data-color', 'verde');
+  });
+
+  test('consultoría: cuatro respuestas dan una orientación', async ({ page }) => {
+    await page.goto('/servicios/consultoria');
+    for (const answer of [
+      'Copiar datos y armar reportes',
+      'En Excel',
+      'De 2 a 5',
+      'Ahorrar tiempo',
+    ]) {
+      await page.getByRole('button', { name: answer }).click();
+    }
+    await expect(page.locator('[data-result-title]')).toHaveText('Automatizar lo repetitivo');
+    await expect(page.locator('[data-result-title]')).toBeFocused();
+    await page.getByRole('button', { name: 'Empezar de nuevo' }).click();
+    await expect(page.locator('[data-step]')).toHaveText('Pregunta 1 de 4');
+  });
+
+  test('equipos: cada opción muestra lo que llega', async ({ page }) => {
+    await page.goto('/servicios/equipos-y-computadores');
+    await expect(page.locator('[data-grid] li')).toHaveCount(6);
+    await page.getByRole('button', { name: 'Alto rendimiento' }).click();
+    await expect(page.locator('[data-grid] li')).toHaveCount(3);
+    await expect(page.locator('[data-grid]')).toContainText('Equipo de alto rendimiento');
+  });
+
+  test('Servicios enlaza la página de cada servicio', async ({ page }) => {
+    await page.goto('/servicios');
+    const nav = page.getByRole('navigation', { name: 'Servicios' }).first();
+    await expect(nav.locator('a[href^="/servicios/"]')).toHaveCount(5);
+  });
+});
+
+test.describe('menú Para tu negocio', () => {
+  test('en escritorio abre las cinco secciones', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'escritorio', 'Solo en escritorio');
+    await page.goto('/');
+    const menu = page.getByRole('navigation', { name: 'Principal', exact: true });
+    await menu.getByText('Para tu negocio').click();
+    await expect(menu.locator('a[href^="/para/"]')).toHaveCount(5);
+    await expect(menu.getByRole('link', { name: 'Droguerías' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(menu.getByRole('link', { name: 'Droguerías' })).toBeHidden();
   });
 });
 

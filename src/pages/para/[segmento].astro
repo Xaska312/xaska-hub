@@ -1,25 +1,29 @@
 ---
 /**
- * Landing por tipo de negocio: /para/distribuidores, /para/papelerias, /para/restaurantes.
- * Contenido en src/content/landings/<segmento>.yaml.
+ * Sección por tipo de negocio: /para/restaurantes, /para/tiendas, /para/servicios,
+ * /para/droguerias y /para/distribuidores. Contenido en src/content/landings/<segmento>.yaml;
+ * colores en src/styles/segments.css; ilustración interactiva en src/components/scenes/.
  *
  * Hecha para anuncios y visitas: un solo objetivo, escribir por WhatsApp. El mensaje prellenado
- * es distinto en cada landing, así Daniel sabe de cuál llegó cada conversación (sin rastreo).
+ * es distinto en cada sección, así Daniel sabe de cuál llegó cada conversación (sin rastreo).
  * "Probar gratis" queda como segunda opción, más discreta.
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Section from '@/components/Section.astro';
-import Card from '@/components/Card.astro';
 import Icon from '@/components/Icon.astro';
 import Steps from '@/components/Steps.astro';
 import Faq from '@/components/Faq.astro';
 import CTA from '@/components/CTA.astro';
 import WhatsAppButton from '@/components/WhatsAppButton.astro';
-import LiveRegister from '@/components/LiveRegister.astro';
-import PosScreen from '@/components/PosScreen.astro';
-import { contact, products, primaryCta, site } from '@/config/site';
+import SegmentGlyph from '@/components/SegmentGlyph.astro';
+import RestaurantScene from '@/components/scenes/RestaurantScene.astro';
+import StoreScene from '@/components/scenes/StoreScene.astro';
+import ServicesScene from '@/components/scenes/ServicesScene.astro';
+import PharmacyScene from '@/components/scenes/PharmacyScene.astro';
+import RouteScene from '@/components/scenes/RouteScene.astro';
+import { contact, products, primaryCta } from '@/config/site';
 import { faqPage } from '@/lib/structured-data';
 
 export const getStaticPaths = (async () => {
@@ -27,8 +31,20 @@ export const getStaticPaths = (async () => {
   return landings.map((entry) => ({ params: { segmento: entry.id }, props: { entry } }));
 }) satisfies GetStaticPaths;
 
+const scenes = {
+  restaurantes: RestaurantScene,
+  tiendas: StoreScene,
+  servicios: ServicesScene,
+  droguerias: PharmacyScene,
+  distribuidores: RouteScene,
+} as const;
+
 const { entry } = Astro.props;
 const page = entry.data;
+const segment = entry.id as keyof typeof scenes;
+const Scene = scenes[segment];
+if (!Scene) throw new Error(`Falta la ilustración de /para/${entry.id} en src/components/scenes/`);
+
 const pos = (await getEntry('pos', 'index'))?.data;
 if (!pos) throw new Error('Falta src/content/pos/index.yaml');
 const plan = pos.plans.items.find((item) => item.name === page.pricing.plan);
@@ -43,14 +59,15 @@ const steps = [
     text: 'Por WhatsApp, con lo que vendes y cómo trabajas hoy. Nuestro asistente te responde al instante y, si hace falta, te pasa con Daniel.',
   },
   {
-    title: 'Míralo con tus productos',
-    text: 'En 10 minutos te mostramos XASKA POS con productos como los tuyos, sin compromiso.',
+    title: 'Míralo con lo tuyo',
+    text: 'En 10 minutos te mostramos XASKA POS con productos y trabajos como los tuyos, sin compromiso.',
   },
   {
     title: 'Pruébalo 14 días gratis',
     text: 'Sin tarjeta. Si te sirve, eliges tu plan; si no, no pagas nada.',
   },
 ];
+const wide = page.hero.layout === 'wide';
 ---
 
 <BaseLayout
@@ -59,157 +76,151 @@ const steps = [
   whatsappMessage={page.whatsapp}
   jsonLd={[faqPage(page.faq)]}
 >
-  <section class="pt-6 pb-4 sm:pt-10" aria-labelledby="landing">
-    <div class="mx-auto grid w-full max-w-(--container-page) items-center gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
-      <div class="flex flex-col gap-6 lg:col-span-5">
-        <div class="flex flex-wrap gap-2">
-          <span class="chip">{page.chip}</span>
-          <span class="chip">Hecho en {site.city.split(',')[0]}</span>
-        </div>
-        <h1
-          id="landing"
-          class="text-[2.4rem] leading-[1.04] sm:text-5xl lg:text-[3.2rem] lg:leading-[1.03]"
+  <div class:list={['seg-page pb-8', `seg-${segment}`]}>
+    <section class="pt-6 pb-4 sm:pt-10" aria-labelledby="landing">
+      <div
+        class:list={[
+          'mx-auto grid w-full max-w-(--container-page) gap-10 px-4 sm:px-6 lg:gap-12 lg:px-8',
+          !wide && 'items-center lg:grid-cols-12',
+        ]}
+      >
+        <div
+          class:list={[
+            'flex min-w-0 flex-col gap-6',
+            wide ? 'lg:flex-row lg:items-end lg:justify-between' : 'lg:col-span-5',
+          ]}
         >
-          {page.hero.title}
-        </h1>
-        <p class="max-w-[44ch] text-lg font-medium text-muted">{page.hero.lead}</p>
-        <div class="flex flex-wrap items-center gap-3">
-          <WhatsAppButton message={page.whatsapp} label="Quiero verlo" variant="solid" />
-          <CTA href={primaryCta.href} variant="secondary" external>
-            Probar gratis 14 días
-          </CTA>
-        </div>
-        <p class="text-sm text-muted">{contact.assistant}</p>
-      </div>
-      <div class="min-w-0 lg:col-span-7">
-        {page.hero.screen === 'register' ? (
-          <LiveRegister products={page.hero.products} caption={page.hero.caption} />
-        ) : (
-          <div class="mx-auto max-w-xl">
-            <PosScreen
-              screen={page.hero.screen}
-              title={page.hero.screenTitle}
-              description={page.hero.screenDescription}
-            />
-            <p class="mt-3 px-2 text-sm text-muted">Datos de ejemplo.</p>
+          <div class="flex min-w-0 flex-col gap-6">
+            <span class="seg-chip self-start">
+              <SegmentGlyph segment={segment} size={18} />
+              {page.chip}
+            </span>
+            <h1
+              id="landing"
+              class:list={[
+                'text-[2.4rem] leading-[1.04] sm:text-5xl lg:text-[3.2rem] lg:leading-[1.03]',
+                wide && 'max-w-[18ch]',
+              ]}
+            >
+              {page.hero.title}
+            </h1>
+            <p class="max-w-[48ch] text-lg font-medium text-muted">{page.hero.lead}</p>
           </div>
-        )}
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-wrap items-center gap-3">
+              <WhatsAppButton message={page.whatsapp} label={page.hero.cta} variant="segment" />
+              <CTA href={primaryCta.href} variant="secondary" external>
+                Probar gratis 14 días
+              </CTA>
+            </div>
+            <p class="max-w-[44ch] text-sm text-muted">{contact.assistant}</p>
+          </div>
+        </div>
+        <div class:list={['min-w-0', !wide && 'lg:col-span-7']}>
+          <Scene />
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <Section labelledby="resuelve">
-    <h2 id="resuelve" class="text-3xl sm:text-4xl">
-      {page.pains.title}
-    </h2>
-    <ul class="mt-8 grid gap-4 sm:grid-cols-2">
-      {page.pains.items.map((item) => (
-        <li class="bento flex flex-col gap-4 rounded-panel p-6 sm:p-8">
-          <span class="icon-tile">
-            <Icon name={item.icon} />
-          </span>
-          <h3 class="text-xl">{item.title}</h3>
-          <p class="text-muted">{item.text}</p>
-        </li>
-      ))}
-    </ul>
-  </Section>
+    <Section labelledby="momentos">
+      <h2 id="momentos" class="text-3xl sm:text-4xl">
+        {page.moments.title}
+      </h2>
+      <ol class="mt-8 grid gap-4 md:grid-cols-3">
+        {page.moments.items.map((item) => (
+          <li class="seg-moment flex flex-col gap-2 p-6 sm:p-7">
+            <span class="seg-moment-time text-sm font-extrabold text-(--seg-strong)">
+              {item.time}
+            </span>
+            <h3 class="text-xl">{item.title}</h3>
+            <p class="seg-moment-text text-muted">{item.text}</p>
+          </li>
+        ))}
+      </ol>
+    </Section>
 
-  <Section labelledby="pantallas">
-    <h2 id="pantallas" class="text-3xl sm:text-4xl">
-      {page.screens.title}
-    </h2>
-    <ul class="mt-8 grid gap-4 md:grid-cols-2">
-      {page.screens.items.map((item) => (
-        <li class="flex">
-          <figure class="bento flex w-full flex-col gap-3 rounded-panel p-2 sm:p-3">
-            <PosScreen
-              screen={item.screen}
-              title={item.title}
-              description={item.description}
-              class="flex-1"
-            />
-            <figcaption class="px-3 pb-2 text-sm text-muted">{item.caption}</figcaption>
-          </figure>
-        </li>
-      ))}
-    </ul>
-    <p class="mt-4 text-sm text-muted">Datos de ejemplo de un negocio de prueba.</p>
-  </Section>
+    <Section labelledby="empieza">
+      <h2 id="empieza" class="text-3xl sm:text-4xl">
+        Así empiezas
+      </h2>
+      <div class="mt-8">
+        <Steps steps={steps} />
+      </div>
+    </Section>
 
-  <Section labelledby="empieza">
-    <h2 id="empieza" class="text-3xl sm:text-4xl">
-      Así empiezas
-    </h2>
-    <div class="mt-8">
-      <Steps steps={steps} />
-    </div>
-  </Section>
-
-  <Section labelledby="precio">
-    <div class="grid gap-4 lg:grid-cols-12">
-      <Card tone="deep" size="panel" class="flex flex-col justify-between gap-8 lg:col-span-7">
-        <div>
-          <span class="chip">Plan {plan.name}</span>
-          <h2 id="precio" class="mt-6 text-3xl sm:text-4xl">
-            {plan.price} <span class="text-xl font-semibold text-muted">al mes</span>
-          </h2>
-          <p class="mt-3 text-lg text-muted">
-            {plan.limits}. {page.pricing.note}
-          </p>
-          <p class="mt-2 text-muted">O {plan.annual}: pagas 10 meses.</p>
+    <Section labelledby="precio">
+      <div class="grid gap-4 lg:grid-cols-12">
+        <div class="seg-panel flex flex-col justify-between gap-8 rounded-panel p-7 sm:p-10 lg:col-span-7">
+          <div>
+            <span class="inline-flex rounded-full bg-white/15 px-3.5 py-2 text-sm font-bold">
+              Plan {plan.name}
+            </span>
+            <h2 id="precio" class="mt-6 text-3xl sm:text-4xl">
+              {plan.price} <span class="seg-panel-muted text-xl font-semibold">al mes</span>
+            </h2>
+            <p class="seg-panel-muted mt-3 text-lg">
+              {plan.limits}. {page.pricing.note}
+            </p>
+            <p class="seg-panel-muted mt-2">O {plan.annual}: pagas 10 meses.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-4">
+            <WhatsAppButton message={page.whatsapp} label={page.hero.cta} variant="segment" />
+            <a
+              class="font-semibold text-white underline underline-offset-4"
+              href={`${products.pos.path}#planes-seccion`}
+            >
+              Ver todos los planes
+            </a>
+          </div>
         </div>
-        <div class="flex flex-wrap items-center gap-3">
-          <WhatsAppButton message={page.whatsapp} label="Quiero verlo" variant="solid" />
-          <a class="link font-semibold" href={`${products.pos.path}#planes-seccion`}>
-            Ver todos los planes
-          </a>
+        <div class="bento flex flex-col gap-4 rounded-panel p-7 lg:col-span-5">
+          <h3 class="text-lg">Incluye</h3>
+          <ul class="flex flex-col gap-3">
+            {plan.features.map((feature) => (
+              <li class="flex gap-3">
+                <span class="text-(--seg-strong)">
+                  <Icon name="check" size={20} />
+                </span>
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="mt-auto text-sm text-muted">14 días de prueba gratis, sin tarjeta.</p>
         </div>
-      </Card>
-      <Card class="flex flex-col gap-4 lg:col-span-5">
-        <h3 class="text-lg">Incluye</h3>
-        <ul class="flex flex-col gap-3">
-          {plan.features.map((feature) => (
-            <li class="flex gap-3">
-              <span class="text-accent">
-                <Icon name="check" size={20} />
+      </div>
+    </Section>
+
+    <Section labelledby="preguntas-landing">
+      <Faq title="Preguntas frecuentes" items={page.faq} headingId="preguntas-landing" />
+    </Section>
+
+    <Section labelledby="otros">
+      <h2 id="otros" class="text-2xl">
+        ¿Tienes otro tipo de negocio?
+      </h2>
+      <ul class="mt-6 flex flex-wrap gap-2">
+        {others.map((item) => (
+          <li class={`seg-${item.id}`}>
+            <a
+              href={`/para/${item.id}`}
+              class="press inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-5 font-semibold hover:border-(--seg)"
+            >
+              <span class="text-(--seg-strong)">
+                <SegmentGlyph segment={item.id} size={18} />
               </span>
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
-        <p class="mt-auto text-sm text-muted">14 días de prueba gratis, sin tarjeta.</p>
-      </Card>
-    </div>
-  </Section>
-
-  <Section labelledby="preguntas-landing">
-    <Faq title="Preguntas frecuentes" items={page.faq} headingId="preguntas-landing" />
-  </Section>
-
-  <Section labelledby="otros">
-    <h2 id="otros" class="text-2xl">
-      ¿Tienes otro tipo de negocio?
-    </h2>
-    <ul class="mt-6 flex flex-wrap gap-2">
-      {others.map((item) => (
+              {item.data.name}
+            </a>
+          </li>
+        ))}
         <li>
           <a
-            href={`/para/${item.id}`}
-            class="press inline-flex min-h-11 items-center rounded-full border border-line-strong px-5 font-semibold hover:border-accent hover:bg-accent-soft"
+            href={products.pos.path}
+            class="press inline-flex min-h-11 items-center rounded-full border border-line-strong bg-surface px-5 font-semibold hover:border-ink"
           >
-            {item.data.name}
+            Todo sobre XASKA POS
           </a>
         </li>
-      ))}
-      <li>
-        <a
-          href={products.pos.path}
-          class="press inline-flex min-h-11 items-center rounded-full border border-line-strong px-5 font-semibold hover:border-accent hover:bg-accent-soft"
-        >
-          Todos los negocios
-        </a>
-      </li>
-    </ul>
-  </Section>
+      </ul>
+    </Section>
+  </div>
 </BaseLayout>

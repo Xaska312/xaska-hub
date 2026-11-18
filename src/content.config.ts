@@ -115,6 +115,15 @@ const services = defineCollection({
     forWho: text,
     examples: z.array(text).min(2).max(6),
     deliverables: z.array(text).min(2).max(6),
+    // Página propia del servicio (/servicios/<archivo>), con su color en segments.css y su
+    // ilustración interactiva en src/components/services/.
+    seo: z.object({ title: text, description: text }),
+    hero: z.object({ title: text, lead: text, cta: text }),
+    whatsapp: text,
+    highlights: z
+      .array(z.object({ title: text, text: text }))
+      .min(3)
+      .max(4),
   }),
 });
 
@@ -298,31 +307,10 @@ const faq = defineCollection({
 });
 
 /**
- * Landings por tipo de negocio (/para/<archivo>): un solo botón (WhatsApp con mensaje propio, para
- * saber de qué landing llegó cada conversación), pantallas vivas y preguntas de ese negocio.
+ * Secciones por tipo de negocio (/para/<archivo>): cada una con su color, su ilustración
+ * interactiva (src/components/scenes/) y un solo botón (WhatsApp con mensaje propio, para saber
+ * de qué sección llegó cada conversación).
  */
-const iconName = z.enum([
-  'cart',
-  'code',
-  'globe',
-  'zap',
-  'monitor',
-  'compass',
-  'chat',
-  'mail',
-  'pin',
-  'arrow',
-  'register',
-  'box',
-  'book',
-  'chart',
-  'users',
-  'check',
-  'camera',
-  'sparkle',
-  'store',
-]);
-const screenItem = z.object({ screen: posScreen, title: text, caption: text, description: text });
 const landings = defineCollection({
   loader: glob({ pattern: '*.yaml', base: './src/content/landings' }),
   schema: z.object({
@@ -331,33 +319,18 @@ const landings = defineCollection({
     seo: z.object({ title: text, description: text }),
     whatsapp: text,
     chip: text,
-    hero: z.discriminatedUnion('screen', [
-      z.object({
-        screen: z.literal('register'),
-        title: text,
-        lead: text,
-        caption: text,
-        products: z
-          .array(z.object({ name: text, price: z.number().int().positive() }))
-          .min(3)
-          .max(6),
-      }),
-      z.object({
-        screen: posScreen,
-        title: text,
-        lead: text,
-        screenTitle: text,
-        screenDescription: text,
-      }),
-    ]),
-    pains: z.object({
+    hero: z.object({
       title: text,
-      items: z
-        .array(z.object({ icon: iconName, title: text, text: text }))
-        .min(3)
-        .max(4),
+      lead: text,
+      // 'side': la ilustración al lado del título; 'wide': debajo, a todo el ancho.
+      layout: z.enum(['side', 'wide']),
+      cta: text,
     }),
-    screens: z.object({ title: text, items: z.array(screenItem).min(1).max(3) }),
+    // Tres momentos del día del negocio; el último va en el panel oscuro.
+    moments: z.object({
+      title: text,
+      items: z.array(z.object({ time: text, title: text, text: text })).length(3),
+    }),
     // Plan que necesita este negocio: el precio sale de los planes de XASKA POS.
     pricing: z.object({ plan: z.enum(['Emprende', 'Negocio', 'Empresa']), note: text }),
     faq: z

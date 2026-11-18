@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './segments.css';
 
 /*
  * Tokens de diseño de XASKA. Único lugar donde se definen colores, tipografía,

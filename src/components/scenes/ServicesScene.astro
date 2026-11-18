@@ -1,0 +1,286 @@
+---
+/**
+ * Ilustración interactiva de un negocio de servicios: el tablero de pedidos de XASKA POS
+ * (cotizado → en proceso → listo → entregado). Cada toque mueve el trabajo a la siguiente
+ * columna y actualiza el saldo. Trabajos, clientes y valores de ejemplo.
+ */
+import { formatPesos } from '@/lib/money';
+
+const columns = ['Cotizado', 'En proceso', 'Listo', 'Entregado'];
+const jobs = [
+  {
+    name: 'Impresión 500 volantes',
+    who: 'Panadería El Trigal',
+    total: 180000,
+    advance: 0,
+    due: 'Viernes',
+    at: 0,
+  },
+  {
+    name: 'Cambio de pantalla',
+    who: 'Cliente de mostrador',
+    total: 120000,
+    advance: 50000,
+    due: 'Jueves',
+    at: 1,
+  },
+  {
+    name: 'Instalación de cámaras',
+    who: 'Tienda La 15',
+    total: 640000,
+    advance: 300000,
+    due: 'Ayer',
+    at: 1,
+  },
+  {
+    name: 'Mantenimiento portátil',
+    who: 'Oficina contable',
+    total: 90000,
+    advance: 40000,
+    due: 'Hoy',
+    at: 2,
+  },
+  {
+    name: 'Pendón 2 × 1 m',
+    who: 'Colegio San José',
+    total: 75000,
+    advance: 0,
+    due: 'Lunes',
+    at: 0,
+  },
+];
+
+function moneyText(job: (typeof jobs)[number], stage: number) {
+  if (stage === 0) return `Cotizado ${formatPesos(job.total)}`;
+  if (stage === 3) return `Pagado ${formatPesos(job.total)}`;
+  return `Saldo ${formatPesos(job.total - Math.max(job.advance, Math.round(job.total / 2)))}`;
+}
+function dueText(job: (typeof jobs)[number], stage: number) {
+  if (stage === 3) return 'Entregado';
+  return job.due === 'Ayer' ? 'Atrasado' : job.due;
+}
+---
+
+<div class="sv" data-services data-jobs={JSON.stringify(jobs)}>
+  <div class="sv-tools" aria-hidden="true">
+    <svg viewBox="0 0 24 24">
+      <path d="M14.5 5.5a4 4 0 0 0-5 5L4 16v4h4l5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"></path>
+    </svg>
+    <svg viewBox="0 0 24 24">
+      <path d="M6 9V3h12v6"></path>
+      <rect x="3" y="9" width="18" height="8" rx="2"></rect>
+      <path d="M7 14h10v7H7z"></path>
+    </svg>
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"></path>
+    </svg>
+  </div>
+  <p class="sv-title">Tablero de pedidos · toca un pedido para moverlo</p>
+  <div class="sv-board">
+    {columns.map((column, ci) => (
+      <div class="sv-col" data-col={ci}>
+        <p class="sv-col-head">
+          <span>{column}</span>
+          <span data-count>{jobs.filter((job) => job.at === ci).length}</span>
+        </p>
+        <div class="sv-cards" data-cards>
+          {jobs.map((job, i) =>
+            job.at === ci ? (
+              <button
+                type="button"
+                class="sv-card press"
+                data-job={i}
+                data-stage={job.at}
+                data-late={job.due === 'Ayer' ? '' : undefined}
+              >
+                <span class="sv-card-name">{job.name}</span>
+                <span class="sr-only" data-hint>
+                  {`En ${column}. Pasar a ${columns[(ci + 1) % 4]}.`}
+                </span>
+                <span class="sv-card-who">{job.who}</span>
+                <span class="sv-card-foot">
+                  <span data-money>{moneyText(job, job.at)}</span>
+                  <span class="sv-due" data-due>
+                    {dueText(job, job.at)}
+                  </span>
+                </span>
+              </button>
+            ) : null,
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+  <p class="sv-foot" aria-live="polite" data-msg>
+    Datos de ejemplo. Al entregar, el saldo queda pagado y entra al cierre de caja.
+  </p>
+</div>
+
+<style>
+  .sv {
+    position: relative;
+    border-radius: 2.5rem;
+    background-color: var(--seg-soft);
+    padding: 1.25rem;
+  }
+  .sv-tools {
+    position: absolute;
+    top: 1.375rem;
+    right: 1.875rem;
+    display: none;
+    gap: 0.875rem;
+    opacity: 0.9;
+  }
+  .sv-tools svg {
+    width: 2.5rem;
+    height: 2.5rem;
+    fill: none;
+    stroke: var(--seg);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sv-title {
+    margin-bottom: 1.125rem;
+    color: var(--seg-strong);
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+  .sv-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: 0.875rem;
+  }
+  .sv-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    min-height: 8rem;
+    border-radius: 1.4rem;
+    background-color: rgb(255 255 255 / 0.55);
+    padding: 0.75rem;
+  }
+  :global(:root[data-theme='dark']) .sv-col {
+    background-color: rgb(0 0 0 / 0.25);
+  }
+  .sv-col-head {
+    display: flex;
+    justify-content: space-between;
+    color: var(--seg-strong);
+    font-size: 0.875rem;
+    font-weight: 800;
+  }
+  .sv-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .sv-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    border-radius: 1rem;
+    background-color: #ffffff;
+    padding: 0.75rem;
+    color: #1c1206;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 10px 20px -16px #78350f;
+  }
+  .sv-card[data-stage='3'] {
+    background-color: #ecfdf5;
+  }
+  .sv-card-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+  .sv-card-who {
+    color: #4a3820;
+    font-size: 0.8125rem;
+  }
+  .sv-card-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .sv-due {
+    color: #78350f;
+  }
+  .sv-card[data-late]:not([data-stage='3']) .sv-due {
+    color: #9f1239;
+  }
+  .sv-foot {
+    margin-top: 0.875rem;
+    color: var(--seg-strong);
+    font-size: 0.8125rem;
+  }
+  @media (min-width: 768px) {
+    .sv {
+      padding: 1.75rem;
+    }
+    .sv-tools {
+      display: flex;
+    }
+    .sv-board {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .sv-col {
+      min-height: 17.5rem;
+    }
+  }
+</style>
+
+<script>
+  import { formatPesos } from '@/lib/money';
+
+  type Job = { name: string; total: number; advance: number; due: string };
+  const COLUMNS = ['Cotizado', 'En proceso', 'Listo', 'Entregado'];
+
+  document.querySelectorAll<HTMLElement>('[data-services]').forEach((root) => {
+    const jobs = JSON.parse(root.dataset.jobs ?? '[]') as Job[];
+    const cols = [...root.querySelectorAll<HTMLElement>('[data-col]')];
+    const msg = root.querySelector<HTMLElement>('[data-msg]');
+
+    function update(card: HTMLButtonElement, stage: number) {
+      const job = jobs[Number(card.dataset.job)];
+      if (!job) return;
+      card.dataset.stage = String(stage);
+      const money = card.querySelector('[data-money]');
+      const due = card.querySelector('[data-due]');
+      if (money) {
+        money.textContent =
+          stage === 0
+            ? `Cotizado ${formatPesos(job.total)}`
+            : stage === 3
+              ? `Pagado ${formatPesos(job.total)}`
+              : `Saldo ${formatPesos(job.total - Math.max(job.advance, Math.round(job.total / 2)))}`;
+      }
+      if (due)
+        due.textContent = stage === 3 ? 'Entregado' : job.due === 'Ayer' ? 'Atrasado' : job.due;
+      const hint = card.querySelector('[data-hint]');
+      if (hint) hint.textContent = `En ${COLUMNS[stage]}. Pasar a ${COLUMNS[(stage + 1) % 4]}.`;
+      if (msg) msg.textContent = `${job.name}: ${COLUMNS[stage]?.toLowerCase()}.`;
+    }
+
+    function counts() {
+      cols.forEach((col) => {
+        const count = col.querySelector('[data-count]');
+        if (count) count.textContent = String(col.querySelectorAll('.sv-card').length);
+      });
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('.sv-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        const stage = ((Number(card.dataset.stage) || 0) + 1) % 4;
+        cols[stage]?.querySelector('[data-cards]')?.append(card);
+        update(card, stage);
+        counts();
+        card.focus();
+      });
+    });
+  });
+</script>

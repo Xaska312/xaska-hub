@@ -1,0 +1,258 @@
+---
+/**
+ * Equipos y computadores: el visitante elige qué necesita (punto de venta, oficina o alto
+ * rendimiento) y ve lo que le llega. Sin precios: se cotiza según el uso y el presupuesto.
+ */
+const kits = [
+  {
+    label: 'Punto de venta completo',
+    note: 'Todo lo que necesitas para empezar a vender con sistema, en una sola entrega.',
+    items: [
+      ['pc', 'Computador', 'Para la caja, con el sistema listo.'],
+      ['scan', 'Lector de código de barras', 'Para vender rápido, sin digitar.'],
+      ['print', 'Impresora térmica', 'Tiquetes de 58 u 80 mm, con su papel.'],
+      ['drawer', 'Cajón monedero', 'Se abre solo al cobrar.'],
+      ['power', 'UPS', 'Para que un apagón no te deje sin caja.'],
+      ['gear', 'Instalación', 'Todo conectado, configurado y probado.'],
+    ],
+  },
+  {
+    label: 'Computador de oficina',
+    note: 'Armado a la medida de lo que hace tu equipo, sin pagar por lo que no usa.',
+    items: [
+      ['pc', 'Computador a la medida', 'Según los programas que usas.'],
+      ['gear', 'Configuración', 'Sistema, programas y respaldo listos.'],
+      ['power', 'Protección eléctrica', 'Para cuidar el equipo.'],
+    ],
+  },
+  {
+    label: 'Alto rendimiento',
+    note: 'Para diseño, video o juegos, con las piezas elegidas para tu trabajo.',
+    items: [
+      ['pc', 'Equipo de alto rendimiento', 'Procesador y tarjeta de video según tu uso.'],
+      ['gear', 'Ensamble y pruebas', 'Probado a fondo antes de entregarlo.'],
+      ['power', 'Energía estable', 'Fuente y protección a la altura.'],
+    ],
+  },
+];
+const icons: Record<string, string> = {
+  pc: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+  scan: '<path d="M4 7V5h3M17 5h3v2M20 17v2h-3M7 19H4v-2M8 9v6M11 9v6M14 9v6M17 9v6"/>',
+  print:
+    '<path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="7" rx="2"/><path d="M7 14h10v7H7z"/>',
+  drawer: '<rect x="3" y="7" width="18" height="11" rx="2"/><path d="M3 12h18M10 15h4"/>',
+  power: '<path d="M13 3 6 13h5l-1 8 7-10h-5z"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',
+};
+const first = kits[0];
+if (!first) throw new Error('Faltan los equipos de ejemplo');
+---
+
+<div class="kc" data-kits={JSON.stringify(kits)} data-icons={JSON.stringify(icons)}>
+  <div class="kc-tabs" role="group" aria-label="Qué necesitas">
+    {kits.map((kit, i) => (
+      <button
+        type="button"
+        class="kc-tab press"
+        data-kit={i}
+        aria-pressed={i === 0 ? 'true' : 'false'}
+      >
+        {kit.label}
+      </button>
+    ))}
+  </div>
+  <ul class="kc-grid" data-grid>
+    {first.items.map(([icon, title, text]) => (
+      <li class="kc-item">
+        <span class="kc-icon">
+          <svg aria-hidden="true" viewBox="0 0 24 24" set:html={icons[icon ?? 'pc']} />
+        </span>
+        <span class="kc-title">{title}</span>
+        <span class="kc-text">{text}</span>
+      </li>
+    ))}
+  </ul>
+  <div class="kc-foot">
+    <span aria-live="polite" data-note>
+      {first.note}
+    </span>
+    <span class="kc-badge">Instalado y listo para trabajar</span>
+  </div>
+</div>
+
+<style>
+  .kc {
+    display: flex;
+    flex-direction: column;
+    gap: 1.375rem;
+    border-radius: 2.5rem;
+    background-color: #0f172a;
+    background-image:
+      linear-gradient(rgb(148 163 184 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(148 163 184 / 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    padding: 1.25rem;
+    color: #ffffff;
+  }
+  .kc-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+  }
+  .kc-tab {
+    min-height: 3rem;
+    border-radius: 0.875rem;
+    background-color: rgb(255 255 255 / 0.08);
+    padding: 0 1.125rem;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1.5px rgb(148 163 184 / 0.4);
+  }
+  .kc-tab[aria-pressed='true'] {
+    background-color: #a3e635;
+    color: #1a2e05;
+    box-shadow: none;
+  }
+  .kc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    gap: 0.875rem;
+  }
+  .kc-grid :global(.kc-item) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    border-radius: 1.4rem 0.5rem 1.4rem 1.4rem;
+    background-color: rgb(255 255 255 / 0.05);
+    padding: 1.125rem;
+    box-shadow: inset 0 0 0 1px rgb(148 163 184 / 0.25);
+    animation: pop 420ms var(--ease-bounce) both;
+  }
+  .kc-grid :global(.kc-item:nth-child(even)) {
+    border-radius: 1.4rem 1.4rem 1.4rem 0.5rem;
+  }
+  .kc-grid :global(.kc-item:nth-child(2)) {
+    animation-delay: 60ms;
+  }
+  .kc-grid :global(.kc-item:nth-child(3)) {
+    animation-delay: 120ms;
+  }
+  .kc-grid :global(.kc-item:nth-child(4)) {
+    animation-delay: 180ms;
+  }
+  .kc-grid :global(.kc-item:nth-child(5)) {
+    animation-delay: 240ms;
+  }
+  .kc-grid :global(.kc-item:nth-child(6)) {
+    animation-delay: 300ms;
+  }
+  .kc-grid :global(.kc-icon) {
+    display: inline-flex;
+    width: 3.5rem;
+    height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    background-color: #1e293b;
+    color: #a3e635;
+  }
+  .kc-grid :global(.kc-icon svg) {
+    width: 1.875rem;
+    height: 1.875rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .kc-grid :global(.kc-title) {
+    font-size: 1.0625rem;
+    font-weight: 800;
+  }
+  .kc-grid :global(.kc-text) {
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .kc-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 1.125rem;
+    background-color: rgb(255 255 255 / 0.06);
+    padding: 0.875rem 1rem;
+    color: #e2e8f0;
+    font-size: 0.9375rem;
+  }
+  .kc-badge {
+    margin-left: auto;
+    border-radius: 999px;
+    background-color: #a3e635;
+    padding: 0.45rem 0.75rem;
+    color: #1a2e05;
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+  @media (min-width: 768px) {
+    .kc {
+      padding: 1.625rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kc-grid :global(.kc-item) {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  type Kit = { label: string; note: string; items: string[][] };
+  const SVG = 'http://www.w3.org/2000/svg';
+
+  document.querySelectorAll<HTMLElement>('[data-kits]').forEach((root) => {
+    const kits = JSON.parse(root.dataset.kits ?? '[]') as Kit[];
+    const icons = JSON.parse(root.dataset.icons ?? '{}') as Record<string, string>;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-kit]')];
+    const grid = root.querySelector<HTMLElement>('[data-grid]');
+    const note = root.querySelector<HTMLElement>('[data-note]');
+    const parser = new DOMParser();
+    const iconNode = (name: string) => {
+      const doc = parser.parseFromString(
+        `<svg xmlns="${SVG}" viewBox="0 0 24 24" aria-hidden="true">${icons[name] ?? ''}</svg>`,
+        'image/svg+xml',
+      );
+      return document.importNode(doc.documentElement, true);
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => {
+        const kit = kits[index];
+        if (!kit) return;
+        tabs.forEach((other) =>
+          other.setAttribute('aria-pressed', other === tab ? 'true' : 'false'),
+        );
+        grid?.replaceChildren(
+          ...kit.items.map(([icon, title, text]) => {
+            const li = document.createElement('li');
+            li.className = 'kc-item';
+            const box = document.createElement('span');
+            box.className = 'kc-icon';
+            box.append(iconNode(icon ?? 'pc'));
+            const t = document.createElement('span');
+            t.className = 'kc-title';
+            t.textContent = title ?? '';
+            const d = document.createElement('span');
+            d.className = 'kc-text';
+            d.textContent = text ?? '';
+            li.append(box, t, d);
+            return li;
+          }),
+        );
+        if (note) note.textContent = kit.note;
+      });
+    });
+  });
+</script>

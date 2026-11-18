@@ -7,6 +7,7 @@ import Section from '@/components/Section.astro';
 import CTA from '@/components/CTA.astro';
 import Card from '@/components/Card.astro';
 import Icon from '@/components/Icon.astro';
+import SegmentGlyph from '@/components/SegmentGlyph.astro';
 import Steps from '@/components/Steps.astro';
 import RomboList from '@/components/RomboList.astro';
 import WhatsAppButton from '@/components/WhatsAppButton.astro';
@@ -33,6 +34,7 @@ const faq = faqEntry.data;
 const home = entry.data;
 const slogan = posEntry.data.slogan.join(' ');
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const landings = (await getCollection('landings')).sort((a, b) => a.data.order - b.data.order);
 const [productPillar, projectsPillar, directPillar] = home.pillars.items;
 ---
 
@@ -123,6 +125,20 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
       <Card class="lg:col-span-7">
         <h3 class="text-lg">Lo que trae</h3>
         <RomboList items={home.pos.highlights} layout="columns" class="mt-5" />
+        <h3 class="mt-8 text-lg">Hecho para tu negocio</h3>
+        <ul class="mt-4 flex flex-wrap gap-2" aria-label="XASKA POS por tipo de negocio">
+          {landings.map((item) => (
+            <li class={`seg-${item.id}`}>
+              <a
+                href={`/para/${item.id}`}
+                class="press inline-flex min-h-11 items-center gap-2 rounded-full bg-(--seg-soft) px-4 font-semibold text-(--seg-strong)"
+              >
+                <SegmentGlyph segment={item.id} size={18} />
+                {item.data.name}
+              </a>
+            </li>
+          ))}
+        </ul>
       </Card>
     </div>
   </Section>
@@ -205,13 +221,13 @@ const [productPillar, projectsPillar, directPillar] = home.pillars.items;
         </a>
       </li>
       {services.map((service) => (
-        <li class="flex">
+        <li class={`flex seg-${service.id}`}>
           <a
-            href={`/servicios#${service.id}`}
+            href={`/servicios/${service.id}`}
             class="bento bento-link flex w-full flex-col justify-between gap-10 rounded-block p-6 sm:p-8"
           >
             <span class="flex items-start justify-between gap-4">
-              <span class="icon-tile">
+              <span class="seg-tile">
                 <Icon name={serviceIcon(service.id)} />
               </span>
               <Icon name="arrow" class="text-muted" />

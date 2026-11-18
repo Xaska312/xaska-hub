@@ -1,0 +1,37 @@
+# Sección para droguerías. Ilustración: src/components/scenes/PharmacyScene.astro.
+order: 4
+name: Droguerías
+seo:
+  title: Programa para droguerías con lotes y vencimientos
+  description: XASKA POS para droguerías de Ibagué. Catálogo del INVIMA, venta con fórmula, lotes que salen por vencimiento y registro de temperatura y humedad.
+whatsapp: Hola, vengo de la página para droguerías y quiero ver XASKA POS
+chip: Para droguerías
+hero:
+  title: Lotes, vencimientos y fórmulas, sin cuaderno.
+  lead: Vende una caja y mira qué lote sale, siempre el que vence primero. Y registra la temperatura del local para tener todo listo cuando llegue la visita.
+  layout: side
+  cta: Quiero verlo en mi droguería
+moments:
+  title: Un día en tu droguería
+  items:
+    - time: 7:00 a. m.
+      title: Primera lectura
+      text: Registras la temperatura y la humedad. Si falta una lectura, XASKA te lo recuerda.
+    - time: 10:00 a. m.
+      title: Venta con fórmula
+      text: En los antibióticos quedan anotados los datos de la fórmula, y confirma quien tiene el permiso.
+    - time: 6:00 p. m.
+      title: Recibes el pedido
+      text: Con la factura del proveedor, lote por lote, y la ficha del medicamento desde el catálogo del INVIMA.
+pricing:
+  plan: Negocio
+  note: El módulo de droguería viene desde el plan Negocio. La factura electrónica y el control especial llegan después.
+faq:
+  - question: ¿Tengo que crear cada medicamento a mano?
+    answer: No. La ficha del medicamento se trae del catálogo del INVIMA, con el registro, el CUM y el principio activo.
+  - question: ¿Cómo maneja los lotes y los vencimientos?
+    answer: Cada compra entra con su lote y su fecha. Al vender, sale primero el lote que vence primero, y XASKA te avisa con meses de anticipación lo que está por vencer.
+  - question: ¿Sirve para la visita de la secretaría de salud?
+    answer: Ayuda a tenerla lista. Registras temperatura y humedad dos veces al día, los eventos adversos, y sacas el informe con todo.
+  - question: ¿Hace factura electrónica?
+    answer: Todavía no. Mientras tanto, el tiquete es un comprobante interno. La factura electrónica y el control especial llegan después.

@@ -1,52 +1,37 @@
-# Landing para restaurantes y comidas (segmento 3 de la estrategia comercial).
-order: 3
-name: Restaurantes
+# Sección para restaurantes y bares. Ilustración: src/components/scenes/RestaurantScene.astro.
+order: 1
+name: Restaurantes y bares
 seo:
-  title: Programa para restaurantes con mesas y comandas
-  description: XASKA POS para restaurantes de Ibagué. Mesas por zona, el mesero toma el pedido en la tablet, la cocina lo ve en pantalla y cobras con pago mixto.
-whatsapp: Hola, vengo de la página para restaurantes y quiero ver XASKA POS
-chip: Para restaurantes
+  title: Programa para restaurantes y bares con mesas y comandas
+  description: XASKA POS para restaurantes y bares de Ibagué. Mesas por zona, comandas a cocina y barra, cuenta dividida con propina sugerida y caja cuadrada.
+whatsapp: Hola, vengo de la página para restaurantes y bares y quiero ver XASKA POS
+chip: Para restaurantes y bares
 hero:
-  title: Las mesas, la cocina y la caja, hablando entre sí.
-  lead: El mesero toma el pedido en la tablet o el celular, la cocina lo ve en su pantalla al instante y tú cobras la mesa con efectivo, transferencia o las dos.
-  screen: mesas
-  screenTitle: Mesas
-  screenDescription: Mapa de mesas por zona, cada una con su estado (libre, en cocina, comiendo o pidió la cuenta) y el valor de su cuenta abierta. Datos de ejemplo.
-pains:
-  title: Lo que te resuelve en el día a día
+  title: Del primer pedido a la última cuenta, todo cuadra.
+  lead: Toca las mesas del dibujo y cambian de estado, como en XASKA POS. Elige una y divide su cuenta con la propina sugerida.
+  layout: side
+  cta: Quiero verlo con mi carta
+moments:
+  title: Una noche en tu negocio
   items:
-    - icon: store
-      title: Cada mesa, de un vistazo
-      text: Las mesas por zona, con un color para cada estado y el valor de su cuenta. Sabes cuál está libre y cuál pidió la cuenta.
-    - icon: chat
-      title: El pedido, sin papelitos
-      text: El mesero toma la comanda en la tablet o el celular, con adiciones y notas. Nada se pierde entre la mesa y la cocina.
-    - icon: monitor
-      title: La cocina, en tiempo real
-      text: La cocina ve los pedidos en su pantalla apenas se envían y los marca como preparando o listos. El mesero se entera cuando su pedido está listo.
-    - icon: register
-      title: El cobro y el cierre, cuadrados
-      text: Cobras la mesa con pago mixto, imprimes el tiquete o lo mandas por WhatsApp, y cierras la caja con arqueo.
-screens:
-  title: Así se ve
-  items:
-    - screen: tiquete
-      title: Tiquete
-      caption: El tiquete impreso de 58 u 80 mm, o como imagen por WhatsApp.
-      description: Tiquete de venta con los productos, el total, el pago y el botón Enviar con la opción de imagen del tiquete. Datos de ejemplo.
-    - screen: finanzas
-      title: Finanzas
-      caption: La plata que entra y sale, y el punto de equilibrio del mes.
-      description: Tablero de Finanzas con las ventas netas, la utilidad operativa, la plata que entró por medio de pago y el avance hacia el punto de equilibrio. Datos de ejemplo.
+    - time: 7:00 p. m.
+      title: Llega una mesa
+      text: La ubicas en el plano y el mesero toma el pedido en la tablet, con adiciones y notas como "sin cebolla".
+    - time: 7:05 p. m.
+      title: La cocina y la barra lo ven
+      text: Cada cosa sale a su estación, en pantalla o impresa. El mesero se entera cuando está lista.
+    - time: 11:30 p. m.
+      title: Cierras cuadrado
+      text: Mesas, para llevar y domicilios en la misma caja, con las propinas repartidas entre quienes elijas.
 pricing:
   plan: Negocio
-  note: El módulo de restaurante (mesas, comandas y cocina) viene desde el plan Negocio.
+  note: Mesas, comandas y cocina vienen desde el plan Negocio.
 faq:
-  - question: ¿Qué necesito para la pantalla de cocina?
-    answer: Cualquier tablet, computador o televisor con navegador. Se abre la pantalla de cocina de XASKA y los pedidos llegan solos.
+  - question: ¿Qué necesito para la pantalla de cocina o de la barra?
+    answer: Cualquier tablet, computador o televisor con navegador. Se abre la pantalla de cocina de XASKA y los pedidos llegan solos. También se pueden imprimir las comandas.
+  - question: ¿Puedo dividir la cuenta de una mesa?
+    answer: Sí, por productos o en partes iguales, con la propina sugerida del 10 % que se le pregunta al cliente. El pago puede ser en efectivo, transferencia o las dos.
   - question: ¿Los meseros necesitan su propio usuario?
-    answer: Sí. Cada mesero entra con su usuario y su rol de mesero, y la cocina con el suyo. Así sabes quién tomó cada pedido.
-  - question: ¿Puedo cobrar una mesa con efectivo y transferencia?
-    answer: Sí. El pago mixto te deja cobrar una parte en efectivo y otra por transferencia o tarjeta en la misma cuenta.
-  - question: ¿Sirve para un negocio pequeño de comidas rápidas?
-    answer: Sí. Si no atiendes a la mesa, vendes directo en la caja como cualquier comercio, con adiciones en los productos.
+    answer: Sí. Cada mesero entra con su usuario y su rol de mesero, y la cocina con el suyo. Así sabes quién tomó cada pedido y cómo repartir las propinas.
+  - question: ¿Sirve para comidas rápidas o un bar pequeño?
+    answer: Sí. Si no atiendes a la mesa, vendes directo en la caja con adiciones en los productos, y también manejas pedidos para llevar y domicilios.

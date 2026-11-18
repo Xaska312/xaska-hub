@@ -1,0 +1,3 @@
+# Redirecciones permanentes del hub (Cloudflare Workers, assets estáticos).
+# La página de papelerías se unió a la de tiendas y minimarkets.
+/para/papelerias /para/tiendas 301
