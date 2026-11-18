@@ -1,0 +1,257 @@
+/*
+ * Colores de cada tipo de negocio (/para/...): cada sección se siente propia sin salirse de XASKA.
+ *   --seg         color del negocio (botones, acentos)
+ *   --seg-on      texto sobre --seg
+ *   --seg-strong  texto de acento sobre fondos suaves
+ *   --seg-soft    fondos suaves (forma orgánica de la ilustración, chips)
+ *   --seg-deep    paneles oscuros (barra del restaurante, tarjeta final)
+ *   --seg-page    fondo de la página
+ * En oscuro, los suaves pasan a tonos oscuros del mismo color y el acento se aclara.
+ * Contraste revisado: --seg con --seg-on y --seg-strong sobre --seg-soft pasan 4,5:1.
+ */
+.seg-restaurantes {
+  --seg: #be123c;
+  --seg-on: #ffffff;
+  --seg-strong: #881337;
+  --seg-soft: #ffe4e6;
+  --seg-deep: #4c0519;
+  --seg-page: #fff7f7;
+}
+.seg-tiendas {
+  --seg: #4338ca;
+  --seg-on: #ffffff;
+  --seg-strong: #312e81;
+  --seg-soft: #e0e7ff;
+  --seg-deep: #1e1b4b;
+  --seg-page: #f5f6ff;
+}
+.seg-servicios {
+  --seg: #b45309;
+  --seg-on: #ffffff;
+  --seg-strong: #78350f;
+  --seg-soft: #fef3c7;
+  --seg-deep: #451a03;
+  --seg-page: #fffbf2;
+}
+.seg-droguerias {
+  --seg: #047857;
+  --seg-on: #ffffff;
+  --seg-strong: #065f46;
+  --seg-soft: #d1fae5;
+  --seg-deep: #022c22;
+  --seg-page: #f2fbf7;
+}
+.seg-distribuidores {
+  --seg: #0369a1;
+  --seg-on: #ffffff;
+  --seg-strong: #075985;
+  --seg-soft: #e0f2fe;
+  --seg-deep: #082f49;
+  --seg-page: #f2f8fd;
+}
+
+:root[data-theme='dark'] .seg-restaurantes {
+  --seg: #fb7185;
+  --seg-on: #2a0710;
+  --seg-strong: #fda4af;
+  --seg-soft: #3a0d18;
+  --seg-deep: #2a0710;
+  --seg-page: var(--c-bg);
+}
+:root[data-theme='dark'] .seg-tiendas {
+  --seg: #818cf8;
+  --seg-on: #0f0d2b;
+  --seg-strong: #c7d2fe;
+  --seg-soft: #1e2550;
+  --seg-deep: #141238;
+  --seg-page: var(--c-bg);
+}
+:root[data-theme='dark'] .seg-servicios {
+  --seg: #fbbf24;
+  --seg-on: #2a1503;
+  --seg-strong: #fde68a;
+  --seg-soft: #3a2506;
+  --seg-deep: #2a1503;
+  --seg-page: var(--c-bg);
+}
+:root[data-theme='dark'] .seg-droguerias {
+  --seg: #34d399;
+  --seg-on: #022c22;
+  --seg-strong: #a7f3d0;
+  --seg-soft: #06291f;
+  --seg-deep: #03201a;
+  --seg-page: var(--c-bg);
+}
+:root[data-theme='dark'] .seg-distribuidores {
+  --seg: #38bdf8;
+  --seg-on: #062033;
+  --seg-strong: #bae6fd;
+  --seg-soft: #082b40;
+  --seg-deep: #061f30;
+  --seg-page: var(--c-bg);
+}
+
+/*
+ * Colores de cada servicio (/servicios/...), con los mismos nombres de variables que los tipos de
+ * negocio para reutilizar .seg-chip, .seg-solid, .seg-moment y .seg-panel.
+ */
+.seg-desarrollo-a-medida {
+  --seg: #6d28d9;
+  --seg-on: #ffffff;
+  --seg-strong: #5b21b6;
+  --seg-soft: #ede9fe;
+  --seg-deep: #2e1065;
+  --seg-page: #f7f5ff;
+}
+.seg-automatizacion {
+  --seg: #0f766e;
+  --seg-on: #ffffff;
+  --seg-strong: #115e59;
+  --seg-soft: #ccfbf1;
+  --seg-deep: #134e4a;
+  --seg-page: #f0faf9;
+}
+.seg-paginas-web {
+  --seg: #a21caf;
+  --seg-on: #ffffff;
+  --seg-strong: #86198f;
+  --seg-soft: #fae8ff;
+  --seg-deep: #4a044e;
+  --seg-page: #fdf4ff;
+}
+.seg-consultoria {
+  --seg: #1d4ed8;
+  --seg-on: #ffffff;
+  --seg-strong: #1e40af;
+  --seg-soft: #dbeafe;
+  --seg-deep: #0b1736;
+  --seg-page: #f3f6ff;
+}
+.seg-equipos-y-computadores {
+  --seg: #0f172a;
+  --seg-on: #ffffff;
+  --seg-strong: #1e293b;
+  --seg-soft: #e2e8f0;
+  --seg-deep: #0f172a;
+  --seg-page: #f4f6f8;
+}
+:root[data-theme='dark'] .seg-desarrollo-a-medida {
+  --seg: #a78bfa;
+  --seg-on: #1e0b45;
+  --seg-strong: #ddd6fe;
+  --seg-soft: #2a1a4d;
+  --seg-deep: #1e0b45;
+  --seg-page: var(--c-bg);
+}
+:root[data-theme='dark'] .seg-automatizacion {
+  --seg: #2dd4bf;
+  --seg-on: #042f2e;
+  --seg-strong: #99f6e4;
+  --seg-soft: #0b3532;
+  --seg-deep: #042f2e;
+  --seg-page: var(--c-bg);
+}
+:root[data-theme='dark'] .seg-paginas-web {
+  --seg: #e879f9;
+  --seg-on: #2a0b2e;
+  --seg-strong: #f5d0fe;
+  --seg-soft: #3b0d40;
+  --seg-deep: #2a0b2e;
+  --seg-page: var(--c-bg);
+}
+:root[data-theme='dark'] .seg-consultoria {
+  --seg: #60a5fa;
+  --seg-on: #0b1736;
+  --seg-strong: #bfdbfe;
+  --seg-soft: #142a55;
+  --seg-deep: #0b1736;
+  --seg-page: var(--c-bg);
+}
+:root[data-theme='dark'] .seg-equipos-y-computadores {
+  --seg: #a3e635;
+  --seg-on: #1a2e05;
+  --seg-strong: #d9f99d;
+  --seg-soft: #1e293b;
+  --seg-deep: #0b1220;
+  --seg-page: var(--c-bg);
+}
+
+/* Piezas comunes de las secciones. */
+.seg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--seg-soft);
+  padding: 0.5rem 0.875rem;
+  color: var(--seg-strong);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.seg-solid {
+  background-color: var(--seg);
+  color: var(--seg-on);
+  box-shadow: 0 12px 26px -14px var(--seg);
+}
+.seg-solid:hover {
+  filter: brightness(1.06);
+}
+.seg-blob {
+  background-color: var(--seg-soft);
+  border-radius: 46% 54% 42% 58% / 52% 40% 60% 48%;
+}
+.seg-moment {
+  border-radius: 1.75rem 1.75rem 1.75rem 0.5rem;
+  background-color: var(--c-surface);
+}
+.seg-moment:nth-child(2) {
+  border-radius: 1.75rem 0.5rem 1.75rem 1.75rem;
+}
+.seg-moment:last-child {
+  border-radius: 0.5rem 1.75rem 1.75rem 1.75rem;
+  background-color: var(--seg-deep);
+  color: #ffffff;
+}
+.seg-moment:last-child .seg-moment-text {
+  color: rgb(255 255 255 / 0.82);
+}
+.seg-moment:last-child .seg-moment-time {
+  color: rgb(255 255 255 / 0.75);
+}
+.seg-page {
+  background-color: var(--seg-page);
+}
+.seg-link {
+  color: var(--seg-strong);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.seg-panel {
+  background-color: var(--seg-deep);
+  color: #ffffff;
+}
+.seg-panel .seg-panel-muted {
+  color: rgb(255 255 255 / 0.78);
+}
+
+/* Sin JavaScript (sin data-theme) y con el sistema en oscuro: fondos neutros para no perder contraste. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .seg-page {
+    --seg-page: var(--c-bg);
+    --seg-soft: var(--c-inset);
+    --seg-strong: var(--c-text);
+  }
+}
+
+/* Ícono en cuadro con el color del servicio o del negocio (tarjetas del inicio y de Servicios). */
+.seg-tile {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.875rem;
+  background-color: var(--seg-soft);
+  color: var(--seg-strong);
+}

@@ -41,7 +41,10 @@ export const GET: APIRoute = async () => {
     '',
     '## Servicios',
     '',
-    ...services.map((service) => `- ${service.data.title}: ${service.data.summary}`),
+    ...services.map(
+      (service) =>
+        `- [${service.data.title}](${page(`/servicios/${service.id}`)}): ${service.data.summary}`,
+    ),
     '',
     '## Preguntas frecuentes',
     '',

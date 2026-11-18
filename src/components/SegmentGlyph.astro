@@ -1,0 +1,76 @@
+---
+/**
+ * Ícono a dos tonos de cada tipo de negocio, el mismo de XASKA POS (shared/icons/xicons.ts del POS:
+ * type-restaurant, type-retail, type-services, type-pharmacy). Distribuidores usa un camión.
+ * Decorativo: el nombre del negocio siempre va escrito al lado.
+ */
+interface Props {
+  segment: string;
+  size?: number;
+}
+const { segment, size = 20 } = Astro.props;
+---
+
+<svg
+  aria-hidden="true"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  {segment === 'restaurantes' && (
+    <>
+      <path
+        d="M13.5 9c0-3.5 1.5-6 3.5-6v9h-3.5z"
+        fill="currentColor"
+        fill-opacity=".22"
+        stroke="none"
+      />
+      <path d="M6 3v7a2 2 0 0 0 4 0V3M8 3v18" />
+      <path d="M17 21V3c-2 0-3.5 2.5-3.5 6v3H17" />
+    </>
+  )}
+  {segment === 'tiendas' && (
+    <>
+      <path d="M5 8h14l-1 12H6z" fill="currentColor" fill-opacity=".22" stroke="none" />
+      <path d="M5 8h14l-1 12H6z" />
+      <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+      <path d="M9 12a3 3 0 0 0 6 0" />
+    </>
+  )}
+  {segment === 'servicios' && (
+    <>
+      <circle cx="15" cy="9" r="4" fill="currentColor" fill-opacity=".22" stroke="none" />
+      <path d="M14.5 5.5a4 4 0 0 0-5 5L4 16v4h4l5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z" />
+    </>
+  )}
+  {segment === 'droguerias' && (
+    <>
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="4"
+        fill="currentColor"
+        fill-opacity=".22"
+        stroke="none"
+      />
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <path d="M12 7.5v9M7.5 12h9" />
+    </>
+  )}
+  {segment === 'distribuidores' && (
+    <>
+      <path d="M3 7h11v9H3z" fill="currentColor" fill-opacity=".22" stroke="none" />
+      <path d="M3 7h11v9H3z" />
+      <path d="M14 10h4l3 3v3h-7z" />
+      <circle cx="7" cy="17.5" r="1.8" />
+      <circle cx="17" cy="17.5" r="1.8" />
+    </>
+  )}
+</svg>

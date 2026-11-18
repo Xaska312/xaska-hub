@@ -1,0 +1,185 @@
+---
+/**
+ * Página propia de cada servicio: /servicios/desarrollo-a-medida, /servicios/automatizacion,
+ * /servicios/paginas-web, /servicios/consultoria y /servicios/equipos-y-computadores.
+ * Contenido en src/content/services/<servicio>.md; color en src/styles/segments.css;
+ * ilustración interactiva en src/components/services/. Sin precios: cada trabajo se cotiza.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import Icon from '@/components/Icon.astro';
+import Steps from '@/components/Steps.astro';
+import RomboList from '@/components/RomboList.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import CustomBuilder from '@/components/services/CustomBuilder.astro';
+import AutomationFlow from '@/components/services/AutomationFlow.astro';
+import WebPreview from '@/components/services/WebPreview.astro';
+import Diagnosis from '@/components/services/Diagnosis.astro';
+import KitChooser from '@/components/services/KitChooser.astro';
+import { serviceIcon } from '@/lib/service-icons';
+import { contact } from '@/config/site';
+
+export const getStaticPaths = (async () => {
+  const services = await getCollection('services');
+  return services.map((entry) => ({ params: { servicio: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const service = entry.data;
+const { Content } = await render(entry);
+const id = entry.id;
+
+const pageEntry = await getEntry('servicesPage', 'index');
+if (!pageEntry) throw new Error('Falta src/content/services-page/index.yaml');
+const process = pageEntry.data.process;
+
+const others = (await getCollection('services'))
+  .filter((item) => item.id !== id)
+  .sort((a, b) => a.data.order - b.data.order);
+
+// El constructor de desarrollo a medida y el diagnóstico de consultoría llevan su propio botón
+// de WhatsApp (con el mensaje que arma el visitante); los demás lo llevan en la entrada.
+const ownCta = id === 'desarrollo-a-medida' || id === 'consultoria';
+---
+
+<BaseLayout
+  title={service.seo.title}
+  description={service.seo.description}
+  whatsappMessage={service.whatsapp}
+>
+  <div class:list={['seg-page pb-8', `seg-${id}`]}>
+    <section class="pt-6 pb-4 sm:pt-10" aria-labelledby="servicio">
+      <div class="mx-auto flex w-full max-w-(--container-page) flex-col gap-8 px-4 sm:px-6 lg:px-8">
+        <nav aria-label="Ruta" class="text-sm text-muted">
+          <a class="link" href="/servicios">
+            Servicios
+          </a>
+          <span aria-hidden="true"> › </span>
+          <span aria-current="page">{service.title}</span>
+        </nav>
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div class="flex min-w-0 flex-col gap-5">
+            <span class="seg-chip self-start">
+              <Icon name={serviceIcon(id)} size={18} />
+              {service.title}
+            </span>
+            <h1
+              id="servicio"
+              class="max-w-[20ch] text-[2.4rem] leading-[1.04] sm:text-5xl lg:text-[3.4rem] lg:leading-[1.02]"
+            >
+              {service.hero.title}
+            </h1>
+            <p class="max-w-[54ch] text-lg font-medium text-muted">{service.hero.lead}</p>
+          </div>
+          {!ownCta && (
+            <div class="flex shrink-0 flex-col gap-2">
+              <WhatsAppButton
+                message={service.whatsapp}
+                label={service.hero.cta}
+                variant="segment"
+              />
+              <p class="max-w-[34ch] text-sm text-muted">{contact.assistant}</p>
+            </div>
+          )}
+        </div>
+        <div class="min-w-0">
+          {id === 'desarrollo-a-medida' && <CustomBuilder cta={service.hero.cta} />}
+          {id === 'automatizacion' && <AutomationFlow />}
+          {id === 'paginas-web' && <WebPreview />}
+          {id === 'consultoria' && <Diagnosis />}
+          {id === 'equipos-y-computadores' && <KitChooser />}
+        </div>
+      </div>
+    </section>
+
+    <Section labelledby="destacados">
+      <h2 id="destacados" class="sr-only">
+        Lo que recibes
+      </h2>
+      <ul
+        class:list={[
+          'grid gap-4',
+          service.highlights.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3',
+        ]}
+      >
+        {service.highlights.map((item) => (
+          <li class="seg-moment flex flex-col gap-2 p-6 sm:p-7">
+            <h3 class="text-lg">{item.title}</h3>
+            <p class="seg-moment-text text-muted">{item.text}</p>
+          </li>
+        ))}
+      </ul>
+    </Section>
+
+    <Section labelledby="detalle">
+      <div class="grid gap-4 lg:grid-cols-12">
+        <div class="bento flex flex-col gap-5 rounded-panel p-7 sm:p-9 lg:col-span-7">
+          <h2 id="detalle" class="text-3xl sm:text-4xl">
+            Para quién es
+          </h2>
+          <p class="text-lg">{service.forWho}</p>
+          <div class="prose-xaska max-w-(--container-prose) text-muted">
+            <Content />
+          </div>
+        </div>
+        <div class="seg-panel flex flex-col gap-4 rounded-panel p-7 sm:p-9 lg:col-span-5">
+          <h3 class="text-lg">Por ejemplo</h3>
+          <RomboList items={service.examples} />
+        </div>
+      </div>
+    </Section>
+
+    <Section labelledby="como-trabajamos">
+      <h2 id="como-trabajamos" class="text-3xl sm:text-4xl">
+        {process.title}
+      </h2>
+      <div class="mt-8">
+        <Steps steps={process.steps} />
+      </div>
+      <div class="bento mt-4 flex flex-wrap items-center justify-between gap-6 rounded-panel p-7 sm:p-9">
+        <p class="text-2xl font-extrabold tracking-tight sm:text-3xl">Cuéntanos qué necesitas</p>
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
+          <WhatsAppButton
+            message={service.whatsapp}
+            label="Escribir por WhatsApp"
+            variant="segment"
+          />
+          <a class="link font-semibold" href={`mailto:${contact.email}`}>
+            {contact.email}
+          </a>
+        </div>
+      </div>
+    </Section>
+
+    <Section labelledby="otros-servicios">
+      <h2 id="otros-servicios" class="text-2xl">
+        Otros servicios
+      </h2>
+      <ul class="mt-6 flex flex-wrap gap-2">
+        {others.map((item) => (
+          <li class={`seg-${item.id}`}>
+            <a
+              href={`/servicios/${item.id}`}
+              class="press inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-5 font-semibold hover:border-(--seg)"
+            >
+              <span class="text-(--seg-strong)">
+                <Icon name={serviceIcon(item.id)} size={18} />
+              </span>
+              {item.data.title}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a
+            href="/servicios"
+            class="press inline-flex min-h-11 items-center rounded-full border border-line-strong bg-surface px-5 font-semibold hover:border-ink"
+          >
+            Todos los servicios
+          </a>
+        </li>
+      </ul>
+    </Section>
+  </div>
+</BaseLayout>

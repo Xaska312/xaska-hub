@@ -1,0 +1,37 @@
+# Sección para talleres y negocios de servicios. Ilustración: src/components/scenes/ServicesScene.astro.
+order: 3
+name: Servicios
+seo:
+  title: Programa para talleres y negocios de servicios
+  description: XASKA POS para talleres, impresiones, instalaciones y mantenimiento en Ibagué. Cotización en PDF, pedidos con anticipo y fecha de entrega, y fiado para tus clientes.
+whatsapp: Hola, vengo de la página para negocios de servicios y quiero ver XASKA POS
+chip: Para talleres y negocios de servicios
+hero:
+  title: Cotiza, recibe el anticipo y entrega a tiempo.
+  lead: Para talleres, impresiones, instalaciones y mantenimiento. Toca cada pedido del tablero para moverlo y sigue cada trabajo de la cotización a la entrega.
+  layout: wide
+  cta: Quiero verlo con mis trabajos
+moments:
+  title: Así se mueve un trabajo
+  items:
+    - time: Lunes
+      title: Cotizas en PDF
+      text: Con tu logo y por WhatsApp. Si te la aprueban, se vuelve pedido con un toque.
+    - time: Martes
+      title: Recibes el anticipo
+      text: El pedido queda con lo abonado, el saldo y la fecha de entrega, con aviso si se vence.
+    - time: Jueves
+      title: Entregas y cobras
+      text: El saldo entra al cierre de caja, y si es cliente de siempre, se lo fías dentro de su cupo.
+pricing:
+  plan: Negocio
+  note: El fiado viene en todos los planes. Los pedidos y las cotizaciones, desde el plan Negocio.
+faq:
+  - question: ¿Puedo hacer cotizaciones con mi logo?
+    answer: Sí. La cotización sale en PDF con tu logo, la mandas por WhatsApp y, si te la aprueban, la conviertes en pedido o en venta.
+  - question: ¿Cómo manejo los anticipos?
+    answer: Cada pedido guarda el anticipo, el saldo y la fecha de entrega. Al entregar cobras el saldo y todo queda en el cierre de caja.
+  - question: ¿Me avisa si un trabajo se atrasa?
+    answer: Sí. Los pedidos con la fecha de entrega vencida aparecen marcados para que no se te pase ninguno.
+  - question: ¿Puedo fiarle a mis clientes de siempre?
+    answer: Sí. Cada cliente tiene su cupo y su estado de cuenta, y registras sus abonos cuando te pagan.

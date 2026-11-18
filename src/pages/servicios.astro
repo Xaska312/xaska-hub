@@ -38,13 +38,13 @@ const services = await Promise.all(
     <nav slot="visual" aria-label="Servicios" class="flex-1">
       <ul class="grid h-full gap-4 sm:grid-cols-2">
         {services.map(({ entry }, index) => (
-          <li class:list={['flex', index === 0 && 'sm:col-span-2']}>
+          <li class:list={['flex', `seg-${entry.id}`, index === 0 && 'sm:col-span-2']}>
             <a
-              href={`#${entry.id}`}
+              href={`/servicios/${entry.id}`}
               class="bento bento-link flex w-full min-w-0 flex-col justify-between gap-6 rounded-block p-5"
             >
               <span class="flex items-start justify-between gap-4">
-                <span class="icon-tile">
+                <span class="seg-tile">
                   <Icon name={serviceIcon(entry.id)} />
                 </span>
                 <Icon name="arrow" class="shrink-0 text-muted" />
@@ -58,10 +58,10 @@ const services = await Promise.all(
   </PageHeader>
 
   {services.map(({ entry, Content }, index) => (
-    <Section id={entry.id} labelledby={`${entry.id}-titulo`} class="scroll-mt-20">
+    <Section id={entry.id} labelledby={`${entry.id}-titulo`} class={`scroll-mt-20 seg-${entry.id}`}>
       <div class="grid gap-4 lg:grid-cols-12">
         <Card size="panel" class="lg:col-span-7">
-          <span class="icon-tile">
+          <span class="seg-tile">
             <Icon name={serviceIcon(entry.id)} />
           </span>
           <h2 id={`${entry.id}-titulo`} class="mt-8 text-3xl sm:text-4xl">
@@ -75,6 +75,13 @@ const services = await Promise.all(
             <h3 class="text-sm font-bold text-muted">Para quién</h3>
             <p class="mt-2">{entry.data.forWho}</p>
           </div>
+          <a
+            href={`/servicios/${entry.id}`}
+            class="press-solid seg-solid mt-6 inline-flex min-h-12 items-center gap-2 rounded-control px-6 font-semibold"
+          >
+            Ver {entry.data.title.toLowerCase()}
+            <Icon name="arrow" size={18} />
+          </a>
         </Card>
         <div class:list={['grid gap-4 lg:col-span-5', index % 2 === 1 && 'lg:order-first']}>
           <Card>

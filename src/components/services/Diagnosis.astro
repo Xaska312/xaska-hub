@@ -1,0 +1,420 @@
+---
+/**
+ * Consultoría: cuatro preguntas y una orientación de por dónde empezar. Es una orientación, no el
+ * diagnóstico: el mensaje de WhatsApp lleva las respuestas para seguir la conversación.
+ */
+import { whatsappUrl } from '@/config/site';
+
+const questions = [
+  {
+    text: '¿Qué es lo que más tiempo te quita?',
+    short: 'Lo que más tiempo quita',
+    options: [
+      'Vender, cobrar y cuadrar la caja',
+      'Copiar datos y armar reportes',
+      'Un proceso propio que ningún programa resuelve',
+      'No sé por dónde empezar',
+    ],
+  },
+  {
+    text: '¿Cómo lo llevas hoy?',
+    short: 'Cómo lo llevas hoy',
+    options: [
+      'En cuaderno',
+      'En Excel',
+      'En varios programas que no se hablan',
+      'En un programa que no uso bien',
+    ],
+  },
+  {
+    text: '¿Cuántas personas trabajan contigo?',
+    short: 'Tu equipo',
+    options: ['Solo yo', 'De 2 a 5', 'De 6 a 20', 'Más de 20'],
+  },
+  {
+    text: '¿Qué te gustaría lograr primero?',
+    short: 'Lo primero',
+    options: ['Tener todo en orden', 'Ahorrar tiempo', 'Vender más', 'Saber cómo va el negocio'],
+  },
+];
+const results = {
+  pos: {
+    title: 'Una caja con inventario: XASKA POS',
+    text: 'Lo tuyo es el día a día del mostrador. Un punto de venta te ordena ventas, caja, inventario y fiado antes de pensar en algo a la medida.',
+    steps: [
+      'Cargar tus productos desde Excel',
+      'Probar 14 días con tu caja real',
+      'Revisar juntos el primer cierre',
+    ],
+  },
+  auto: {
+    title: 'Automatizar lo repetitivo',
+    text: 'Si los datos ya existen pero los mueves a mano, lo que más rinde es que pasen solos y que los reportes se armen sin ti.',
+    steps: [
+      'Listar las tareas que se repiten cada semana',
+      'Elegir la que más tiempo quita',
+      'Automatizarla y medir el tiempo que libera',
+    ],
+  },
+  medida: {
+    title: 'Un desarrollo a la medida, por etapas',
+    text: 'Tu proceso es propio y ningún programa comercial se ajusta. Conviene empezar por la parte que más duele y crecer desde ahí.',
+    steps: [
+      'Dibujar el proceso como lo haces hoy',
+      'Definir la primera etapa',
+      'Construirla y usarla antes de seguir',
+    ],
+  },
+  orden: {
+    title: 'Ordenar el proceso antes de comprar',
+    text: 'Antes de pagar por herramientas, vale la pena mirar cómo trabajas y qué sobra. Muchas veces se ahorra dinero solo con eso.',
+    steps: [
+      'Revisar qué herramientas pagas hoy',
+      'Ordenar el proceso en papel',
+      'Elegir lo mínimo que lo resuelve',
+    ],
+  },
+};
+const first = questions[0];
+if (!first) throw new Error('Faltan las preguntas de la consultoría');
+---
+
+<div
+  class="dg"
+  data-diagnosis
+  data-questions={JSON.stringify(questions)}
+  data-results={JSON.stringify(results)}
+  data-wa={whatsappUrl()}
+>
+  <ol class="dg-trail" aria-label="Tus respuestas">
+    {questions.map((question, i) => (
+      <li class="dg-trail-item" data-trail={i} data-state={i === 0 ? 'current' : 'todo'}>
+        <span class="dg-dot" aria-hidden="true">
+          {i + 1}
+        </span>
+        <span class="dg-trail-text">{question.short}</span>
+      </li>
+    ))}
+  </ol>
+
+  <div class="dg-panel">
+    <div class="dg-ask" data-ask>
+      <p class="dg-kicker" data-step>
+        Pregunta 1 de 4
+      </p>
+      <p class="dg-question" data-question tabindex="-1">
+        {first.text}
+      </p>
+      <div class="dg-options" role="group" aria-label="Respuestas">
+        {first.options.map((option, i) => (
+          <button type="button" class="dg-option press" data-option={i}>
+            {option}
+          </button>
+        ))}
+      </div>
+    </div>
+    <div class="dg-done" data-done hidden>
+      <p class="dg-kicker">Por lo que nos cuentas, empezaríamos por</p>
+      <p class="dg-result-title" data-result-title tabindex="-1"></p>
+      <p class="dg-result-text" data-result-text></p>
+      <div class="dg-steps">
+        <p class="dg-kicker">Primeros pasos</p>
+        <ul data-result-steps></ul>
+      </div>
+      <div class="dg-actions">
+        <a
+          class="dg-send press-solid"
+          data-send
+          href={whatsappUrl()}
+          target="_blank"
+          rel="noopener"
+        >
+          Hablar de mi caso por WhatsApp<span class="sr-only"> (se abre en una pestaña nueva)</span>
+        </a>
+        <button type="button" class="dg-restart press" data-restart>
+          Empezar de nuevo
+        </button>
+      </div>
+      <p class="dg-fine">
+        Es una orientación. El diagnóstico real lo hacemos contigo, por escrito y en palabras
+        sencillas.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .dg {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .dg-trail {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 16rem;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding-top: 0.5rem;
+  }
+  .dg-trail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--c-muted);
+    font-size: 0.9375rem;
+  }
+  .dg-dot {
+    display: inline-flex;
+    width: 2.125rem;
+    height: 2.125rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--seg-soft);
+    color: var(--seg-strong);
+    font-size: 0.875rem;
+    font-weight: 800;
+  }
+  [data-state='current'] .dg-dot {
+    background-color: var(--c-surface);
+    box-shadow: inset 0 0 0 2px var(--seg);
+  }
+  [data-state='done'] .dg-dot {
+    background-color: var(--seg);
+    color: var(--seg-on);
+  }
+  [data-state='done'] {
+    color: var(--c-text);
+    font-weight: 600;
+  }
+  .dg-panel {
+    display: flex;
+    min-width: 0;
+    min-height: 30rem;
+    flex: 2 1 30rem;
+    flex-direction: column;
+    border-radius: 2.5rem;
+    background-color: #0b1736;
+    background-image: radial-gradient(circle at 85% 12%, rgb(96 165 250 / 0.35), transparent 40%);
+    padding: 1.5rem;
+    color: #ffffff;
+  }
+  .dg-ask,
+  .dg-done {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+    animation: dg-in 380ms var(--ease-bounce);
+  }
+  .dg-done[hidden],
+  .dg-ask[hidden] {
+    display: none;
+  }
+  @keyframes dg-in {
+    from {
+      opacity: 0.2;
+      transform: translateX(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .dg-kicker {
+    color: #93c5fd;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .dg-question {
+    font-size: 1.625rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    outline: none;
+  }
+  .dg-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .dg-option {
+    min-height: 4.75rem;
+    border-radius: 1.25rem;
+    background-color: rgb(255 255 255 / 0.08);
+    padding: 1rem;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1.5px rgb(147 197 253 / 0.35);
+  }
+  .dg-option:hover {
+    background-color: rgb(255 255 255 / 0.14);
+  }
+  .dg-result-title {
+    font-size: 1.875rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    outline: none;
+  }
+  .dg-result-text {
+    color: #dbeafe;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .dg-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-radius: 1.125rem;
+    background-color: rgb(255 255 255 / 0.08);
+    padding: 1rem;
+  }
+  .dg-steps :global(li) {
+    font-size: 0.9375rem;
+  }
+  .dg-steps :global(li)::before {
+    content: '• ';
+  }
+  .dg-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+  }
+  .dg-send {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    border-radius: 0.875rem;
+    background-color: #60a5fa;
+    padding: 0 1.25rem;
+    color: #0b1736;
+    font-weight: 800;
+  }
+  .dg-restart {
+    min-height: 3rem;
+    border: 1.5px solid #93c5fd;
+    border-radius: 0.875rem;
+    background: transparent;
+    padding: 0 1.125rem;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .dg-fine {
+    color: #bfdbfe;
+    font-size: 0.8125rem;
+  }
+  @media (min-width: 560px) {
+    .dg-options {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 768px) {
+    .dg-panel {
+      padding: 1.75rem;
+    }
+    .dg-question {
+      font-size: 1.875rem;
+    }
+    .dg-result-title {
+      font-size: 2.125rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dg-ask,
+    .dg-done {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  type Question = { text: string; short: string; options: string[] };
+  type Result = { title: string; text: string; steps: string[] };
+
+  document.querySelectorAll<HTMLElement>('[data-diagnosis]').forEach((root) => {
+    const questions = JSON.parse(root.dataset.questions ?? '[]') as Question[];
+    const results = JSON.parse(root.dataset.results ?? '{}') as Record<string, Result>;
+    const base = root.dataset.wa ?? '';
+    const answers: number[] = [];
+    const out = (name: string) => root.querySelector<HTMLElement>(`[data-${name}]`);
+    const options = [...root.querySelectorAll<HTMLButtonElement>('[data-option]')];
+    const trail = [...root.querySelectorAll<HTMLElement>('[data-trail]')];
+
+    function pick(): Result | undefined {
+      const [first, second] = answers;
+      if (first === 0) return results.pos;
+      if (first === 1) return results.auto;
+      if (first === 2) return results.medida;
+      return second === 0 ? results.pos : results.orden;
+    }
+
+    function render(moveFocus: boolean) {
+      const step = answers.length;
+      const done = step >= questions.length;
+      trail.forEach((item, i) => {
+        item.dataset.state = i < step ? 'done' : i === step ? 'current' : 'todo';
+        const text = item.querySelector('.dg-trail-text');
+        const q = questions[i];
+        if (text && q)
+          text.textContent = i < step ? `${q.short}: ${q.options[answers[i] ?? 0]}` : q.short;
+      });
+      const ask = out('ask');
+      const finished = out('done');
+      if (ask) ask.hidden = done;
+      if (finished) finished.hidden = !done;
+      if (!done) {
+        const q = questions[step];
+        if (!q) return;
+        const stepOut = out('step');
+        if (stepOut) stepOut.textContent = `Pregunta ${step + 1} de ${questions.length}`;
+        const question = out('question');
+        if (question) {
+          question.textContent = q.text;
+          if (moveFocus) question.focus();
+        }
+        options.forEach((option, i) => (option.textContent = q.options[i] ?? ''));
+        return;
+      }
+      const result = pick();
+      if (!result) return;
+      const title = out('result-title');
+      if (title) title.textContent = result.title;
+      const text = out('result-text');
+      if (text) text.textContent = result.text;
+      out('result-steps')?.replaceChildren(
+        ...result.steps.map((s) => {
+          const li = document.createElement('li');
+          li.textContent = s;
+          return li;
+        }),
+      );
+      const summary = questions
+        .map((q, i) => `${q.short}: ${q.options[answers[i] ?? 0]?.toLowerCase()}`)
+        .join('. ');
+      out('send')?.setAttribute(
+        'href',
+        `${base}?text=${encodeURIComponent(`Hola, quiero una consultoría. ${summary}.`)}`,
+      );
+      if (moveFocus) title?.focus();
+    }
+
+    options.forEach((option, i) => {
+      option.addEventListener('click', () => {
+        answers.push(i);
+        render(true);
+      });
+    });
+    out('restart')?.addEventListener('click', () => {
+      answers.length = 0;
+      render(true);
+    });
+  });
+</script>

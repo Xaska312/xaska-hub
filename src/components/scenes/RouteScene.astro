@@ -1,0 +1,359 @@
+---
+/**
+ * Ilustración interactiva de una distribuidora: la ruta del día con cuatro tiendas. Al tocar una,
+ * se ve lo que debe, su cupo y su pedido; el abono baja la cuenta y el recordatorio queda listo
+ * para WhatsApp. Tiendas, cupos y valores de ejemplo.
+ */
+import { formatPesos } from '@/lib/money';
+
+const stops = [
+  { name: 'Tienda La 15', limit: 150000, debt: 42300, order: '12 cajas de gaseosa' },
+  { name: 'Minimercado El Sol', limit: 300000, debt: 0, order: '8 cajas de agua, listo' },
+  { name: 'Tienda Doña Rosa', limit: 120000, debt: 86500, order: 'Sin pedido hoy' },
+  { name: 'Granero San Simón', limit: 200000, debt: 15000, order: '20 paquetes de galletas' },
+];
+const first = stops[0] ?? { name: '', limit: 0, debt: 0, order: '' };
+---
+
+<div class="rt" data-route data-stops={JSON.stringify(stops)}>
+  <div class="rt-road-wrap">
+    <div class="rt-road" aria-hidden="true"></div>
+    <ul class="rt-stops" aria-label="Tiendas de la ruta">
+      {stops.map((stop, i) => (
+        <li class="rt-stop">
+          <span class="rt-truck-slot" aria-hidden="true">
+            <svg
+              class="rt-truck"
+              viewBox="0 0 24 24"
+              data-truck
+              data-here={i === 0 ? '' : undefined}
+            >
+              <path d="M2 7h12v9H2z" />
+              <path d="M14 10h4l3 3v3h-7z" />
+              <circle cx="6.5" cy="17.5" r="2" />
+              <circle cx="17" cy="17.5" r="2" />
+            </svg>
+          </span>
+          <button
+            type="button"
+            class="rt-shop press"
+            data-stop={i}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+          >
+            <span class="rt-shop-name">{stop.name}</span>
+            <span class="rt-shop-debt" data-debt-text>
+              {stop.debt ? `Debe ${formatPesos(stop.debt)}` : 'Al día'}
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="rt-panels">
+    <div class="rt-account">
+      <p class="rt-name" data-name>
+        {first.name}
+      </p>
+      <div class="rt-figures">
+        <p>
+          <span>Debe</span>
+          <strong data-debt>{formatPesos(first.debt)}</strong>
+        </p>
+        <p>
+          <span>Cupo</span>
+          <strong data-limit>{formatPesos(first.limit)}</strong>
+        </p>
+        <p>
+          <span>Disponible</span>
+          <strong data-free>{formatPesos(first.limit - first.debt)}</strong>
+        </p>
+      </div>
+      <div class="rt-bar" aria-hidden="true">
+        <div class="rt-bar-fill" data-bar></div>
+      </div>
+      <p class="rt-order">
+        Pedido de hoy: <span data-order>{first.order}</span>
+      </p>
+    </div>
+    <div class="rt-actions">
+      <button type="button" class="rt-pay press-solid" data-pay>
+        Recibir abono de $20.000
+      </button>
+      <button type="button" class="rt-remind press" data-remind>
+        Enviar recordatorio
+      </button>
+      <p class="rt-msg" aria-live="polite" data-msg>
+        Toca otra tienda de la ruta para ver su cuenta.
+      </p>
+    </div>
+  </div>
+  <p class="rt-foot">Datos de ejemplo.</p>
+</div>
+
+<style>
+  .rt {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    border-radius: 2.75rem 2.75rem 2.75rem 0.75rem;
+    background-color: var(--seg-soft);
+    padding: 1.25rem;
+  }
+  .rt-road-wrap {
+    position: relative;
+  }
+  .rt-road {
+    display: none;
+  }
+  .rt-stops {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .rt-stop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+  }
+  .rt-truck-slot {
+    display: flex;
+    height: 2.5rem;
+    align-items: flex-end;
+  }
+  .rt-truck {
+    width: 2.75rem;
+    height: 2.5rem;
+    fill: var(--seg);
+    stroke: #ffffff;
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+  }
+  .rt-truck:not([data-here]) {
+    display: none;
+  }
+  .rt-shop {
+    display: flex;
+    width: 100%;
+    min-height: 5.375rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    border: 3px solid #ffffff;
+    border-radius: 1.4rem;
+    background-color: #ffffff;
+    padding: 0.75rem;
+    color: #072235;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 14px 26px -18px #082f49;
+  }
+  .rt-shop[aria-pressed='true'] {
+    border-color: #0369a1;
+  }
+  .rt-shop-name {
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+  .rt-shop-debt {
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+  .rt-panels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .rt-account {
+    display: flex;
+    min-width: 0;
+    flex: 2 1 26rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-radius: 1.6rem;
+    background-color: #ffffff;
+    padding: 1.375rem;
+    color: #072235;
+  }
+  .rt-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+  .rt-figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+    gap: 0.625rem;
+  }
+  .rt-figures p {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    border-radius: 0.875rem;
+    background-color: #f2f8fd;
+    padding: 0.75rem;
+  }
+  .rt-figures span {
+    color: #25465c;
+    font-size: 0.75rem;
+  }
+  .rt-figures strong {
+    font-size: 1.25rem;
+  }
+  .rt-bar {
+    height: 0.625rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background-color: #e0f2fe;
+  }
+  .rt-bar-fill {
+    width: 0;
+    height: 100%;
+    border-radius: 999px;
+    background-color: #0369a1;
+    transition: width 300ms var(--ease-bounce);
+  }
+  .rt-order {
+    color: #25465c;
+    font-size: 0.875rem;
+  }
+  .rt-actions {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 16rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-radius: 1.6rem;
+    background-color: #082f49;
+    padding: 1.375rem;
+    color: #ffffff;
+  }
+  .rt-pay {
+    min-height: 3.25rem;
+    border-radius: 0.875rem;
+    background-color: #38bdf8;
+    color: #082f49;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .rt-remind {
+    min-height: 3rem;
+    border: 1.5px solid #7dd3fc;
+    border-radius: 0.875rem;
+    background: transparent;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .rt-msg {
+    color: #bae6fd;
+    font-size: 0.875rem;
+  }
+  .rt-foot {
+    color: var(--seg-strong);
+    font-size: 0.8125rem;
+  }
+  @media (min-width: 768px) {
+    .rt {
+      padding: 2rem;
+    }
+    .rt-road {
+      position: absolute;
+      top: 2.4rem;
+      right: 2.5rem;
+      left: 2.5rem;
+      display: block;
+      height: 0.875rem;
+      border-radius: 999px;
+      background-color: #7dd3fc;
+    }
+    .rt-road::after {
+      position: absolute;
+      top: 0.375rem;
+      right: 0;
+      left: 0;
+      border-top: 2px dashed #ffffff;
+      content: '';
+    }
+    .rt-stops {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<script>
+  import { formatPesos } from '@/lib/money';
+
+  type Stop = { name: string; limit: number; debt: number; order: string };
+
+  document.querySelectorAll<HTMLElement>('[data-route]').forEach((root) => {
+    const stops = JSON.parse(root.dataset.stops ?? '[]') as Stop[];
+    const reminded = new Set<number>();
+    const shops = [...root.querySelectorAll<HTMLButtonElement>('[data-stop]')];
+    const trucks = [...root.querySelectorAll<SVGElement>('[data-truck]')];
+    const out = (name: string) => root.querySelector<HTMLElement>(`[data-${name}]`);
+    const msg = out('msg');
+    const remind = out('remind');
+    let selected = 0;
+
+    function render() {
+      const stop = stops[selected];
+      if (!stop) return;
+      shops.forEach((shop, i) => {
+        shop.setAttribute('aria-pressed', i === selected ? 'true' : 'false');
+        const text = shop.querySelector('[data-debt-text]');
+        const debt = stops[i]?.debt ?? 0;
+        if (text) text.textContent = debt ? `Debe ${formatPesos(debt)}` : 'Al día';
+      });
+      trucks.forEach((truck, i) => truck.toggleAttribute('data-here', i === selected));
+      const set = (name: string, value: string) => {
+        const el = out(name);
+        if (el) el.textContent = value;
+      };
+      set('name', stop.name);
+      set('debt', formatPesos(stop.debt));
+      set('limit', formatPesos(stop.limit));
+      set('free', formatPesos(stop.limit - stop.debt));
+      set('order', stop.order);
+      const bar = out('bar');
+      if (bar) bar.style.width = `${Math.min(100, Math.round((stop.debt / stop.limit) * 100))}%`;
+      if (remind)
+        remind.textContent = reminded.has(selected)
+          ? 'Recordatorio enviado'
+          : 'Enviar recordatorio';
+    }
+
+    shops.forEach((shop, i) => {
+      shop.addEventListener('click', () => {
+        selected = i;
+        if (msg) msg.textContent = 'Toca otra tienda de la ruta para ver su cuenta.';
+        render();
+      });
+    });
+
+    out('pay')?.addEventListener('click', () => {
+      const stop = stops[selected];
+      if (!stop) return;
+      const paid = Math.min(20000, stop.debt);
+      stop.debt -= paid;
+      if (msg) {
+        msg.textContent = paid
+          ? `Abono de ${formatPesos(paid)} registrado. El recibo sale por WhatsApp.`
+          : 'Esta tienda está al día.';
+      }
+      render();
+    });
+
+    remind?.addEventListener('click', () => {
+      reminded.add(selected);
+      if (msg) msg.textContent = 'Recordatorio listo para enviar por WhatsApp con lo que debe.';
+      render();
+    });
+
+    render();
+  });
+</script>

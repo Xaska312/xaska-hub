@@ -1,0 +1,311 @@
+---
+/**
+ * Ilustración interactiva de una droguería: un medicamento con tres lotes. "Vender 1 caja" saca
+ * siempre del lote que vence primero (FEFO, como XASKA POS) y la lectura de temperatura y humedad
+ * se registra con un toque. Lotes y fechas de ejemplo.
+ */
+const lots = [
+  { code: 'B11', exp: '02/2027', qty: 3 },
+  { code: 'C04', exp: '08/2027', qty: 6 },
+  { code: 'D20', exp: '01/2028', qty: 8 },
+];
+---
+
+<div class="ph" data-pharmacy data-lots={JSON.stringify(lots)}>
+  <div class="seg-blob ph-blob" aria-hidden="true"></div>
+  <div class="ph-inner">
+    <p class="ph-head">
+      <span class="ph-cross" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 5v14M5 12h14"></path>
+        </svg>
+      </span>
+      <span>Acetaminofén 500 mg · por lote</span>
+    </p>
+    <ul class="ph-lots" aria-label="Lotes">
+      {lots.map((lot, i) => (
+        <li class="ph-lot" data-lot={i} data-next={i === 0 ? '' : undefined}>
+          <span class="ph-lot-code">Lote {lot.code}</span>
+          <span class="ph-lot-exp">Vence {lot.exp}</span>
+          <span class="ph-boxes" aria-hidden="true" data-boxes>
+            {Array.from({ length: lot.qty }, () => (
+              <span class="ph-box" />
+            ))}
+          </span>
+          <span class="ph-qty">
+            <span data-qty>{lot.qty}</span> cajas
+          </span>
+          <span class="ph-tag" data-tag>
+            {i === 0 ? 'Sale primero' : 'Espera su turno'}
+          </span>
+        </li>
+      ))}
+    </ul>
+    <div class="ph-actions">
+      <button type="button" class="ph-sell press-solid" data-sell>
+        Vender 1 caja
+      </button>
+      <div class="ph-temp">
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M10 13.5V5a2 2 0 0 1 4 0v8.5a4 4 0 1 1-4 0z"></path>
+        </svg>
+        <span class="ph-temp-text">
+          <strong>21 °C · 55 %</strong>
+          <span data-temp-note>Falta la lectura de la tarde</span>
+        </span>
+        <button type="button" class="ph-temp-btn press" data-temp aria-pressed="false">
+          Registrar
+        </button>
+      </div>
+    </div>
+    <p class="ph-msg" aria-live="polite" data-msg>
+      Toca "Vender 1 caja": XASKA saca la caja del lote que vence primero.
+    </p>
+  </div>
+</div>
+<p class="mt-3 text-sm text-muted">Ilustración con datos de ejemplo.</p>
+
+<style>
+  .ph {
+    position: relative;
+  }
+  .ph-blob {
+    position: absolute;
+    inset: 0;
+  }
+  .ph-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.75rem 1rem;
+  }
+  .ph-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--seg-strong);
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+  .ph-cross {
+    display: inline-flex;
+    width: 3.375rem;
+    height: 3.375rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    background-color: #047857;
+  }
+  .ph-cross svg {
+    width: 1.875rem;
+    height: 1.875rem;
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+  .ph-lots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+    gap: 0.75rem;
+  }
+  .ph-lot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    border: 3px solid transparent;
+    border-radius: 1.25rem;
+    background-color: #ffffff;
+    padding: 0.875rem;
+    color: #052e22;
+    transition: border-color 200ms;
+  }
+  .ph-lot[data-next] {
+    border-color: #6ee7b7;
+  }
+  .ph-lot[data-fresh] {
+    border-color: #047857;
+  }
+  .ph-lot-code {
+    font-size: 1rem;
+    font-weight: 800;
+  }
+  .ph-lot-exp {
+    font-size: 0.8125rem;
+  }
+  .ph-boxes {
+    display: flex;
+    min-height: 2.5rem;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0.25rem;
+  }
+  .ph-box {
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 2px solid #34d399;
+    border-radius: 5px;
+    background: #ffffff;
+  }
+  .ph-qty {
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+  .ph-tag {
+    align-self: flex-start;
+    border-radius: 999px;
+    background-color: #ecfdf5;
+    padding: 0.25rem 0.5625rem;
+    color: #065f46;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .ph-lot[data-next] .ph-tag {
+    background-color: #047857;
+    color: #ffffff;
+  }
+  .ph-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .ph-sell {
+    min-height: 3.25rem;
+    flex: 1 1 13.75rem;
+    border-radius: 0.875rem;
+    background-color: #047857;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 12px 24px -14px #047857;
+  }
+  .ph-temp {
+    display: flex;
+    flex: 1 1 15rem;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 1rem;
+    background-color: #ffffff;
+    padding: 0.625rem 0.875rem;
+    color: #052e22;
+  }
+  .ph-temp > svg {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    fill: none;
+    stroke: #047857;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .ph-temp-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8125rem;
+  }
+  .ph-temp-text strong {
+    font-size: 0.9375rem;
+  }
+  .ph-temp-btn {
+    min-height: 2.75rem;
+    margin-left: auto;
+    border-radius: 0.625rem;
+    background-color: #fef3c7;
+    padding: 0 0.75rem;
+    color: #92400e;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .ph-temp-btn[aria-pressed='true'] {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  .ph-msg {
+    border-radius: 0.875rem;
+    background-color: #ffffff;
+    padding: 0.75rem 0.875rem;
+    color: #052e22;
+    font-size: 0.875rem;
+  }
+  @media (min-width: 640px) {
+    .ph-inner {
+      padding: 2.5rem 2.125rem;
+    }
+  }
+</style>
+
+<script>
+  type Lot = { code: string; exp: string; qty: number };
+
+  document.querySelectorAll<HTMLElement>('[data-pharmacy]').forEach((root) => {
+    const initial = JSON.parse(root.dataset.lots ?? '[]') as Lot[];
+    let qty = initial.map((lot) => lot.qty);
+    const items = [...root.querySelectorAll<HTMLElement>('[data-lot]')];
+    const msg = root.querySelector<HTMLElement>('[data-msg]');
+    const temp = root.querySelector<HTMLButtonElement>('[data-temp]');
+    const tempNote = root.querySelector<HTMLElement>('[data-temp-note]');
+
+    function render(last: number) {
+      const next = qty.findIndex((q) => q > 0);
+      items.forEach((item, i) => {
+        const count = qty[i] ?? 0;
+        item.toggleAttribute('data-next', i === next);
+        item.toggleAttribute('data-fresh', i === last);
+        const qtyOut = item.querySelector('[data-qty]');
+        if (qtyOut) qtyOut.textContent = String(count);
+        const tag = item.querySelector('[data-tag]');
+        if (tag)
+          tag.textContent =
+            count === 0 ? 'Agotado' : i === next ? 'Sale primero' : 'Espera su turno';
+        const boxes = item.querySelector('[data-boxes]');
+        if (boxes) {
+          boxes.replaceChildren(
+            ...Array.from({ length: count }, () => {
+              const box = document.createElement('span');
+              box.className = 'ph-box';
+              return box;
+            }),
+          );
+        }
+      });
+      if (!msg) return;
+      if (last < 0) {
+        msg.textContent = 'Toca "Vender 1 caja": XASKA saca la caja del lote que vence primero.';
+      } else if (next < 0) {
+        msg.textContent =
+          'Se acabó el acetaminofén: aparece en "Por agotarse" para el próximo pedido.';
+      } else {
+        const lot = initial[last];
+        msg.textContent = `Vendida 1 caja del lote ${lot?.code} (vence ${lot?.exp}).`;
+      }
+    }
+
+    root.querySelector('[data-sell]')?.addEventListener('click', () => {
+      const i = qty.findIndex((q) => q > 0);
+      if (i < 0) {
+        qty = initial.map((lot) => lot.qty);
+        render(-1);
+        return;
+      }
+      qty[i] = (qty[i] ?? 1) - 1;
+      render(i);
+    });
+
+    temp?.addEventListener('click', () => {
+      const done = temp.getAttribute('aria-pressed') !== 'true';
+      temp.setAttribute('aria-pressed', done ? 'true' : 'false');
+      temp.textContent = done ? 'Hecho' : 'Registrar';
+      if (tempNote) {
+        tempNote.textContent = done
+          ? 'Lectura de la tarde registrada'
+          : 'Falta la lectura de la tarde';
+      }
+    });
+  });
+</script>

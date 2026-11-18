@@ -1,0 +1,336 @@
+---
+/**
+ * Automatización: tres casos de ejemplo que se ven "a mano" (cuatro pasos de una persona) o
+ * "automático" (un flujo que corre solo, con un punto que recorre la línea).
+ */
+const cases = [
+  {
+    label: 'Reporte semanal',
+    manual: [
+      ['Descargar las ventas', 'Del sistema, cada lunes.'],
+      ['Pegarlas en Excel', 'Y arreglar columnas.'],
+      ['Armar el reporte', 'Totales y comparación.'],
+      ['Enviarlo por correo', 'A cada socio.'],
+    ],
+    auto: [
+      ['Lunes temprano', 'El flujo arranca solo.'],
+      ['Toma las ventas', 'Directo del sistema.'],
+      ['Arma el reporte', 'Con el mismo formato siempre.'],
+      ['Llega al correo', 'Y avisa si algo está raro.'],
+    ],
+  },
+  {
+    label: 'Datos entre sistemas',
+    manual: [
+      ['Buscar pedidos nuevos', 'En el primer sistema.'],
+      ['Copiar dato por dato', 'Cliente, productos, valores.'],
+      ['Pegar en el otro', 'Revisando que no falte nada.'],
+      ['Corregir errores', 'Los que se cuelan al copiar.'],
+    ],
+    auto: [
+      ['Aparece un pedido', 'El flujo lo detecta.'],
+      ['Lo revisa', 'Lo que no cuadra queda aparte.'],
+      ['Lo pasa solo', 'Al otro sistema.'],
+      ['Te avisa si falla', 'En vez de enterarte tarde.'],
+    ],
+  },
+  {
+    label: 'Avisos',
+    manual: [
+      ['Revisar a mano', 'Qué se acaba o vence.'],
+      ['Anotarlo', 'En un cuaderno o un chat.'],
+      ['Avisar uno por uno', 'Cuando te acuerdas.'],
+      ['Volver a revisar', 'Al día siguiente.'],
+    ],
+    auto: [
+      ['Cada día a la hora', 'Que tú digas.'],
+      ['Revisa todo', 'Sin olvidar nada.'],
+      ['Arma el aviso', 'Con lo que hay que hacer.'],
+      ['Le llega a quien es', 'Por correo.'],
+    ],
+  },
+];
+const first = cases[0]?.manual ?? [];
+---
+
+<div class="af" data-automation data-cases={JSON.stringify(cases)} data-mode="manual">
+  <div class="af-controls">
+    <div class="af-cases" role="group" aria-label="Caso">
+      {cases.map((item, i) => (
+        <button
+          type="button"
+          class="af-case press"
+          data-case={i}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+    <div class="af-modes" role="group" aria-label="Modo">
+      <button type="button" class="af-mode press" data-set-mode="manual" aria-pressed="true">
+        A mano
+      </button>
+      <button type="button" class="af-mode press" data-set-mode="auto" aria-pressed="false">
+        Automático
+      </button>
+    </div>
+  </div>
+
+  <div class="af-board">
+    <div class="af-line" aria-hidden="true">
+      <span class="af-runner"></span>
+    </div>
+    <ol class="af-steps" data-steps>
+      {first.map(([title, text]) => (
+        <li class="af-step">
+          <span class="af-who">Una persona</span>
+          <span class="af-step-title">{title}</span>
+          <span class="af-step-text">{text}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+  <p class="af-note" aria-live="polite" data-note>
+    Cuatro pasos y una persona, cada semana. Toca "Automático".
+  </p>
+</div>
+
+<style>
+  .af {
+    display: flex;
+    flex-direction: column;
+    gap: 1.375rem;
+    border-radius: 2.5rem;
+    background-color: var(--c-surface);
+    padding: 1.25rem;
+    box-shadow: 0 30px 60px -44px #134e4a;
+  }
+  .af-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .af-cases {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .af-case {
+    min-height: 2.75rem;
+    border-radius: 999px;
+    background-color: var(--seg-soft);
+    padding: 0 1rem;
+    color: var(--c-text);
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .af-case[aria-pressed='true'] {
+    background-color: var(--seg-deep);
+    color: #ffffff;
+  }
+  .af-modes {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.375rem;
+    border-radius: 1rem;
+    background-color: var(--seg-soft);
+    padding: 0.375rem;
+  }
+  .af-mode {
+    min-height: 2.875rem;
+    border-radius: 0.75rem;
+    background: transparent;
+    color: var(--seg-strong);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .af-mode[aria-pressed='true'] {
+    background-color: var(--seg);
+    color: var(--seg-on);
+    box-shadow: 0 8px 18px -10px var(--seg);
+  }
+  .af-board {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-radius: 1.9rem;
+    background-color: #f4f6f6;
+    padding: 1.375rem;
+    transition: background-color 300ms;
+  }
+  [data-mode='auto'] .af-board {
+    background-color: #042f2e;
+  }
+  .af-line {
+    position: relative;
+    height: 1.125rem;
+    margin: 0 2.5rem;
+    overflow: hidden;
+  }
+  .af-line::before {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    border-top: 3px dashed #b8c5c3;
+    content: '';
+  }
+  [data-mode='auto'] .af-line::before {
+    height: 4px;
+    margin-top: -2px;
+    border: 0;
+    border-radius: 999px;
+    background-color: #2dd4bf;
+  }
+  .af-runner {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    display: none;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border-radius: 50%;
+    background-color: #5eead4;
+    box-shadow: 0 0 0 6px rgb(94 234 212 / 0.25);
+  }
+  [data-mode='auto'] .af-runner {
+    display: block;
+    animation: af-run 3.2s linear infinite;
+  }
+  @keyframes af-run {
+    from {
+      left: 0;
+    }
+    to {
+      left: calc(100% - 14px);
+    }
+  }
+  .af-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: 0.75rem;
+  }
+  .af-steps :global(.af-step) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-radius: 1.4rem 0.5rem 1.4rem 1.4rem;
+    background-color: #ffffff;
+    padding: 1.125rem;
+    color: #062925;
+  }
+  .af-steps :global(.af-step:nth-child(even)) {
+    border-radius: 1.4rem 1.4rem 1.4rem 0.5rem;
+  }
+  [data-mode='auto'] .af-steps :global(.af-step) {
+    background-color: #134e4a;
+    color: #ecfeff;
+  }
+  .af-steps :global(.af-who) {
+    align-self: flex-start;
+    border-radius: 999px;
+    background-color: #ffffff;
+    padding: 0.25rem 0.5625rem;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px #e2e8f0;
+  }
+  [data-mode='auto'] .af-steps :global(.af-who) {
+    background-color: #ccfbf1;
+    color: #115e59;
+    box-shadow: none;
+  }
+  .af-steps :global(.af-step-title) {
+    font-weight: 800;
+  }
+  .af-steps :global(.af-step-text) {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .af-note {
+    color: var(--c-muted);
+    font-size: 0.9375rem;
+  }
+  @media (min-width: 768px) {
+    .af {
+      padding: 1.625rem;
+    }
+    .af-modes {
+      width: auto;
+      min-width: 20rem;
+      margin-left: auto;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-mode='auto'] .af-runner {
+      left: 50%;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  type Case = { label: string; manual: string[][]; auto: string[][] };
+
+  document.querySelectorAll<HTMLElement>('[data-automation]').forEach((root) => {
+    const cases = JSON.parse(root.dataset.cases ?? '[]') as Case[];
+    const caseButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-case]')];
+    const modeButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-set-mode]')];
+    const steps = root.querySelector<HTMLElement>('[data-steps]');
+    const note = root.querySelector<HTMLElement>('[data-note]');
+    let current = 0;
+
+    function render() {
+      const auto = root.dataset.mode === 'auto';
+      const list = (auto ? cases[current]?.auto : cases[current]?.manual) ?? [];
+      steps?.replaceChildren(
+        ...list.map(([title, text]) => {
+          const li = document.createElement('li');
+          li.className = 'af-step';
+          const who = document.createElement('span');
+          who.className = 'af-who';
+          who.textContent = auto ? 'Automático' : 'Una persona';
+          const t = document.createElement('span');
+          t.className = 'af-step-title';
+          t.textContent = title ?? '';
+          const d = document.createElement('span');
+          d.className = 'af-step-text';
+          d.textContent = text ?? '';
+          li.append(who, t, d);
+          return li;
+        }),
+      );
+      if (note) {
+        note.textContent = auto
+          ? 'Ejemplo. Cada automatización se diseña con tu proceso real y herramientas que puedas mantener.'
+          : 'Cuatro pasos y una persona, cada semana. Toca "Automático".';
+      }
+    }
+
+    caseButtons.forEach((button, i) => {
+      button.addEventListener('click', () => {
+        current = i;
+        caseButtons.forEach((other) =>
+          other.setAttribute('aria-pressed', other === button ? 'true' : 'false'),
+        );
+        render();
+      });
+    });
+    modeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        root.dataset.mode = button.dataset.setMode ?? 'manual';
+        modeButtons.forEach((other) =>
+          other.setAttribute('aria-pressed', other === button ? 'true' : 'false'),
+        );
+        render();
+      });
+    });
+  });
+</script>

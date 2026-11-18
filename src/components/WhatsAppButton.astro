@@ -5,12 +5,13 @@ import { whatsappUrl, whatsappMessages } from '@/config/site';
  * Enlace a WhatsApp con mensaje prellenado.
  * - variant "button": botón con texto (borde).
  * - variant "solid": botón con texto y relleno de acento.
+ * - variant "segment": relleno con el color del tipo de negocio (--seg, ver segments.css).
  * - variant "icon": solo ícono (encabezado móvil), con nombre accesible.
  */
 interface Props {
   message?: string | undefined;
   label?: string | undefined;
-  variant?: 'button' | 'solid' | 'icon' | undefined;
+  variant?: 'button' | 'solid' | 'segment' | 'icon' | undefined;
   class?: string | undefined;
 }
 
@@ -58,7 +59,9 @@ const href = whatsappUrl(message);
       'inline-flex min-h-12 items-center gap-2 rounded-control px-6 font-semibold press',
       variant === 'solid'
         ? 'press-solid bg-accent text-on-accent hover:bg-accent-strong'
-        : 'border-[1.5px] border-line-strong text-ink hover:border-ink',
+        : variant === 'segment'
+          ? 'press-solid seg-solid'
+          : 'border-[1.5px] border-line-strong text-ink hover:border-ink',
       className,
     ]}
   >

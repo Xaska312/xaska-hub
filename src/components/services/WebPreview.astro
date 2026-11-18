@@ -1,0 +1,441 @@
+---
+/**
+ * Páginas web: un sitio de ejemplo que cambia de negocio, de color y de pantalla
+ * (celular, tablet, computador). Negocios y textos de ejemplo.
+ */
+const businesses = [
+  {
+    label: 'Panadería',
+    name: 'Panadería El Trigal',
+    menu: 'Productos',
+    kicker: 'Desde las 5 a. m.',
+    title: 'Pan caliente todos los días, a la vuelta de tu casa',
+    cards: [
+      ['Pan de queso', 'Recién salido'],
+      ['Tortas por encargo', 'Con 2 días de anticipo'],
+      ['Desayunos', 'Para llevar'],
+    ],
+  },
+  {
+    label: 'Taller',
+    name: 'Taller Motos Ya',
+    menu: 'Servicios',
+    kicker: 'Mecánica y repuestos',
+    title: 'Tu moto revisada el mismo día',
+    cards: [
+      ['Mantenimiento', 'Aceite, frenos y cadena'],
+      ['Repuestos', 'Originales y genéricos'],
+      ['Domicilio', 'Recogemos tu moto'],
+    ],
+  },
+  {
+    label: 'Tienda en línea',
+    name: 'Mercado Verde',
+    menu: 'Tienda',
+    kicker: 'Pedidos en línea',
+    title: 'Frutas y verduras frescas, a tu puerta',
+    cards: [
+      ['Canasta semanal', 'Lista para pedir'],
+      ['Frutas', 'Por libra o por unidad'],
+      ['Envío', 'En tu barrio'],
+    ],
+  },
+];
+const colors = [
+  { key: 'fucsia', label: 'Fucsia' },
+  { key: 'naranja', label: 'Naranja' },
+  { key: 'verde', label: 'Verde' },
+  { key: 'azul', label: 'Azul' },
+];
+const devices = [
+  { key: 'celular', label: 'Celular' },
+  { key: 'tablet', label: 'Tablet' },
+  { key: 'computador', label: 'Computador' },
+];
+const biz = businesses[0];
+if (!biz) throw new Error('WebPreview necesita al menos un negocio de ejemplo');
+---
+
+<div
+  class="wp"
+  data-web
+  data-businesses={JSON.stringify(businesses)}
+  data-color="fucsia"
+  data-device="computador"
+>
+  <div class="wp-controls">
+    <div class="wp-group" role="group" aria-label="Negocio">
+      {businesses.map((item, i) => (
+        <button
+          type="button"
+          class="wp-pill press"
+          data-biz={i}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+    <div class="wp-group" role="group" aria-label="Color">
+      {colors.map((color, i) => (
+        <button
+          type="button"
+          class:list={['wp-swatch press', `wp-swatch-${color.key}`]}
+          data-set-color={color.key}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+          aria-label={`Color ${color.label}`}
+        />
+      ))}
+    </div>
+    <div class="wp-devices" role="group" aria-label="Pantalla">
+      {devices.map((device) => (
+        <button
+          type="button"
+          class="wp-device press"
+          data-set-device={device.key}
+          aria-pressed={device.key === 'computador' ? 'true' : 'false'}
+        >
+          {device.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="wp-stage">
+    <div class="wp-frame">
+      <div class="wp-head">
+        <span class="wp-name" data-out="name">
+          {biz.name}
+        </span>
+        <span class="wp-menu" aria-hidden="true">
+          <span>Inicio</span>
+          <span data-out="menu">{biz.menu}</span>
+          <span>Contacto</span>
+        </span>
+      </div>
+      <div class="wp-hero">
+        <span class="wp-kicker" data-out="kicker">
+          {biz.kicker}
+        </span>
+        <span class="wp-title" data-out="title">
+          {biz.title}
+        </span>
+        <span class="wp-btn">Escríbenos por WhatsApp</span>
+      </div>
+      <div class="wp-cards">
+        {biz.cards.map(([title, text], i) => (
+          <div class="wp-card">
+            <span class:list={['wp-img', i === 1 && 'wp-img-strong']} />
+            <span class="wp-card-title" data-out={`card${i}t`}>
+              {title}
+            </span>
+            <span class="wp-card-text" data-out={`card${i}d`}>
+              {text}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+  <p class="wp-note">
+    Negocios y textos de ejemplo. Cada página se diseña con tu marca, tus fotos y tus textos.
+  </p>
+</div>
+
+<style>
+  .wp {
+    --wp-c: #a21caf;
+    --wp-soft: #fae8ff;
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+    border-radius: 2.5rem;
+    background-color: var(--c-surface);
+    padding: 1.25rem;
+    box-shadow: 0 30px 60px -44px #701a75;
+  }
+  .wp[data-color='naranja'] {
+    --wp-c: #c2410c;
+    --wp-soft: #ffedd5;
+  }
+  .wp[data-color='verde'] {
+    --wp-c: #15803d;
+    --wp-soft: #dcfce7;
+  }
+  .wp[data-color='azul'] {
+    --wp-c: #1d4ed8;
+    --wp-soft: #dbeafe;
+  }
+  .wp-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  .wp-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .wp-pill {
+    min-height: 2.75rem;
+    border-radius: 0.75rem;
+    background-color: var(--seg-soft);
+    padding: 0 0.875rem;
+    color: var(--c-text);
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .wp-pill[aria-pressed='true'] {
+    background-color: var(--seg-deep);
+    color: #ffffff;
+  }
+  .wp-swatch {
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 4px solid #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px #e9d5ef;
+  }
+  .wp-swatch[aria-pressed='true'] {
+    border-color: #2a0b2e;
+  }
+  .wp-swatch-fucsia {
+    background: #a21caf;
+  }
+  .wp-swatch-naranja {
+    background: #c2410c;
+  }
+  .wp-swatch-verde {
+    background: #15803d;
+  }
+  .wp-swatch-azul {
+    background: #1d4ed8;
+  }
+  .wp-devices {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.375rem;
+    border-radius: 0.875rem;
+    background-color: var(--seg-soft);
+    padding: 0.3rem;
+  }
+  .wp-device {
+    min-height: 2.75rem;
+    border-radius: 0.625rem;
+    background: transparent;
+    padding: 0 0.5rem;
+    color: var(--seg-strong);
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .wp-device[aria-pressed='true'] {
+    background-color: var(--seg);
+    color: var(--seg-on);
+  }
+  .wp-stage {
+    display: flex;
+    min-height: 20rem;
+    justify-content: center;
+    border-radius: 1.9rem;
+    background-color: #f5eef6;
+    padding: 1rem;
+  }
+  :global(:root[data-theme='dark']) .wp-stage {
+    background-color: var(--seg-soft);
+  }
+  .wp-frame {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+    align-self: flex-start;
+    overflow: hidden;
+    border: 10px solid #2a0b2e;
+    border-radius: 1rem;
+    background-color: #fffdfd;
+    color: #2a0b2e;
+    transition:
+      width 350ms var(--ease-bounce),
+      border-radius 300ms;
+  }
+  [data-device='tablet'] .wp-frame {
+    width: 33.75rem;
+    border-radius: 1.6rem;
+  }
+  [data-device='celular'] .wp-frame {
+    width: 18.75rem;
+    border-radius: 2.1rem;
+  }
+  .wp-head {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    background-color: var(--wp-c);
+    padding: 0.875rem 1.125rem;
+    color: #ffffff;
+  }
+  .wp-name {
+    font-weight: 800;
+  }
+  .wp-menu {
+    display: none;
+    gap: 0.875rem;
+    margin-left: auto;
+    font-size: 0.8125rem;
+  }
+  .wp-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background-color: var(--wp-soft);
+    padding: 1.5rem 1.125rem;
+  }
+  .wp-kicker {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .wp-title {
+    max-width: 18ch;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .wp-btn {
+    align-self: flex-start;
+    border-radius: 0.75rem;
+    background-color: var(--wp-c);
+    padding: 0.7rem 0.875rem;
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+  .wp-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 1.125rem;
+  }
+  [data-device='tablet'] .wp-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .wp-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    border-radius: 0.875rem;
+    background-color: #ffffff;
+    padding: 0.75rem;
+    box-shadow: 0 6px 16px -12px #2a0b2e;
+  }
+  .wp-img {
+    display: block;
+    height: 4.375rem;
+    border-radius: 0.625rem;
+    background-color: var(--wp-soft);
+  }
+  .wp-img-strong {
+    background-color: var(--wp-c);
+    opacity: 0.85;
+  }
+  .wp-card-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .wp-card-text {
+    color: #5b3360;
+    font-size: 0.75rem;
+  }
+  .wp-note {
+    color: var(--c-muted);
+    font-size: 0.8125rem;
+  }
+  /* El "computador" solo se ve como computador cuando hay espacio. */
+  @media (min-width: 768px) {
+    .wp {
+      padding: 1.5rem;
+    }
+    .wp-devices {
+      display: flex;
+      width: auto;
+      margin-left: auto;
+    }
+    .wp-device {
+      padding: 0 0.875rem;
+    }
+    .wp-stage {
+      min-height: 32rem;
+      padding: 1.625rem;
+    }
+    [data-device='computador'] .wp-menu {
+      display: flex;
+    }
+    [data-device='computador'] .wp-hero {
+      padding: 2.5rem 2.25rem;
+    }
+    [data-device='computador'] .wp-title {
+      font-size: 2.125rem;
+    }
+    [data-device='computador'] .wp-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    [data-device='computador'] .wp-img {
+      height: 5.625rem;
+    }
+  }
+</style>
+
+<script>
+  type Biz = { name: string; menu: string; kicker: string; title: string; cards: string[][] };
+
+  document.querySelectorAll<HTMLElement>('[data-web]').forEach((root) => {
+    const businesses = JSON.parse(root.dataset.businesses ?? '[]') as Biz[];
+    const set = (name: string, value: string) => {
+      const el = root.querySelector(`[data-out="${name}"]`);
+      if (el) el.textContent = value;
+    };
+    const press = (buttons: HTMLButtonElement[], active: HTMLButtonElement) =>
+      buttons.forEach((b) => b.setAttribute('aria-pressed', b === active ? 'true' : 'false'));
+
+    const bizButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-biz]')];
+    bizButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const biz = businesses[Number(button.dataset.biz)];
+        if (!biz) return;
+        press(bizButtons, button);
+        set('name', biz.name);
+        set('menu', biz.menu);
+        set('kicker', biz.kicker);
+        set('title', biz.title);
+        biz.cards.forEach(([title, text], i) => {
+          set(`card${i}t`, title ?? '');
+          set(`card${i}d`, text ?? '');
+        });
+      });
+    });
+
+    const colorButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-set-color]')];
+    colorButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        root.dataset.color = button.dataset.setColor ?? 'fucsia';
+        press(colorButtons, button);
+      });
+    });
+
+    const deviceButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-set-device]')];
+    deviceButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        root.dataset.device = button.dataset.setDevice ?? 'computador';
+        press(deviceButtons, button);
+      });
+    });
+  });
+</script>
