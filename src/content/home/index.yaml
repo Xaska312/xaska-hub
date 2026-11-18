@@ -73,7 +73,7 @@ chapters:
 # Quiénes somos, bajo la caja y las pestañas.
 pillars:
   title: Software para pymes, hecho por gente que conoce el mostrador
-  lead: En XASKA creamos XASKA POS y desarrollamos herramientas a la medida para pymes colombianas. Hablas directo con quien lo construye.
+  lead: En XASKA creamos XASKA POS y desarrollamos herramientas a la medida para pymes colombianas. Y cuando lo necesitas, hablas directo con quien lo construye.
   items:
     - title: Un producto propio
       text: XASKA POS, para vender, controlar el inventario y cuadrar la caja desde el computador, la tablet o el celular.
@@ -86,7 +86,7 @@ pillars:
         label: Ver servicios
         href: /servicios
     - title: Trato directo
-      text: Sin intermediarios ni respuestas automáticas. Nos escribes por WhatsApp y te responde quien conoce tu caso.
+      text: Nos escribes por WhatsApp y nuestro asistente te responde al instante, a cualquier hora. Si hace falta, te pasa con Daniel, que conoce tu caso.
 
 pos:
   title: XASKA POS
@@ -126,4 +126,4 @@ process:
 
 closing:
   title: ¿Hablamos de tu negocio?
-  text: Escríbenos por WhatsApp o por correo y te respondemos nosotros mismos.
+  text: Escríbenos por WhatsApp y nuestro asistente te responde al instante, a cualquier hora. Si hace falta, te pasa con Daniel. También puedes escribirnos al correo.

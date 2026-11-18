@@ -77,10 +77,16 @@ export const socialProfiles: readonly { name: string; url: string }[] = [
 export const contact = {
   email: 'soporte@xaska.co',
   whatsapp: {
-    display: '+57 316 778 4193',
-    number: '573167784193',
+    // Desde el 2026-11-18 lo responde primero un asistente de IA, las 24 horas, que pasa con
+    // Daniel cuando hace falta (ver assistant).
+    display: '+57 324 556 0729',
+    number: '573245560729',
   },
+  /** Horario de atención de personas (el asistente de WhatsApp responde siempre). */
   hours: 'Lunes a sábado, de 8:00 a. m. a 6:00 p. m.' as string | null,
+  /** Cómo se dice en el sitio quién responde el WhatsApp. */
+  assistant:
+    'Te responde nuestro asistente al instante, a cualquier hora, y si hace falta te pasa con Daniel.',
 } as const;
 
 export const products = {
