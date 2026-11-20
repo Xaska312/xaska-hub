@@ -31,7 +31,7 @@ export const flags = {
    * (decisión 364 del POS, rama aska-web). Se pone en true cuando esa versión del POS ya esté
    * desplegada en app.xaska.co; antes, la burbuja no tendría con quién hablar.
    */
-  ASKA_CHAT: false,
+  ASKA_CHAT: true,
 } as const;
 
 export const site = {
