@@ -592,4 +592,64 @@ test.describe('chat de Aska', () => {
     await expect(panel).toBeHidden();
     await expect(launcher).toBeFocused();
   });
+
+  test('pregunta el nombre y, al despedirse, pide calificar con estrellas', async ({ page }) => {
+    let rated: { score: number; comment: string | null } | undefined;
+    await page.route(API, (route) =>
+      route.fulfill({
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        json: {
+          status: 'CLOSED',
+          ratingPending: true,
+          messages: [
+            {
+              id: 'b1',
+              author: 'BOT',
+              body: '¡Que te vaya bien!',
+              createdAt: '2026-11-20T20:00:00Z',
+            },
+            {
+              id: 'b2',
+              author: 'BOT',
+              body: '¿Cómo te atendimos? Califica de 1 a 5 ⭐',
+              createdAt: '2026-11-20T20:00:01Z',
+            },
+          ],
+        },
+      }),
+    );
+    await page.route(`${API}/*/rating`, async (route) => {
+      rated = route.request().postDataJSON() as { score: number; comment: string | null };
+      await route.fulfill({
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        json: {
+          status: 'CLOSED',
+          ratingPending: false,
+          messages: [
+            {
+              id: 'b3',
+              author: 'BOT',
+              body: 'Gracias, ya se lo pasamos al equipo de XASKA.',
+              createdAt: '2026-11-20T20:01:00Z',
+            },
+          ],
+        },
+      });
+    });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Pregúntale a Aska' }).click();
+    const panel = page.getByRole('dialog', { name: 'Aska' });
+    await expect(panel.getByRole('log')).toContainText('¿Con quién tengo el gusto?');
+    await expect(panel.getByRole('group', { name: '¿Cómo te atendimos?' })).toBeHidden();
+    await panel.getByLabel('Escríbele a Aska').fill('Eso es todo, gracias');
+    await panel.getByRole('button', { name: 'Enviar', exact: true }).click();
+    const stars = panel.getByRole('group', { name: '¿Cómo te atendimos?' });
+    await expect(stars).toBeVisible();
+    await stars.locator('label', { hasText: '4 de 5' }).click();
+    await panel.getByLabel('¿Algo que podamos mejorar? (opcional)').fill('Muy clara');
+    await panel.getByRole('button', { name: 'Enviar calificación' }).click();
+    await expect(panel.getByRole('log')).toContainText('se lo pasamos al equipo');
+    await expect(stars).toBeHidden();
+    expect(rated).toEqual({ score: 4, comment: 'Muy clara' });
+  });
 });

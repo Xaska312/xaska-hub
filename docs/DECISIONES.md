@@ -458,6 +458,13 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 
 - La política de xaska.co suma lo que se recoge por WhatsApp y por el chat con Aska (número o identificador de usuario de WhatsApp, nombre del perfil, mensajes y lo que cuentan del negocio, y el identificador aleatorio del chat en el navegador), que Aska es una IA que puede equivocarse, y los encargados Meta Platforms (WhatsApp Business), Anthropic (Claude) y Contabo (donde XASKA POS guarda las conversaciones). Las conversaciones de WhatsApp y del chat se borran a los 12 meses de su último mensaje (decisión 372 del POS); los mensajes del formulario y del correo siguen hasta dos años. Va en línea con la política 1.4 de XASKA POS (decisión 373).
 
+### Aska pregunta el nombre y pide calificar (2026-11-20)
+
+- Tras probar a Aska con clientes reales (decisión 375 del POS): el saludo del chat ya no pregunta el tipo de negocio sino "¿Con quién tengo el gusto?"; Aska saluda por el nombre y pregunta si ya usa XASKA POS o lo está conociendo (con clientes da soporte, sin ofrecer la prueba gratis).
+- Cuando la conversación se cierra (Aska se despide, alguien de XASKA la cierra o pasan 30 minutos sin respuesta), el servidor manda `ratingPending: true` y el chat muestra 5 estrellas (botones de opción, accesibles con teclado) y un comentario opcional; se envían a `POST {chatApi}/{sesión}/rating`. Escribir otro mensaje oculta las estrellas y reabre la conversación.
+- Con Aska, el chat abierto consulta cada minuto (antes solo con una persona, cada 8 s) para mostrar el cierre por inactividad.
+- Prueba: "pregunta el nombre y, al despedirse, pide calificar con estrellas" en `tests/smoke.spec.ts`.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
