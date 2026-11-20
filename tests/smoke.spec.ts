@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { stubTurnstile } from './helpers';
 import { publishedPages } from './pages';
+import { flags } from '../src/config/site';
 
 // Sin red hacia Cloudflare en las pruebas: Turnstile se reemplaza por su versión de prueba.
 test.beforeEach(async ({ page }) => {
@@ -414,6 +415,9 @@ test.describe('secciones por tipo de negocio', () => {
     await page.getByRole('button', { name: 'Vender 1 caja' }).click();
     await expect(page.locator('[data-msg]').first()).toContainText('lote B11');
     await expect(page.locator('[data-lot="0"] [data-qty]')).toHaveText('2');
+    // Las cajas que quedan se siguen viendo (se vuelven a dibujar con JavaScript).
+    const box = page.locator('[data-lot="1"] .ph-box').first();
+    expect((await box.boundingBox())?.width ?? 0).toBeGreaterThan(10);
   });
 
   test('distribuidora: el abono baja la cuenta de la tienda', async ({ page }) => {
@@ -494,6 +498,18 @@ test.describe('páginas de servicios', () => {
 });
 
 test.describe('menú Para tu negocio', () => {
+  test('en un celular bajo el menú se desplaza hasta el final', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'movil', 'Solo en móvil');
+    await page.setViewportSize({ width: 375, height: 600 });
+    await page.goto('/para/droguerias');
+    await page.getByRole('button', { name: 'Abrir menú' }).click();
+    const last = page
+      .getByRole('navigation', { name: 'Principal (móvil)' })
+      .getByRole('link', { name: 'Distribuidores' });
+    await last.scrollIntoViewIfNeeded();
+    await expect(last).toBeInViewport();
+  });
+
   test('en escritorio abre las cinco secciones', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'escritorio', 'Solo en escritorio');
     await page.goto('/');
@@ -519,4 +535,61 @@ test.describe('celular pequeño (320 px)', () => {
       expect(width.page).toBeLessThanOrEqual(width.screen);
     });
   }
+});
+
+test.describe('chat de Aska', () => {
+  // Solo cuando el chat está encendido (flags.ASKA_CHAT en src/config/site.ts).
+  test.skip(!flags.ASKA_CHAT, 'Chat de Aska apagado hasta desplegar la rama aska-web del POS');
+
+  const API = 'https://app.xaska.co/api/v1/public/aska/chat';
+
+  test('responde, pinta los enlaces sin HTML y recuerda la sesión', async ({ page }) => {
+    const sent: { session: string; text: string }[] = [];
+    await page.route(`${API}/*`, (route) =>
+      route.fulfill({
+        json: { status: 'BOT', messages: [] },
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      }),
+    );
+    await page.route(API, async (route) => {
+      sent.push(route.request().postDataJSON() as { session: string; text: string });
+      await route.fulfill({
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        json: {
+          status: 'BOT',
+          messages: [
+            {
+              id: 'm1',
+              author: 'BOT',
+              body: 'Para un bar te sirve el *Negocio*. Prueba gratis: https://app.xaska.co/registro. <b>no</b>',
+              createdAt: '2026-11-18T20:00:00Z',
+            },
+          ],
+        },
+      });
+    });
+    await page.goto('/');
+    const launcher = page.getByRole('button', { name: 'Pregúntale a Aska' });
+    await launcher.click();
+    const panel = page.getByRole('dialog', { name: 'Aska' });
+    await expect(panel).toBeVisible();
+    await panel.getByLabel('Escríbele a Aska').fill('Tengo un bar');
+    await panel.getByRole('button', { name: 'Enviar' }).click();
+    const log = panel.getByRole('log');
+    await expect(log).toContainText('Tengo un bar');
+    await expect(log.locator('strong', { hasText: 'Negocio' })).toBeVisible();
+    await expect(log.getByRole('link', { name: 'https://app.xaska.co/registro' })).toHaveAttribute(
+      'href',
+      'https://app.xaska.co/registro',
+    );
+    // Lo que llega del servidor nunca se pinta como HTML.
+    await expect(log.locator('b')).toHaveCount(0);
+    expect(sent[0]?.text).toBe('Tengo un bar');
+    expect(sent[0]?.session).toMatch(/^[0-9a-f-]{36}$/);
+    const stored = await page.evaluate(() => localStorage.getItem('xaska.aska-chat'));
+    expect(stored).toBe(sent[0]?.session);
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(launcher).toBeFocused();
+  });
 });

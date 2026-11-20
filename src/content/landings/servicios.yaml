@@ -1,6 +1,6 @@
 # Sección para talleres y negocios de servicios. Ilustración: src/components/scenes/ServicesScene.astro.
 order: 3
-name: Servicios
+name: Talleres y servicios
 seo:
   title: Programa para talleres y negocios de servicios
   description: XASKA POS para talleres, impresiones, instalaciones y mantenimiento en Ibagué. Cotización en PDF, pedidos con anticipo y fecha de entrega, y fiado para tus clientes.

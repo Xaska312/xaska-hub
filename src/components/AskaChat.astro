@@ -1,0 +1,537 @@
+---
+import { products, whatsappMessages, whatsappUrl } from '@/config/site';
+
+/**
+ * Chat de Aska en todas las páginas (decisión 364 del POS). Habla con el mismo asistente del WhatsApp de XASKA:
+ * responde sobre XASKA POS y los servicios, y si hace falta pasa la conversación a una persona, que responde aquí
+ * mismo desde la consola del POS. Sin JavaScript no se muestra (el WhatsApp sigue en el encabezado y el pie).
+ * La sesión es un identificador aleatorio que guarda el navegador; no se piden datos para empezar.
+ */
+const aska = products.aska;
+const pos = products.pos;
+---
+
+<div
+  class="aska-widget"
+  data-aska-widget
+  data-api={aska.chatApi}
+  data-whatsapp={whatsappUrl(whatsappMessages.askaChat)}
+  hidden
+>
+  <section
+    id="aska-panel"
+    class="aska-panel"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="aska-panel-title"
+    hidden
+    data-aska-panel
+  >
+    <header class="flex items-center gap-3 border-b border-line px-4 py-3">
+      <img src={aska.logo} alt="" width="36" height="36" class="size-9" />
+      <span class="min-w-0 flex-1">
+        <span id="aska-panel-title" class="block font-bold">
+          Aska
+        </span>
+        <span class="block text-xs text-muted">
+          Asistente virtual de XASKA · responde al instante
+        </span>
+      </span>
+      <button type="button" class="aska-icon-button" aria-label="Cerrar el chat" data-aska-close>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </header>
+
+    <ol
+      class="aska-log"
+      role="log"
+      aria-live="polite"
+      aria-label="Conversación con Aska"
+      tabindex="-1"
+      data-aska-log
+    >
+      <li class="aska-msg aska-msg--bot">
+        <span class="sr-only">Aska: </span>¡Hola! Soy Aska, la asistente virtual de XASKA. Te cuento
+        de XASKA POS, precios, equipos o un proyecto a la medida. ¿Qué tipo de negocio tienes?
+      </li>
+    </ol>
+    <p class="aska-typing" hidden data-aska-typing>
+      <span class="sr-only">Aska está escribiendo</span>
+      <span class="aska-dot" aria-hidden="true"></span>
+      <span class="aska-dot" aria-hidden="true"></span>
+      <span class="aska-dot" aria-hidden="true"></span>
+    </p>
+
+    <form class="flex items-end gap-2 border-t border-line p-3" data-aska-form>
+      <label for="aska-input" class="sr-only">
+        Escríbele a Aska
+      </label>
+      <textarea
+        id="aska-input"
+        rows="1"
+        maxlength="1000"
+        placeholder="Escribe tu pregunta…"
+        class="aska-input"
+        data-aska-input
+      ></textarea>
+      <button type="submit" class="aska-send press-solid" aria-label="Enviar" data-aska-send>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M5 12h13M13 6l6 6-6 6" />
+        </svg>
+      </button>
+    </form>
+    <p class="px-4 pb-3 text-xs text-muted">
+      Aska es una IA y puede equivocarse; si hace falta, te pasa con una persona. Al escribir
+      aceptas la
+      <a class="link" href={pos.privacyUrl} target="_blank" rel="noopener">
+        política de privacidad
+      </a>
+      . ¿Prefieres WhatsApp?
+      <a class="link" href={whatsappUrl(whatsappMessages.askaChat)} target="_blank" rel="noopener">
+        Escríbenos
+      </a>
+      .
+    </p>
+  </section>
+
+  <button
+    type="button"
+    class="aska-launcher press-solid"
+    aria-expanded="false"
+    aria-controls="aska-panel"
+    data-aska-launcher
+  >
+    <img src={aska.logo} alt="" width="28" height="28" class="size-7" />
+    <span>Pregúntale a Aska</span>
+  </button>
+</div>
+
+<style>
+  .aska-widget:not([hidden]) {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+  }
+  .aska-launcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0 1.125rem 0 0.75rem;
+    border-radius: 9999px;
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    font-weight: 700;
+    box-shadow: 0 10px 30px -10px rgb(17 24 39 / 0.45);
+    cursor: pointer;
+  }
+  .aska-launcher:hover {
+    background: var(--c-accent-strong);
+  }
+  .aska-launcher[aria-expanded='true'] span {
+    display: none;
+  }
+  .aska-launcher[aria-expanded='true'] {
+    padding: 0 0.625rem;
+  }
+  .aska-panel:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    width: min(24rem, calc(100vw - 2rem));
+    height: min(36rem, calc(100dvh - 7rem));
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-block);
+    background: var(--c-surface);
+    box-shadow: 0 24px 60px -20px rgb(17 24 39 / 0.45);
+    overflow: hidden;
+  }
+  .aska-log {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 1rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .aska-log :global(.aska-msg) {
+    max-width: 88%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 1.25rem;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .aska-log :global(.aska-msg--bot) {
+    align-self: flex-start;
+    border-bottom-left-radius: 0.375rem;
+    background: var(--c-inset);
+  }
+  .aska-log :global(.aska-msg--human) {
+    align-self: flex-start;
+    border-bottom-left-radius: 0.375rem;
+    background: var(--c-accent-soft);
+  }
+  .aska-log :global(.aska-msg--me) {
+    align-self: flex-end;
+    border-bottom-right-radius: 0.375rem;
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+  .aska-log :global(.aska-msg--note) {
+    align-self: center;
+    max-width: 100%;
+    background: none;
+    color: var(--c-muted);
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+  .aska-log :global(.aska-msg a) {
+    text-decoration: underline;
+    font-weight: 600;
+  }
+  .aska-log :global(.aska-who) {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--c-muted);
+  }
+  .aska-typing:not([hidden]) {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-self: flex-start;
+    margin: 0 1rem 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 1.25rem;
+    background: var(--c-inset);
+  }
+  .aska-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background: var(--c-muted);
+    animation: aska-blink 1.2s infinite ease-in-out;
+  }
+  .aska-dot:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+  .aska-dot:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  @keyframes aska-blink {
+    0%,
+    80%,
+    100% {
+      opacity: 0.3;
+    }
+    40% {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .aska-dot {
+      animation: none;
+    }
+  }
+  .aska-input {
+    flex: 1;
+    min-height: 2.75rem;
+    max-height: 8rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--c-line-strong);
+    border-radius: var(--radius-control);
+    background: var(--c-surface);
+    color: var(--c-text);
+    resize: none;
+  }
+  .aska-send,
+  .aska-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-control);
+    cursor: pointer;
+  }
+  .aska-send {
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+  .aska-send:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+  .aska-icon-button:hover {
+    background: var(--c-inset);
+  }
+  @media (max-width: 30rem) {
+    .aska-panel:not([hidden]) {
+      width: calc(100vw - 2rem);
+      height: calc(100dvh - 6.5rem);
+    }
+  }
+</style>
+
+<script>
+  import { askaParts, type AskaPart } from '@/lib/aska-chat';
+
+  interface ChatMessage {
+    id: string;
+    author: 'CUSTOMER' | 'BOT' | 'HUMAN';
+    body: string;
+    createdAt: string;
+  }
+  interface ChatView {
+    status: 'BOT' | 'HUMAN' | 'CLOSED';
+    messages: ChatMessage[];
+  }
+
+  const KEY = 'xaska.aska-chat';
+  const POLL_MS = 8000;
+
+  document.querySelectorAll<HTMLElement>('[data-aska-widget]').forEach((widget) => {
+    const api = widget.dataset.api ?? '';
+    const whatsapp = widget.dataset.whatsapp ?? '';
+    const $panel = widget.querySelector<HTMLElement>('[data-aska-panel]');
+    const $launcher = widget.querySelector<HTMLButtonElement>('[data-aska-launcher]');
+    const $close = widget.querySelector<HTMLButtonElement>('[data-aska-close]');
+    const $log = widget.querySelector<HTMLOListElement>('[data-aska-log]');
+    const $typing = widget.querySelector<HTMLElement>('[data-aska-typing]');
+    const $form = widget.querySelector<HTMLFormElement>('[data-aska-form]');
+    const $input = widget.querySelector<HTMLTextAreaElement>('[data-aska-input]');
+    const $send = widget.querySelector<HTMLButtonElement>('[data-aska-send]');
+    if (
+      !api ||
+      !$panel ||
+      !$launcher ||
+      !$close ||
+      !$log ||
+      !$typing ||
+      !$form ||
+      !$input ||
+      !$send
+    )
+      return;
+    const panel: HTMLElement = $panel;
+    const launcher: HTMLButtonElement = $launcher;
+    const close: HTMLButtonElement = $close;
+    const log: HTMLOListElement = $log;
+    const typing: HTMLElement = $typing;
+    const form: HTMLFormElement = $form;
+    const input: HTMLTextAreaElement = $input;
+    const send: HTMLButtonElement = $send;
+
+    widget.hidden = false;
+    let session = stored();
+    let loaded = false;
+    let busy = false;
+    let status: ChatView['status'] = 'BOT';
+    let last: string | null = null;
+    const seen = new Set<string>();
+    let timer: number | undefined;
+
+    function stored(): string | null {
+      try {
+        return localStorage.getItem(KEY);
+      } catch {
+        return null;
+      }
+    }
+
+    function ensureSession(): string {
+      if (!session) {
+        session = crypto.randomUUID();
+        try {
+          localStorage.setItem(KEY, session);
+        } catch {
+          // Sin almacenamiento la conversación dura lo que dure la pestaña.
+        }
+      }
+      return session;
+    }
+
+    function render(parts: AskaPart[], into: HTMLElement) {
+      for (const part of parts) {
+        if (part.kind === 'link') {
+          const a = document.createElement('a');
+          a.href = part.href;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = part.text;
+          into.append(a);
+        } else if (part.kind === 'bold') {
+          const strong = document.createElement('strong');
+          strong.textContent = part.text;
+          into.append(strong);
+        } else {
+          into.append(part.text);
+        }
+      }
+    }
+
+    function add(kind: 'me' | 'bot' | 'human' | 'note', text: string) {
+      const li = document.createElement('li');
+      li.className = `aska-msg aska-msg--${kind}`;
+      const who = document.createElement('span');
+      who.className = kind === 'human' ? 'aska-who' : 'sr-only';
+      who.textContent =
+        kind === 'me'
+          ? 'Tú: '
+          : kind === 'human'
+            ? 'Equipo de XASKA'
+            : kind === 'bot'
+              ? 'Aska: '
+              : '';
+      if (kind !== 'note') li.append(who);
+      render(askaParts(text), li);
+      log.append(li);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function show(view: ChatView, includeMine: boolean) {
+      status = view.status;
+      for (const m of view.messages) {
+        if (seen.has(m.id)) continue;
+        seen.add(m.id);
+        last = m.createdAt;
+        if (m.author === 'CUSTOMER') {
+          if (includeMine) add('me', m.body);
+        } else {
+          add(m.author === 'HUMAN' ? 'human' : 'bot', m.body);
+        }
+      }
+      schedule();
+    }
+
+    /** Con una persona, se consulta cada tanto lo que responda (solo con el chat abierto). */
+    function schedule() {
+      window.clearTimeout(timer);
+      if (status === 'HUMAN' && !panel.hidden) {
+        timer = window.setTimeout(poll, POLL_MS);
+      }
+    }
+
+    async function poll() {
+      if (!session) return;
+      try {
+        const url = `${api}/${session}` + (last ? `?after=${encodeURIComponent(last)}` : '');
+        const response = await fetch(url);
+        if (response.ok) show((await response.json()) as ChatView, false);
+        else schedule();
+      } catch {
+        schedule();
+      }
+    }
+
+    async function load() {
+      loaded = true;
+      if (!session) return;
+      try {
+        const response = await fetch(`${api}/${session}`);
+        if (response.ok) show((await response.json()) as ChatView, true);
+      } catch {
+        // Si no carga lo anterior, igual se puede escribir.
+      }
+    }
+
+    function open() {
+      panel.hidden = false;
+      launcher.setAttribute('aria-expanded', 'true');
+      launcher.setAttribute('aria-label', 'Cerrar el chat con Aska');
+      if (!loaded) void load();
+      schedule();
+      input.focus();
+    }
+
+    function hide() {
+      panel.hidden = true;
+      launcher.setAttribute('aria-expanded', 'false');
+      launcher.removeAttribute('aria-label');
+      window.clearTimeout(timer);
+      launcher.focus();
+    }
+
+    launcher.addEventListener('click', () => (panel.hidden ? open() : hide()));
+    close.addEventListener('click', hide);
+    panel.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') hide();
+    });
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = `${input.scrollHeight}px`;
+    });
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text || busy) return;
+      busy = true;
+      send.disabled = true;
+      input.value = '';
+      input.style.height = 'auto';
+      add('me', text);
+      typing.hidden = status !== 'BOT';
+      try {
+        const response = await fetch(api, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session: ensureSession(), text }),
+        });
+        if (response.ok) {
+          const view = (await response.json()) as ChatView;
+          show(view, false);
+          if (view.status === 'HUMAN' && view.messages.length === 0) {
+            add('note', 'Le llegó tu mensaje al equipo de XASKA: te responden aquí mismo.');
+          }
+        } else {
+          const problem = (await response.json().catch(() => null)) as { detail?: string } | null;
+          add(
+            'note',
+            problem?.detail ?? `No pude responder ahora. Escríbenos por WhatsApp: ${whatsapp}`,
+          );
+        }
+      } catch {
+        add('note', `No me pude conectar. Escríbenos por WhatsApp: ${whatsapp}`);
+      } finally {
+        typing.hidden = true;
+        busy = false;
+        send.disabled = false;
+        input.focus();
+      }
+    });
+  });
+</script>

@@ -26,6 +26,12 @@ export const flags = {
    * Se pone en true el mismo día que salga en el POS (textos en src/content/pos/index.yaml, eInvoicing).
    */
   E_INVOICING: false,
+  /**
+   * Chat "Pregúntale a Aska" en todas las páginas (AskaChat.astro). Habla con XASKA POS
+   * (decisión 364 del POS, rama aska-web). Se pone en true cuando esa versión del POS ya esté
+   * desplegada en app.xaska.co; antes, la burbuja no tendría con quién hablar.
+   */
+  ASKA_CHAT: false,
 } as const;
 
 export const site = {
@@ -117,7 +123,13 @@ export const products = {
     trialDays: 14,
     /** Monograma oficial de XASKA IA, copiado sin cambios de XASKA POS (frontend/public/xaska-ia.svg). */
     logo: '/brand/xaska-ia/xaska-ia.svg',
-    /** Vendedor por WhatsApp: todavía no existe; el sitio lo anuncia como "próximamente". */
+    /**
+     * Chat de Aska en esta página (decisión 364 del POS): el mismo asistente del WhatsApp de XASKA, servido por
+     * XASKA POS. Público, con topes por IP y por día; las conversaciones se ven en la consola de plataforma del POS.
+     */
+    chatApi: 'https://app.xaska.co/api/v1/public/aska/chat',
+    chatOrigin: 'https://app.xaska.co',
+    /** Vendedor por WhatsApp para cada negocio: todavía no existe; el sitio lo anuncia como "próximamente". */
     soonName: 'ASKA Te Atiende',
   },
 } as const;
@@ -146,6 +158,7 @@ export const whatsappMessages = {
   notFound: 'Hola, estaba en xaska.co y no encontré lo que buscaba',
   aska: 'Hola, quiero saber más de ASKA, la IA de XASKA POS',
   askaSoon: 'Hola, quiero que me avisen cuando salga ASKA Te Atiende',
+  askaChat: 'Hola, vengo del chat de xaska.co',
 } as const;
 
 export interface NavItem {
