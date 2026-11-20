@@ -24,6 +24,10 @@ export function organization(): JsonLd {
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
     name: site.name,
+    // "Xaska" se confunde con otras cosas en los buscadores (una matrícula de avión, Chaska,
+    // Laska): el nombre alterno y la descripción les dicen qué es.
+    alternateName: ['XASKA POS', 'Xaska'],
+    description: 'Empresa de software de Ibagué, Colombia, que crea XASKA POS para pymes.',
     url: site.url,
     logo: {
       '@type': 'ImageObject',
