@@ -2,10 +2,10 @@
 title: Política de tratamiento de datos personales
 description: Cómo XASKA trata los datos personales que recibe por el sitio xaska.co, conforme a la Ley 1581 de 2012.
 reviewed: true
-updated: '2026-11-18'
+updated: '2026-11-20'
 ---
 
-Esta política explica cómo tratamos los datos personales que nos envías por el sitio web **xaska.co** (formulario de contacto, correo y WhatsApp). Cumple la Ley Estatutaria 1581 de 2012 y su reglamentación (Decreto 1377 de 2013, compilado en el Decreto Único 1074 de 2015).
+Esta política explica cómo tratamos los datos personales que nos envías por el sitio web **xaska.co** (formulario de contacto, chat con Aska, correo y WhatsApp). Cumple la Ley Estatutaria 1581 de 2012 y su reglamentación (Decreto 1377 de 2013, compilado en el Decreto Único 1074 de 2015).
 
 El uso de **XASKA POS** (`app.xaska.co`) tiene su propia [política de privacidad](https://app.xaska.co/privacidad) y sus propios [términos](https://app.xaska.co/terminos).
 
@@ -21,6 +21,8 @@ El uso de **XASKA POS** (`app.xaska.co`) tiene su propia [política de privacida
 
 Por el formulario de contacto: nombre, correo, teléfono (si decides darlo), el tema que te interesa y tu mensaje.
 
+Por WhatsApp y por el chat con Aska de este sitio: tu número de WhatsApp (o el identificador de usuario que WhatsApp da a quien usa nombre de usuario), el nombre de tu perfil, los mensajes de la conversación y lo que nos cuentes de tu negocio (nombre, ciudad, lo que necesitas y, si lo das, tu WhatsApp). El chat guarda en tu navegador un identificador aleatorio para que, si vuelves, veas la misma conversación.
+
 Además, para proteger el formulario de envíos automáticos, el servicio de verificación de Cloudflare (Turnstile) procesa datos técnicos de tu navegador y tu dirección IP. No los usamos para identificarte ni para publicidad.
 
 No pedimos datos sensibles ni datos de niños, niñas o adolescentes. Por favor no los incluyas en tu mensaje.
@@ -30,7 +32,7 @@ No pedimos datos sensibles ni datos de niños, niñas o adolescentes. Por favor 
 - Responder tu solicitud, pregunta o petición de cotización.
 - Enviarte la información que nos pediste sobre XASKA POS o nuestros servicios.
 - Llevar un registro de las conversaciones para darte un mejor seguimiento.
-- Responderte por WhatsApp a cualquier hora: los mensajes los atiende primero un asistente de inteligencia artificial, que usa servicios de proveedores tecnológicos solo para entender tu mensaje y responderte. Si el asistente no puede resolverlo, la conversación pasa a una persona de XASKA.
+- Responderte por WhatsApp y en el chat de este sitio a cualquier hora: te responde primero Aska, la asistente virtual de XASKA, una inteligencia artificial que puede equivocarse. Si no puede resolverlo, la conversación pasa a una persona de XASKA.
 - Proteger el sitio contra el abuso y los envíos automáticos.
 
 No vendemos ni alquilamos tus datos, y no te enviaremos publicidad que no hayas pedido.
@@ -46,12 +48,15 @@ Para que el sitio funcione usamos proveedores que tratan los datos por cuenta nu
 - **Cloudflare, Inc.** (Estados Unidos): aloja el sitio, recibe el formulario, verifica que no sea un bot (Turnstile) y cuenta las visitas de forma agregada (Cloudflare Web Analytics).
 - **Resend** (Estados Unidos): envía el mensaje del formulario a nuestro correo.
 - **Nuestro proveedor de correo electrónico**, donde recibimos y respondemos los mensajes.
+- **Meta Platforms, Inc.** (Estados Unidos): plataforma de WhatsApp Business, por donde llegan y salen los mensajes de WhatsApp.
+- **Anthropic, PBC** (Estados Unidos): el modelo de inteligencia artificial (Claude) con el que responde Aska. Recibe los mensajes de la conversación solo para responder y no los usa para entrenar sus modelos.
+- **Contabo** (servidores en Estados Unidos): aloja XASKA POS, donde se guardan las conversaciones de WhatsApp y del chat para que el equipo las atienda.
 
-Esto implica una transmisión internacional de datos a Estados Unidos. Los datos del formulario no se guardan en ninguna base de datos del sitio: viajan en un correo a soporte@xaska.co.
+Esto implica una transmisión internacional de datos a Estados Unidos, país con nivel adecuado de protección según la Superintendencia de Industria y Comercio. Los datos del formulario no se guardan en ninguna base de datos del sitio: viajan en un correo a soporte@xaska.co.
 
 ## 6. Cuánto tiempo los conservamos
 
-Conservamos los mensajes mientras atendemos tu solicitud y hasta por dos años después del último contacto, salvo que nos pidas borrarlos antes o que una ley nos obligue a conservarlos más tiempo.
+Conservamos los mensajes del formulario y del correo mientras atendemos tu solicitud y hasta por dos años después del último contacto. Las conversaciones de WhatsApp y del chat con Aska se borran solas 12 meses después de su último mensaje. En los dos casos puedes pedirnos borrarlos antes, salvo que una ley nos obligue a conservarlos más tiempo.
 
 ## 7. Tus derechos
 

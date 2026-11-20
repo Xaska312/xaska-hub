@@ -454,6 +454,10 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Bandera `ASKA_CHAT`** (`src/config/site.ts`, 2026-11-20): la burbuja solo se genera con la bandera en `true`. Está en `false` hasta que la rama `aska-web` del POS esté desplegada en app.xaska.co, para poder publicar el resto del hub sin que el chat quede sin con quién hablar. Sus pruebas se saltan mientras esté apagada. Encendida el 2026-11-20, con el POS ya desplegado (el chat responde y permite el origen https://xaska.co).
 - Pendiente: nombrar a Anthropic (Claude) como proveedor del asistente en la política de privacidad, y el tiempo que se guardan las conversaciones cuando Daniel lo decida.
 
+### Política de datos: chat con Aska, encargados y 12 meses (2026-11-20)
+
+- La política de xaska.co suma lo que se recoge por WhatsApp y por el chat con Aska (número o identificador de usuario de WhatsApp, nombre del perfil, mensajes y lo que cuentan del negocio, y el identificador aleatorio del chat en el navegador), que Aska es una IA que puede equivocarse, y los encargados Meta Platforms (WhatsApp Business), Anthropic (Claude) y Contabo (donde XASKA POS guarda las conversaciones). Las conversaciones de WhatsApp y del chat se borran a los 12 meses de su último mensaje (decisión 372 del POS); los mensajes del formulario y del correo siguen hasta dos años. Va en línea con la política 1.4 de XASKA POS (decisión 373).
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.
