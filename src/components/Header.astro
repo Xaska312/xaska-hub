@@ -69,7 +69,7 @@ function isCurrent(href: string): boolean {
                       <path d="m6 9 6 6 6-6" />
                     </svg>
                   </summary>
-                  <ul class="bento absolute top-full left-0 z-50 mt-2 flex w-72 flex-col gap-1 rounded-block p-2 shadow-float">
+                  <ul class="bento absolute top-full left-0 z-50 mt-2 flex w-80 flex-col gap-1 rounded-block p-2 shadow-float">
                     {segments.map((segment) => (
                       <li class={`seg-${segment.id}`}>
                         <a
@@ -141,7 +141,11 @@ function isCurrent(href: string): boolean {
     </div>
   </div>
 
-  <div id="mobile-menu" class="hidden px-4 pb-4 sm:px-6 lg:hidden" data-menu-panel>
+  <div
+    id="mobile-menu"
+    class="hidden max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain px-4 pb-4 sm:px-6 lg:hidden"
+    data-menu-panel
+  >
     <nav
       aria-label="Principal (móvil)"
       class="bento mx-auto max-w-(--container-page) rounded-panel p-3 shadow-float"

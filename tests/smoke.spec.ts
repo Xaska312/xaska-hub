@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { stubTurnstile } from './helpers';
 import { publishedPages } from './pages';
+import { flags } from '../src/config/site';
 
 // Sin red hacia Cloudflare en las pruebas: Turnstile se reemplaza por su versión de prueba.
 test.beforeEach(async ({ page }) => {
@@ -497,6 +498,18 @@ test.describe('páginas de servicios', () => {
 });
 
 test.describe('menú Para tu negocio', () => {
+  test('en un celular bajo el menú se desplaza hasta el final', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'movil', 'Solo en móvil');
+    await page.setViewportSize({ width: 375, height: 600 });
+    await page.goto('/para/droguerias');
+    await page.getByRole('button', { name: 'Abrir menú' }).click();
+    const last = page
+      .getByRole('navigation', { name: 'Principal (móvil)' })
+      .getByRole('link', { name: 'Distribuidores' });
+    await last.scrollIntoViewIfNeeded();
+    await expect(last).toBeInViewport();
+  });
+
   test('en escritorio abre las cinco secciones', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'escritorio', 'Solo en escritorio');
     await page.goto('/');
@@ -525,6 +538,9 @@ test.describe('celular pequeño (320 px)', () => {
 });
 
 test.describe('chat de Aska', () => {
+  // Solo cuando el chat está encendido (flags.ASKA_CHAT en src/config/site.ts).
+  test.skip(!flags.ASKA_CHAT, 'Chat de Aska apagado hasta desplegar la rama aska-web del POS');
+
   const API = 'https://app.xaska.co/api/v1/public/aska/chat';
 
   test('responde, pinta los enlaces sin HTML y recuerda la sesión', async ({ page }) => {

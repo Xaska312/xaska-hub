@@ -449,8 +449,9 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 
 - **Burbuja "Pregúntale a Aska"** abajo a la derecha (`src/components/AskaChat.astro`, en `BaseLayout`). Habla con el mismo asistente del WhatsApp de XASKA, servido por XASKA POS (`products.aska.chatApi`, decisión 364 del POS): responde de una vez y, si pasa la conversación a una persona, lo que ella responda desde la consola del POS aparece en el chat (se consulta cada 8 s solo con el chat abierto).
 - Sin JavaScript no se muestra. La sesión es un UUID aleatorio en `localStorage` (`xaska.aska-chat`); no se piden datos para empezar. Aviso visible: "Aska es una IA y puede equivocarse", enlace a la política de privacidad del POS y a WhatsApp.
-- Seguridad: lo que llega del servidor nunca se pinta como HTML (`src/lib/aska-chat.ts` lo parte en texto, *negrita* y enlaces https). La CSP abre `connect-src` solo a https://app.xaska.co. Los topes contra el abuso (por IP y por día) están en el POS.
+- Seguridad: lo que llega del servidor nunca se pinta como HTML (`src/lib/aska-chat.ts` lo parte en texto, negrita (`*así*`) y enlaces https). La CSP abre `connect-src` solo a https://app.xaska.co. Los topes contra el abuso (por IP y por día) están en el POS.
 - Atributos `data-aska-*` para no chocar con los de otras secciones (`data-send` ya lo usaba "Desarrollo a medida").
+- **Bandera `ASKA_CHAT`** (`src/config/site.ts`, 2026-11-20): la burbuja solo se genera con la bandera en `true`. Está en `false` hasta que la rama `aska-web` del POS esté desplegada en app.xaska.co, para poder publicar el resto del hub sin que el chat quede sin con quién hablar. Sus pruebas se saltan mientras esté apagada.
 - Pendiente: nombrar a Anthropic (Claude) como proveedor del asistente en la política de privacidad, y el tiempo que se guardan las conversaciones cuando Daniel lo decida.
 
 ## Tabla de contrastes (WCAG 2.2 AA)

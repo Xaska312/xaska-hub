@@ -26,6 +26,12 @@ export const flags = {
    * Se pone en true el mismo día que salga en el POS (textos en src/content/pos/index.yaml, eInvoicing).
    */
   E_INVOICING: false,
+  /**
+   * Chat "Pregúntale a Aska" en todas las páginas (AskaChat.astro). Habla con XASKA POS
+   * (decisión 364 del POS, rama aska-web). Se pone en true cuando esa versión del POS ya esté
+   * desplegada en app.xaska.co; antes, la burbuja no tendría con quién hablar.
+   */
+  ASKA_CHAT: false,
 } as const;
 
 export const site = {
