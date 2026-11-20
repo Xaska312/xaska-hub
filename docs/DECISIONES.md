@@ -445,6 +445,14 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - **Contenido** en el mismo `src/content/services/<servicio>.md` (se sumaron `seo`, `hero`, `whatsapp` y `highlights`); plantilla `src/pages/servicios/[servicio].astro`; ilustraciones en `src/components/services/`; colores en `segments.css` con las mismas variables de los tipos de negocio.
 - **Resto del sitio:** menú "Para tu negocio" después de Productos (un `<details>` en escritorio, que funciona sin JavaScript y se cierra con Escape, al tocar fuera o al salir con Tab; lista aparte en el menú del celular); pie de página con columnas "Para tu negocio" y "Servicios"; el inicio enlaza cada servicio a su página y muestra los cinco negocios en la tarjeta de XASKA POS; `/servicios` lleva a cada página con el color del servicio; `/llms.txt` enlaza las páginas.
 
+### Chat de Aska en todas las páginas (2026-11-18)
+
+- **Burbuja "Pregúntale a Aska"** abajo a la derecha (`src/components/AskaChat.astro`, en `BaseLayout`). Habla con el mismo asistente del WhatsApp de XASKA, servido por XASKA POS (`products.aska.chatApi`, decisión 364 del POS): responde de una vez y, si pasa la conversación a una persona, lo que ella responda desde la consola del POS aparece en el chat (se consulta cada 8 s solo con el chat abierto).
+- Sin JavaScript no se muestra. La sesión es un UUID aleatorio en `localStorage` (`xaska.aska-chat`); no se piden datos para empezar. Aviso visible: "Aska es una IA y puede equivocarse", enlace a la política de privacidad del POS y a WhatsApp.
+- Seguridad: lo que llega del servidor nunca se pinta como HTML (`src/lib/aska-chat.ts` lo parte en texto, *negrita* y enlaces https). La CSP abre `connect-src` solo a https://app.xaska.co. Los topes contra el abuso (por IP y por día) están en el POS.
+- Atributos `data-aska-*` para no chocar con los de otras secciones (`data-send` ya lo usaba "Desarrollo a medida").
+- Pendiente: nombrar a Anthropic (Claude) como proveedor del asistente en la política de privacidad, y el tiempo que se guardan las conversaciones cuando Daniel lo decida.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

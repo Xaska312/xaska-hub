@@ -117,7 +117,13 @@ export const products = {
     trialDays: 14,
     /** Monograma oficial de XASKA IA, copiado sin cambios de XASKA POS (frontend/public/xaska-ia.svg). */
     logo: '/brand/xaska-ia/xaska-ia.svg',
-    /** Vendedor por WhatsApp: todavía no existe; el sitio lo anuncia como "próximamente". */
+    /**
+     * Chat de Aska en esta página (decisión 364 del POS): el mismo asistente del WhatsApp de XASKA, servido por
+     * XASKA POS. Público, con topes por IP y por día; las conversaciones se ven en la consola de plataforma del POS.
+     */
+    chatApi: 'https://app.xaska.co/api/v1/public/aska/chat',
+    chatOrigin: 'https://app.xaska.co',
+    /** Vendedor por WhatsApp para cada negocio: todavía no existe; el sitio lo anuncia como "próximamente". */
     soonName: 'ASKA Te Atiende',
   },
 } as const;
@@ -146,6 +152,7 @@ export const whatsappMessages = {
   notFound: 'Hola, estaba en xaska.co y no encontré lo que buscaba',
   aska: 'Hola, quiero saber más de ASKA, la IA de XASKA POS',
   askaSoon: 'Hola, quiero que me avisen cuando salga ASKA Te Atiende',
+  askaChat: 'Hola, vengo del chat de xaska.co',
 } as const;
 
 export interface NavItem {

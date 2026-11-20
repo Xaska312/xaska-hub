@@ -54,7 +54,8 @@ export default defineConfig({
         "default-src 'self'",
         "img-src 'self' data:",
         "font-src 'self'",
-        "connect-src 'self'",
+        // El chat de Aska habla con XASKA POS (src/config/site.ts, products.aska.chatOrigin).
+        "connect-src 'self' https://app.xaska.co",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
