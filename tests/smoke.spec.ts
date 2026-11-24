@@ -248,32 +248,32 @@ test.describe('contenido de la fase 1', () => {
     await expect(first).toHaveAttribute('open', '');
   });
 
-  test('ASKA tiene su página con precio, prueba y lo que viene', async ({ page }) => {
+  test('Aska tiene su página con precio, prueba y lo que viene', async ({ page }) => {
     await page.goto('/aska');
-    await expect(page.locator('h1')).toContainText('ASKA');
+    await expect(page.locator('h1')).toContainText('Aska');
     await expect(page.locator('main')).toContainText('$39.900');
-    await expect(page.locator('main a', { hasText: 'Probar ASKA gratis 14 días' })).toHaveAttribute(
+    await expect(page.locator('main a', { hasText: 'Probar Aska gratis 14 días' })).toHaveAttribute(
       'href',
       'https://app.xaska.co/registro',
     );
     const soon = page.locator('#proximamente');
-    await expect(soon).toHaveText('ASKA Te Atiende');
+    await expect(soon).toHaveText('Aska Te Atiende');
     const notify = page.locator('main a', { hasText: 'Avísame cuando salga' });
     expect(decodeURIComponent((await notify.getAttribute('href')) ?? '')).toContain(
-      'ASKA Te Atiende',
+      'Aska Te Atiende',
     );
     const logo = page.locator('main img[src="/brand/xaska-ia/xaska-ia.svg"]').first();
     await expect(logo).toHaveAttribute('width', '56');
     expect(await page.locator('details.faq').count()).toBeGreaterThanOrEqual(4);
   });
 
-  test('el menú marca ASKA y las demás páginas invitan a conocerla', async ({ page }) => {
+  test('el menú marca Aska y las demás páginas invitan a conocerla', async ({ page }) => {
     await page.goto('/aska');
     const current = page.locator('header a[aria-current="page"]');
-    await expect(current.first()).toHaveText('ASKA');
+    await expect(current.first()).toHaveText('Aska');
     for (const path of ['/', '/productos', '/productos/xaska-pos']) {
       await page.goto(path);
-      await expect(page.locator('main a[href="/aska"]', { hasText: 'Conocer ASKA' })).toBeVisible();
+      await expect(page.locator('main a[href="/aska"]', { hasText: 'Conocer Aska' })).toBeVisible();
     }
   });
 
@@ -347,7 +347,7 @@ test.describe('portada viva', () => {
   });
 });
 
-test.describe('ASKA viva', () => {
+test.describe('Aska viva', () => {
   test('las preguntas de ejemplo responden en la conversación', async ({ page }) => {
     await page.goto('/aska');
     const log = page.getByRole('log');

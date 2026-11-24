@@ -1,8 +1,8 @@
 ---
 /**
- * ASKA, la IA de XASKA POS (boceto 1 "Pregúntale a ASKA", elegido el 2026-11-09).
+ * Aska, la IA de XASKA POS (boceto 1 "Pregúntale a Aska", elegido el 2026-11-09).
  * Va en /aska (dirección corta para la campaña) y no en /productos/aska, para que el menú
- * marque solo "ASKA" como página actual.
+ * marque solo "Aska" como página actual.
  */
 import { getEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -16,7 +16,7 @@ import { faqPage } from '@/lib/structured-data';
 
 const entry = await getEntry('aska', 'index');
 const faqEntry = await getEntry('faq', 'aska');
-if (!entry || !faqEntry) throw new Error('Falta el contenido de ASKA o sus preguntas');
+if (!entry || !faqEntry) throw new Error('Falta el contenido de Aska o sus preguntas');
 const aska = entry.data;
 const faq = faqEntry.data;
 const { aska: product, pos } = products;
@@ -66,7 +66,7 @@ const [mainFeature, ...otherFeatures] = aska.features.items;
           <p class="mt-5 max-w-[52ch] text-lg font-medium text-muted">{aska.hero.lead}</p>
           <div class="mt-8 flex flex-wrap items-center gap-3">
             <CTA href={pos.trialUrl} external>
-              {`Probar ASKA gratis ${product.trialDays} días`}
+              {`Probar Aska gratis ${product.trialDays} días`}
             </CTA>
             <CTA href="#funciones-aska" variant="secondary">
               Ver lo que hace
@@ -74,7 +74,7 @@ const [mainFeature, ...otherFeatures] = aska.features.items;
           </div>
         </div>
 
-        {/* Conversación de ejemplo, como el panel de ASKA en el POS. Sin cifras inventadas. */}
+        {/* Conversación de ejemplo, como el panel de Aska en el POS. Sin cifras inventadas. */}
         <figure class="rounded-block border border-line bg-surface lg:col-span-5">
           <figcaption class="flex items-center gap-3 border-b border-line px-5 py-4">
             <img src={product.logo} alt="" width="36" height="36" class="size-9" />
@@ -91,7 +91,7 @@ const [mainFeature, ...otherFeatures] = aska.features.items;
               </p>
               <div class="max-w-[92%] self-start rounded-3xl rounded-bl-md bg-inset px-4 py-3">
                 <p>
-                  <span class="sr-only">Respuesta de ASKA: </span>
+                  <span class="sr-only">Respuesta de Aska: </span>
                   {aska.chat.answer}
                 </p>
                 <p class="mt-3 flex items-center gap-2 text-sm text-muted">
@@ -106,7 +106,7 @@ const [mainFeature, ...otherFeatures] = aska.features.items;
               class="aska-typing hidden self-start rounded-3xl rounded-bl-md bg-inset px-4 py-3"
               data-typing
             >
-              <span class="sr-only">ASKA está escribiendo</span>
+              <span class="sr-only">Aska está escribiendo</span>
               <span class="aska-dot" aria-hidden="true"></span>
               <span class="aska-dot" aria-hidden="true"></span>
               <span class="aska-dot" aria-hidden="true"></span>
@@ -132,7 +132,7 @@ const [mainFeature, ...otherFeatures] = aska.features.items;
                 </p>
                 <div class="pop max-w-[92%] self-start rounded-3xl rounded-bl-md bg-inset px-4 py-3">
                   <p>
-                    <span class="sr-only">Respuesta de ASKA: </span>
+                    <span class="sr-only">Respuesta de Aska: </span>
                     {item.answer}
                   </p>
                   <p class="mt-3 flex items-center gap-2 text-sm text-muted">

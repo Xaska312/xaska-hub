@@ -465,6 +465,10 @@ Registro de decisiones del hub de XASKA: fecha, decisión, motivo y alternativa 
 - Con Aska, el chat abierto consulta cada minuto (antes solo con una persona, cada 8 s) para mostrar el cierre por inactividad.
 - Prueba: "pregunta el nombre y, al despedirse, pide calificar con estrellas" en `tests/smoke.spec.ts`.
 
+### Un solo nombre: Aska (2026-11-24)
+
+- Decisión 376 del POS: la IA se llama **Aska** en todas partes. Antes era "ASKA" en este sitio y "XASKA IA" como adicional en XASKA POS. Cambian el menú, la página `/aska` (título, botones, conversación de ejemplo), las preguntas frecuentes, `llms.txt`, el bloque `AskaBand`, la opción "Aska" del formulario (antes "ASKA (XASKA IA)") y el próximo "Aska Te Atiende". La dirección `/aska` no cambia.
+
 ## Tabla de contrastes (WCAG 2.2 AA)
 
 Texto normal ≥ 4,5:1. Texto grande y componentes de interfaz ≥ 3:1.

@@ -57,7 +57,7 @@ export const GET: APIRoute = async () => {
       (item) =>
         `- [XASKA POS para ${item.data.name.toLowerCase()}](${page(`/para/${item.id}`)}): ${item.data.seo.description}`,
     ),
-    `- [ASKA](${page(products.aska.path)}): la inteligencia artificial de XASKA POS.`,
+    `- [Aska](${page(products.aska.path)}): la inteligencia artificial de XASKA POS.`,
     `- [Servicios](${page('/servicios')}): desarrollo a medida, automatización, páginas web, consultoría y equipos.`,
     `- [Nosotros](${page('/nosotros')}): quiénes somos, misión y visión.`,
     `- [Contacto](${page('/contacto')}): WhatsApp, correo y formulario.`,
