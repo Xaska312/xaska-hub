@@ -108,20 +108,20 @@ export const products = {
     trialLabel: 'Probar gratis 14 días',
     demoLabel: 'Pedir una demo',
     manualUrl: 'https://app.xaska.co/manual',
-    /** Precios públicos del POS (planes, XASKA IA y adicionales), sin iniciar sesión. */
+    /** Precios públicos del POS (planes, Aska y adicionales), sin iniciar sesión. */
     pricingUrl: 'https://app.xaska.co/precios',
   },
   /**
-   * ASKA: la IA de XASKA POS. En el POS se vende como el adicional "XASKA IA".
+   * Aska: la IA de XASKA POS. En el POS se vende como el adicional "Aska" (antes "Aska", decisión 376 del POS).
    * Precio tomado de Planes y pagos del POS (2026-11-09). Sin mención de IVA.
    */
   aska: {
-    name: 'ASKA',
-    addonName: 'XASKA IA',
+    name: 'Aska',
+    addonName: 'Aska',
     path: '/aska',
     price: '$39.900',
     trialDays: 14,
-    /** Monograma oficial de XASKA IA, copiado sin cambios de XASKA POS (frontend/public/xaska-ia.svg). */
+    /** Monograma oficial de Aska, copiado sin cambios de XASKA POS (frontend/public/xaska-ia.svg). */
     logo: '/brand/xaska-ia/xaska-ia.svg',
     /**
      * Chat de Aska en esta página (decisión 364 del POS): el mismo asistente del WhatsApp de XASKA, servido por
@@ -130,7 +130,7 @@ export const products = {
     chatApi: 'https://app.xaska.co/api/v1/public/aska/chat',
     chatOrigin: 'https://app.xaska.co',
     /** Vendedor por WhatsApp para cada negocio: todavía no existe; el sitio lo anuncia como "próximamente". */
-    soonName: 'ASKA Te Atiende',
+    soonName: 'Aska Te Atiende',
   },
 } as const;
 
@@ -156,8 +156,8 @@ export const whatsappMessages = {
   about: 'Hola, quiero conocer más sobre XASKA',
   hardware: 'Hola, quiero información sobre ensamble de computadores',
   notFound: 'Hola, estaba en xaska.co y no encontré lo que buscaba',
-  aska: 'Hola, quiero saber más de ASKA, la IA de XASKA POS',
-  askaSoon: 'Hola, quiero que me avisen cuando salga ASKA Te Atiende',
+  aska: 'Hola, quiero saber más de Aska, la IA de XASKA POS',
+  askaSoon: 'Hola, quiero que me avisen cuando salga Aska Te Atiende',
   askaChat: 'Hola, vengo del chat de xaska.co',
 } as const;
 
@@ -169,7 +169,7 @@ export interface NavItem {
 const baseNav: NavItem[] = [
   { label: 'Inicio', href: '/' },
   { label: 'Productos', href: '/productos' },
-  { label: 'ASKA', href: '/aska' },
+  { label: 'Aska', href: '/aska' },
   { label: 'Servicios', href: '/servicios' },
   { label: 'Nosotros', href: '/nosotros' },
   { label: 'Contacto', href: '/contacto' },
@@ -182,7 +182,7 @@ export const mainNav: NavItem[] = flags.SHOW_HARDWARE
 /** Opciones del campo "interés" del formulario de contacto (fase 2). */
 export const interestOptions: readonly string[] = [
   'XASKA POS',
-  'ASKA (XASKA IA)',
+  'Aska',
   'Desarrollo a medida',
   'Automatización',
   'Página web',

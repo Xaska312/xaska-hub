@@ -1,6 +1,6 @@
 # Preguntas frecuentes de la portada: lo que alguien pregunta antes de escribirnos, con las
 # palabras con que lo busca. Si cambian los precios (src/content/pos/index.yaml, plans, y
-# src/config/site.ts, ASKA), cambiarlos también aquí.
+# src/config/site.ts, Aska), cambiarlos también aquí.
 title: Preguntas frecuentes
 items:
   - question: ¿Qué es XASKA?
@@ -11,7 +11,7 @@ items:
     answer: Para tiendas de barrio y de centro comercial, minimercados, papelerías, tiendas de ropa y calzado (maneja tallas y colores), restaurantes que atienden a la mesa y droguerías, con fórmulas, lotes y vencimientos.
   - question: ¿Cuánto cuesta XASKA POS?
     answer: Hay tres planes. Emprende cuesta $34.900 al mes, Negocio $69.900 y Empresa $129.900. Si pagas el año, pagas 10 meses. Todos empiezan con 14 días de prueba gratis, sin tarjeta.
-  - question: ¿Qué es ASKA?
-    answer: ASKA es la inteligencia artificial de XASKA POS. Le preguntas por tus ventas, recibes la mercancía con una foto de la factura y te manda el resumen del día. Se agrega a cualquier plan por $39.900 al mes, con 14 días de prueba gratis.
+  - question: ¿Qué es Aska?
+    answer: Aska es la inteligencia artificial de XASKA POS. Le preguntas por tus ventas, recibes la mercancía con una foto de la factura y te manda el resumen del día. Se agrega a cualquier plan por $39.900 al mes, con 14 días de prueba gratis.
   - question: ¿Dónde está XASKA y cómo los contacto?
     answer: Estamos en Ibagué, Tolima. Nos escribes por WhatsApp al +57 324 556 0729 y nuestro asistente te responde al instante, a cualquier hora; si hace falta, te pasa con Daniel, de lunes a sábado de 8:00 a. m. a 6:00 p. m. También puedes escribir al correo soporte@xaska.co.

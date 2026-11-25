@@ -248,32 +248,32 @@ test.describe('contenido de la fase 1', () => {
     await expect(first).toHaveAttribute('open', '');
   });
 
-  test('ASKA tiene su página con precio, prueba y lo que viene', async ({ page }) => {
+  test('Aska tiene su página con precio, prueba y lo que viene', async ({ page }) => {
     await page.goto('/aska');
-    await expect(page.locator('h1')).toContainText('ASKA');
+    await expect(page.locator('h1')).toContainText('Aska');
     await expect(page.locator('main')).toContainText('$39.900');
-    await expect(page.locator('main a', { hasText: 'Probar ASKA gratis 14 días' })).toHaveAttribute(
+    await expect(page.locator('main a', { hasText: 'Probar Aska gratis 14 días' })).toHaveAttribute(
       'href',
       'https://app.xaska.co/registro',
     );
     const soon = page.locator('#proximamente');
-    await expect(soon).toHaveText('ASKA Te Atiende');
+    await expect(soon).toHaveText('Aska Te Atiende');
     const notify = page.locator('main a', { hasText: 'Avísame cuando salga' });
     expect(decodeURIComponent((await notify.getAttribute('href')) ?? '')).toContain(
-      'ASKA Te Atiende',
+      'Aska Te Atiende',
     );
     const logo = page.locator('main img[src="/brand/xaska-ia/xaska-ia.svg"]').first();
     await expect(logo).toHaveAttribute('width', '56');
     expect(await page.locator('details.faq').count()).toBeGreaterThanOrEqual(4);
   });
 
-  test('el menú marca ASKA y las demás páginas invitan a conocerla', async ({ page }) => {
+  test('el menú marca Aska y las demás páginas invitan a conocerla', async ({ page }) => {
     await page.goto('/aska');
     const current = page.locator('header a[aria-current="page"]');
-    await expect(current.first()).toHaveText('ASKA');
+    await expect(current.first()).toHaveText('Aska');
     for (const path of ['/', '/productos', '/productos/xaska-pos']) {
       await page.goto(path);
-      await expect(page.locator('main a[href="/aska"]', { hasText: 'Conocer ASKA' })).toBeVisible();
+      await expect(page.locator('main a[href="/aska"]', { hasText: 'Conocer Aska' })).toBeVisible();
     }
   });
 
@@ -347,7 +347,7 @@ test.describe('portada viva', () => {
   });
 });
 
-test.describe('ASKA viva', () => {
+test.describe('Aska viva', () => {
   test('las preguntas de ejemplo responden en la conversación', async ({ page }) => {
     await page.goto('/aska');
     const log = page.getByRole('log');
@@ -591,5 +591,65 @@ test.describe('chat de Aska', () => {
     await page.keyboard.press('Escape');
     await expect(panel).toBeHidden();
     await expect(launcher).toBeFocused();
+  });
+
+  test('pregunta el nombre y, al despedirse, pide calificar con estrellas', async ({ page }) => {
+    let rated: { score: number; comment: string | null } | undefined;
+    await page.route(API, (route) =>
+      route.fulfill({
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        json: {
+          status: 'CLOSED',
+          ratingPending: true,
+          messages: [
+            {
+              id: 'b1',
+              author: 'BOT',
+              body: '¡Que te vaya bien!',
+              createdAt: '2026-11-20T20:00:00Z',
+            },
+            {
+              id: 'b2',
+              author: 'BOT',
+              body: '¿Cómo te atendimos? Califica de 1 a 5 ⭐',
+              createdAt: '2026-11-20T20:00:01Z',
+            },
+          ],
+        },
+      }),
+    );
+    await page.route(`${API}/*/rating`, async (route) => {
+      rated = route.request().postDataJSON() as { score: number; comment: string | null };
+      await route.fulfill({
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        json: {
+          status: 'CLOSED',
+          ratingPending: false,
+          messages: [
+            {
+              id: 'b3',
+              author: 'BOT',
+              body: 'Gracias, ya se lo pasamos al equipo de XASKA.',
+              createdAt: '2026-11-20T20:01:00Z',
+            },
+          ],
+        },
+      });
+    });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Pregúntale a Aska' }).click();
+    const panel = page.getByRole('dialog', { name: 'Aska' });
+    await expect(panel.getByRole('log')).toContainText('¿Con quién tengo el gusto?');
+    await expect(panel.getByRole('group', { name: '¿Cómo te atendimos?' })).toBeHidden();
+    await panel.getByLabel('Escríbele a Aska').fill('Eso es todo, gracias');
+    await panel.getByRole('button', { name: 'Enviar', exact: true }).click();
+    const stars = panel.getByRole('group', { name: '¿Cómo te atendimos?' });
+    await expect(stars).toBeVisible();
+    await stars.locator('label', { hasText: '4 de 5' }).click();
+    await panel.getByLabel('¿Algo que podamos mejorar? (opcional)').fill('Muy clara');
+    await panel.getByRole('button', { name: 'Enviar calificación' }).click();
+    await expect(panel.getByRole('log')).toContainText('se lo pasamos al equipo');
+    await expect(stars).toBeHidden();
+    expect(rated).toEqual({ score: 4, comment: 'Muy clara' });
   });
 });

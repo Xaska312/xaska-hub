@@ -448,7 +448,7 @@
   }
 
   /*
-   * Chispa de ASKA: el ámbar del monograma de XASKA IA (#FCD34D, el mismo del POS).
+   * Chispa de Aska: el ámbar del monograma de Aska (#FCD34D, el mismo del POS).
    * Solo sobre el índigo profundo (.on-deep): de 11,2:1 (#1E1B4B) a 6,9:1 (#3730A3) en el degradado.
    * Sobre fondo claro no cumple contraste: no usarlo ahí.
    */
@@ -457,8 +457,8 @@
   }
 
   /*
-   * Logo de ASKA (burbuja de chat, decisión 358 del POS): solo una sombra suave que sigue su
-   * forma, sin halo ni brillo, como el botón de ASKA en XASKA POS.
+   * Logo de Aska (burbuja de chat, decisión 358 del POS): solo una sombra suave que sigue su
+   * forma, sin halo ni brillo, como el botón de Aska en XASKA POS.
    */
   .aska-halo {
     filter: drop-shadow(0 10px 18px rgb(30 27 75 / 0.35));

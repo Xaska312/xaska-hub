@@ -240,7 +240,7 @@ const aska = defineCollection({
   loader: glob({ pattern: 'index.yaml', base: './src/content/aska' }),
   schema: z.object({
     seo: z.object({ title: text, description: text }),
-    /** Título en tres partes: la del medio ("ASKA") va resaltada. */
+    /** Título en tres partes: la del medio ("Aska") va resaltada. */
     hero: z.object({
       eyebrow: text,
       title: z.object({ before: text, accent: text, after: text }),
@@ -283,7 +283,7 @@ const aska = defineCollection({
     }),
     pricing: z.object({ title: text, text: text, cta: text }),
     soon: z.object({ badge: text, text: text, linkLabel: text }),
-    /** Bloque corto que invita a conocer ASKA desde la portada, Productos y XASKA POS. */
+    /** Bloque corto que invita a conocer Aska desde la portada, Productos y XASKA POS. */
     band: z.object({ title: text, text: text, linkLabel: text }),
   }),
 });
